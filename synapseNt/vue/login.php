@@ -40,6 +40,7 @@
                       <img class="g" src="img/logop.png">
                       <p class="par1">Connectez-vous, Partagez et Explorez ensemble.</p>
 
+                      
                       <h3 class="login1">Se connecter</h3>
                       <form action="" method="" class="myForm1" onsubmit="submitform1(event)">
                         <div class="form-group">
