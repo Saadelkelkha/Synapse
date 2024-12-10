@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login/Signup Form</title>
+  <title>SynapseNt</title>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -41,9 +41,9 @@
                       <p class="par1">Connectez-vous, Partagez et Explorez ensemble.</p>
 
                       <h3 class="login1">Se connecter</h3>
-                      <form action="" method="" class="myForm1" onsubmit="submitform1(event)">
+                      <form action="index.php?action=validationlogin" method="POST" class="myForm1">
                         <div class="form-group">
-                          <input type="email"  name="logemail" oninput="blurEmail1(event)" class="form-style" placeholder="Email" id="logemail" autocomplete="off" >
+                          <input type="email"  name="logemail" class="form-style" placeholder="Email" id="logemail" autocomplete="off" oninput="blurEmail1()">
                           <i class="input-icon uil uil-at"></i>
                           <div class="error-message" id="emailerror"></div>
                         </div>  
@@ -57,7 +57,6 @@
                             <a href="index.php?action=reintialiser" class="link">Mot de passe oublié?</a><br>
                             <p>Vous n'avez pas de compte? <input type="button" style="color: #102770; background: none; border: none; cursor: pointer;" onclick="createcompte()" value="Creer un compte"></p>
                           </p>
-                      </div>
                       </form>
                   </div>
                 </div>
@@ -72,7 +71,7 @@
                       <img class="g" src="img/logop.png">
                       <p class="par2">Connectez-vous, Partagez et Explorez ensemble.</p>
                       <h3 class="login2">Créer un compte</h3>
-                      <form action="" class="myForm2" onsubmit="submitForm2(event)">
+                      <form action="index.php?action=validationsignup" method="POST" class="myForm2">
                         <div class="form-group">
                           <div class="form-group">
                             <input type="text" name="logprenom" class="form-style" placeholder="Prenom" id="logprenom" oninput="handlePrenom(event)">
@@ -87,17 +86,16 @@
                         </div>
                         <label for="" style="align-self: flex-start;margin-left: 15%; margin-top: 15px; margin-bottom: -10px;">Date de naissance</label>
                         <div class="form-group mt-2">
-                          
                           <div class="days form-style-date">
-                            <input type="number" name="logyear" oninput="bluryear(event)"  class="form-style-date" placeholder="Annees" id="year" min="1930" max="2024">
+                            <input type="number" name="logyear" oninput="bluryear()"  class="form-style-date" placeholder="Annees" id="year" min="1930" max="2024">
                             <div class="error-message" id="yearerror"></div>
                           </div>
                           <div class="days form-style-date">
-                            <input type="number" name="logmonth" oninput="blurmonth(event)" class="form-style-date" placeholder="Mois" id="month" min="1" max="12" disabled>
+                            <input type="number" name="logmonth" oninput="blurmonth()" class="form-style-date" placeholder="Mois" id="month" min="1" max="12">
                             <div class="error-message" id="montherror"></div>
                           </div>
                           <div class="days form-style-date">
-                            <input type="number" name="logday" class="form-style-date"  placeholder="Jours" id="day" min="1" max="31" disabled>
+                            <input type="number" name="logday"  class="form-style-date"  placeholder="Jours" id="day" min="1" max="31" >
                             <div class="error-message" id="dayserror"></div>
                           </div>
                         </div>  
@@ -125,13 +123,86 @@
       </div>
     </div>
   </div>
-  <script src="assets/script.js"> </script>
+  <script>
+    <?php
+      if(isset($_GET['email_error'])){
+          $email_error = $_GET['email_error'];
+          echo 'var emailError = document.getElementById("emailerror");';
+          echo 'emailError.innerText = "' . $email_error . '";';
+          echo 'emailError.style.display = "block";';
+      }
+      if(isset($_GET['pass_error'])){
+        $pass_error = $_GET['pass_error'];
+        echo 'var passError = document.getElementById("passerror");';
+        echo 'passError.innerText = "' . $pass_error . '";';
+        echo 'passError.style.display = "block";';
+      }
+
+      require_once 'assets/script.js';
+
+      if(isset($_GET['prenom_error'])){
+        echo 'createcompte();';
+        $prenom_error = $_GET['prenom_error'];
+        echo 'const prenomerror = document.getElementById("prenomerror");';
+        echo 'prenomerror.innerText = "' . $prenom_error . '";';
+        echo 'prenomerror.style.display = "block";';
+      }
+
+      if(isset($_GET['nom_error'])){
+        echo 'createcompte();';
+        $nom_error = $_GET['nom_error'];
+        echo 'const nomerror = document.getElementById("nomerror");';
+        echo 'nomerror.innerText = "' . $nom_error . '";';
+        echo 'nomerror.style.display = "block";';
+      }
+
+      if(isset($_GET['year_error'])){
+        echo 'createcompte();';
+        $year_error = $_GET['year_error'];
+        echo 'const yearerror = document.getElementById("yearerror");';
+        echo 'yearerror.innerText = "' . $year_error . '";';
+        echo 'yearerror.style.display = "block";';
+      }
+
+      if(isset($_GET['month_error'])){
+        echo 'createcompte();';
+        $month_error = $_GET['month_error'];
+        echo 'const montherror = document.getElementById("montherror");';
+        echo 'montherror.innerText = "' . $month_error . '";';
+        echo 'montherror.style.display = "block";';
+      }
+
+      if(isset($_GET['day_error'])){
+        echo 'createcompte();';
+        $day_error = $_GET['day_error'];
+        echo 'const dayserror = document.getElementById("dayserror");';
+        echo 'dayserror.innerText = "' . $day_error . '";';
+        echo 'dayserror.style.display = "block";';
+      }
+
+      if(isset($_GET['email2_error'])){
+        echo 'createcompte();';
+        $email2_error = $_GET['email2_error'];
+        echo 'var email2error = document.getElementById("email2error");';
+        echo 'email2error.innerText = "' . $email2_error . '";';
+        echo 'email2error.style.display = "block";';
+      }
+
+      if(isset($_GET['pass2_error'])){
+        echo 'createcompte();';
+        $pass2_error = $_GET['pass2_error'];
+        echo 'var pass2error = document.getElementById("pass2error");';
+        echo 'pass2error.innerText = "' . $pass2_error . '";';
+        echo 'pass2error.style.display = "block";';
+      }
+    ?>
+  </script>
 </body>
 </html>
 <?php
   include 'mail.php';
 
-  $to = "ziadchamrah20@gmail.com";
+  $to = "@gmail.com";
   $subject = "Valide account Synapse";
   $body = "<b>Connection successful</b>";
 

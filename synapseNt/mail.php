@@ -30,7 +30,6 @@ function sendEmail($to,$subject,$body){
         
             
         $mail->send();
-        echo 'mail is sent';
         return true;
     }
     catch(Exception $e){
