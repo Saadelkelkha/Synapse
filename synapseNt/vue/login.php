@@ -40,6 +40,7 @@
                       <img class="g" src="img/logop.png">
                       <p class="par1">Connectez-vous, Partagez et Explorez ensemble.</p>
 
+                      
                       <h3 class="login1">Se connecter</h3>
                       <form action="index.php?action=validationlogin" method="POST" class="myForm1">
                         <div class="form-group">
