@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Lobster&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bodyloginsignup">
   <div class="section">
     <div class="container">
       <div class="row full-height justify-content-center">
@@ -85,21 +85,12 @@
                             <div class="error-message" id="nomerror"></div>
                           </div>
                         </div>
-                        <label for="" style="align-self: flex-start;margin-left: 15%; margin-top: 15px; margin-bottom: -10px;">Date de naissance</label>
+                        <label for="logdate" style="align-self: flex-start;margin-left: 15%; margin-top: 15px; margin-bottom: -10px;">Date de naissance</label>
                         <div class="form-group mt-2">
-                          <div class="days form-style-date">
-                            <input type="number" name="logyear" oninput="bluryear()"  class="form-style-date" placeholder="Annees" id="year" min="1930" max="2024">
-                            <div class="error-message" id="yearerror"></div>
-                          </div>
-                          <div class="days form-style-date">
-                            <input type="number" name="logmonth" oninput="blurmonth()" class="form-style-date" placeholder="Mois" id="month" min="1" max="12">
-                            <div class="error-message" id="montherror"></div>
-                          </div>
-                          <div class="days form-style-date">
-                            <input type="number" name="logday"  class="form-style-date"  placeholder="Jours" id="day" min="1" max="31" >
-                            <div class="error-message" id="dayserror"></div>
-                          </div>
-                        </div>  
+                          <input type="date" name="logdate" class="form-style" id="date">
+                          <i class="input-icon uil uil-schedule"></i>
+                          <div class="error-message" id="dateerror"></div>
+                        </div>    
                         <div class="form-group mt-2">
                           <input type="email" name="logemail" class="form-style" placeholder="Email ou numero de telephone" id="email" oninput="handleEmail(event)">
                           <i class="input-icon uil uil-at"></i>
@@ -157,28 +148,12 @@
         echo 'nomerror.style.display = "block";';
       }
 
-      if(isset($_GET['year_error'])){
+      if(isset($_GET['date_error'])){
         echo 'createcompte();';
-        $year_error = $_GET['year_error'];
-        echo 'const yearerror = document.getElementById("yearerror");';
-        echo 'yearerror.innerText = "' . $year_error . '";';
-        echo 'yearerror.style.display = "block";';
-      }
-
-      if(isset($_GET['month_error'])){
-        echo 'createcompte();';
-        $month_error = $_GET['month_error'];
-        echo 'const montherror = document.getElementById("montherror");';
-        echo 'montherror.innerText = "' . $month_error . '";';
-        echo 'montherror.style.display = "block";';
-      }
-
-      if(isset($_GET['day_error'])){
-        echo 'createcompte();';
-        $day_error = $_GET['day_error'];
-        echo 'const dayserror = document.getElementById("dayserror");';
-        echo 'dayserror.innerText = "' . $day_error . '";';
-        echo 'dayserror.style.display = "block";';
+        $date_error = $_GET['date_error'];
+        echo 'const dateerror = document.getElementById("dateerror");';
+        echo 'dateerror.innerText = "' . $date_error . '";';
+        echo 'dateerror.style.display = "block";';
       }
 
       if(isset($_GET['email2_error'])){
@@ -200,12 +175,3 @@
   </script>
 </body>
 </html>
-<?php
-  include 'mail.php';
-
-  $to = "@gmail.com";
-  $subject = "Valide account Synapse";
-  $body = "<b>Connection successful</b>";
-
-  sendEmail($to,$subject,$body);
-?>
