@@ -7,6 +7,8 @@ $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
 
+
+
 $id_post = $_GET['id_post'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -358,6 +360,10 @@ $id_post = $_GET['id_post'] ?? null;
             display:flex;
         }
 
+        /* .like_button:hover{
+            background-color: red;
+        } */
+
     </style>
 </head>
 <body>
@@ -368,6 +374,7 @@ $id_post = $_GET['id_post'] ?? null;
         <main class="mt-1 d-flex">
             <!-- Sidebar -->
             <?php require_once 'vue/layout/navhome2.php'; ?>
+            
             <!-- Formulaire de création de post -->
             <div class="content_chat">
                 <div class="content flex-grow-1">
@@ -415,14 +422,22 @@ $id_post = $_GET['id_post'] ?? null;
                     </div>
                     
                     <!-- Feed -->
-                <?php  
-                foreach($posts as $post){ ?>
-                    <div class="feed" width="100%">
-                        <div class="user">
-                            <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-                                <img src="img/Profile/Julia Clarke.png" alt="">
-                                <div class="name1">
-                                    <h5 class=" mb-0" >Ahmed Said</h5>
+                    <?php
+foreach($posts as $post) {
+    // Récupérer l'ID de l'utilisateur depuis la session
+    $id_user = $_SESSION['id_user'];  
+     
+    // Assurez-vous que l'ID de l'utilisateur est stocké dans la session
+
+    ?>
+    <div class="feed" width="100%">
+        <div class="user">
+            <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
+                <img src="img/Profile/Julia Clarke.png" alt="">
+                <div class="name1">
+                    <h5 class=" mb-0" >Ahmed Said</h5>
+                    
+
                                     <input type="hidden" name="id_post" value="<?php echo $post->id_post; ?>">
                                     <small style="font-size:small; color: #777;"><?php echo $post->date_post; ?></small>
                                     <div class="caption mt-4">
@@ -480,7 +495,11 @@ $id_post = $_GET['id_post'] ?? null;
                         </div>
                         <div class="action-button" style="display: flex; justify-content: space-between;">
                             <div class="interaction-button">
-                                <span><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></span>
+                                <span><button style="background-color:white; color:black" class="like_button" data-post-id="<?php echo $post->id_post; ?>" data-user-id="<?php echo $id_user; ?>"><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button> <!-- Bouton Like --></span>
+
+                                <!-- Compteur de likes -->
+                                
+
                                 <span><i class="uil uil-comment" style="font-size: x-large;"></i></span>
                                 <span><i class="uil uil-share" style="font-size: x-large;"></i></span>
                             </div>
@@ -497,7 +516,9 @@ $id_post = $_GET['id_post'] ?? null;
                             <span class="liked1"><img  src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
                             <span class="liked2"><img src="img/Profile/Julia Clarke.png" height="25px"width="25px" style="border-radius: 50%;"></span>
                             <span class="liked3"><img src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <p class="liked4">Liked by <b>Enrest Achiever</b> and <b>220 others</b></p>
+                            <p class="liked4">Liker par <b><span id="count_like_<?php echo $post->id_post; ?>"><?php $stmt = $pdo->prepare("SELECT COUNT(*) AS like_count FROM likes WHERE id_post = :id_post");
+$stmt->execute(['id_post' => $post->id_post]);
+$likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></span></b> peronnes</p>
                         </div>
                         <div class="comments text-muted">View all 130 comments</div>
                     </div>
@@ -569,7 +590,7 @@ $id_post = $_GET['id_post'] ?? null;
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const uploadedImageContainer = document.getElementById("uploadedImageContainer");
-                    uploadedImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                    uploadedImageContainer.innerHTML = '<img src="${e.target.result}" alt="Uploaded Image"/>';
                 };
                 reader.readAsDataURL(file);
             }
@@ -646,7 +667,47 @@ $id_post = $_GET['id_post'] ?? null;
         document.getElementById('overlay-supprimer').addEventListener('click', () => {
             document.getElementById('popup-supprimer').classList.add('hidden-modifier');
             document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
-        });    
+        });   
+        
+        document.addEventListener("DOMContentLoaded", function () {
+    var likeButtons = document.querySelectorAll('.like_button');
+    
+    likeButtons.forEach(function(likeButton) {
+        likeButton.addEventListener("click", function () {
+            var postId = this.getAttribute('data-post-id');  // Récupérer l'ID du post
+            var userId = this.getAttribute('data-user-id');  // Récupérer l'ID de l'utilisateur
+            var countLike = document.getElementById("count_like_" + postId);  // Compteur de likes spécifique au post
+
+            // Création de l'objet XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+
+            // Configuration de la requête POST
+            xhr.open("POST", "vue/like_post.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // Gestion de la réponse
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+
+                    if (response.success) {
+                        // Mise à jour du compteur de likes
+                       
+                        countLike.textContent = response.like_count;
+                       
+                    } else {
+                        alert("Erreur : " + response.message);
+                    }
+                }
+            };
+
+            // Envoi des données (ID du post et de l'utilisateur)
+            xhr.send("post_id=" + postId + "&user_id=" + userId); // ID du post et de l'utilisateur
+        });
+    });
+});
+
+
     </script>
 
        

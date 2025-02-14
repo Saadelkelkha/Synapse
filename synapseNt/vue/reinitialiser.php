@@ -19,7 +19,7 @@
                 <p style="color: grey;" class="text-center">Entrez votre adresse e-mail pour recevoir un lien de connexion.</p>
                 <form action="index.php?action=send_code" method="post" width="100%">
                     <input type="email" class="form-control-r" aria-label="Default" placeholder="E-mail" name="mail" aria-describedby="inputGroup-sizing-default">
-                    <div class="error-message" id="emailerror"></div>
+                    <div class="error-message" id="emailerror" style="display: none;"></div>
                     <input type="submit" class="form-button-r" aria-label="Default" value="Envoyer un lien de connexion" aria-describedby="inputGroup-sizing-default">
                 </form>
                 <a href="#" class="form-link-r">Vous ne parvenez pas à réinitialiser votre mot de passe ? </a>

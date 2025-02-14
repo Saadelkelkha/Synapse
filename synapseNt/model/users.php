@@ -67,7 +67,7 @@
 
     function addUser($prenom,$nom,$logdate,$email,$password){
         $db = database_connection();
-        $query = $db->prepare("INSERT INTO user values(null,?,?,?,?,?)");
+        $query = $db->prepare("INSERT INTO user(id_user,prenom,nom,date_naissance,email,password) values(null,?,?,?,?,?)");
         $query->execute([$prenom,$nom,$logdate,$email,$password]);
 
         $sqlstate = $db->prepare("SELECT * FROM user WHERE EMAIL = ?");

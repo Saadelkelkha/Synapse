@@ -232,4 +232,10 @@
             exit;
         }
     }
+    
+    function afficherEnregistrerPostController(){
+        $posts = afficherEnregistrerPost();
+        require 'vue/enregistrer_post.php';
+
+    }
 ?>

@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/home.css"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #group_Membres{
+            border-bottom: 2px solid #2B2757;
+            color:#2B2757;
+        }
+    </style>
 </head>
 <body>
     <div class="mt-3">
@@ -18,43 +24,64 @@
         <main class="mt-1 d-flex">
             <?php require_once 'vue/layout/navhome2.php'; ?>
             <div class="explore_groupe">
-                <img class="groupe-banner" src="img/groupe.jpg" width="100%">
-                <div class="groupe-info w-100 p-2 ps-3 pe-3 bg-white">
-                    <h1 class="w-100"><b><?= $group_info->name_group  ?></b></h1>
-                    <p><?= $group_info->description_group  ?></p>
-                    <p class="w-100"><?= $countmembres ?> membres</p>
-                    <div class="d-flex justify-content-between w-100">
-                        <div class="d-flex align-items-center">
-                            <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" width="50px" height="50px">
-                        </div>  
-                        <div>
-                            <button class="btn btn-primary">inviter</button>
-                            <button class="btn btn-secondary">Partager</button>
-                        </div>
-                    </div>
-                    <nav class="border-top border-2 mt-2 pt-1 d-flex gap-3">
-                        <form action="index.php?action=exploregroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit"  class="btn" id="group_discussion">Discussion</button>
-                        </form>
-                        <form action="index.php?action=invitationgroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit"  class="btn" id="group_invitation">Invitation</button>
-                        </form>
-                        <form action="index.php?action=membresgroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit" style="border-bottom: 2px solid #2B2757;color:#2B2757" class="btn" id="group_Membres">Membres</button>
-                        </form>
-                    </nav>
-                </div>
+                <?php require_once 'vue/layout/groupenav.php'; ?>
                 <div class="d-flex flex-column align-items-center w-100 pt-5 pb-5" id="invitationsection">
-
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="btn btn-primary" onclick="fetchMembres()"><i class="bi bi-arrow-clockwise"></i></button>
+                    </div>
                 </div>
               </div>
             </div>
         </main>
     </div>
+    <div id="addkickmemberpopup">
+        <p>Are you sure you want to kick this member from the group?</p>
+        <div class="d-flex w-100 justify-content-around">
+            <button type="submit" name="submit_new_group" class="btn btn-primary">Oui</button>
+            <button type="button" class="btn btn-secondary" onclick="addkickmemberpopup()">Annuler</button>
+        </div>
+    </div>
+    <div class="overlay" id="overlay" onclick="addkickmemberpopup()"></div>
+
+    <div id="addinvitasadminpopup">
+        <p>Are you sure you want to invite this member as an admin?</p>
+        <div class="d-flex w-100 justify-content-around">
+            <button type="submit" name="submit_invit_group" class="btn btn-primary">Oui</button>
+            <button type="button" class="btn btn-secondary" onclick="addinvitasadminpopup()">Annuler</button>
+        </div>
+    </div>
+    <div class="overlay" id="overlayinvit" onclick="addinvitasadminpopup()"></div>
     <script>
+        function addkickmemberpopup(id_groupe_member, event) {
+            var form = document.getElementById('addkickmemberpopup');
+            var overlay = document.getElementById('overlay');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'flex';
+                overlay.style.display = 'block';
+                form.querySelector('button[name="submit_new_group"]').setAttribute('onclick', `kickmember(${id_groupe_member}, event)`);
+                  
+
+            } else {
+                form.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        }
+
+        function addinvitasadminpopup(id_groupe_member, event) {
+            var form = document.getElementById('addinvitasadminpopup');
+            var overlay = document.getElementById('overlayinvit');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'flex';
+                overlay.style.display = 'block';
+                form.querySelector('button[name="submit_invit_group"]').setAttribute('onclick', `invitasadmin(${id_groupe_member}, event)`);
+                  
+
+            } else {
+                form.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        }
+
         $.ajax({
             url: 'index.php?action=select_membres_group',
             method: 'POST',
@@ -70,13 +97,128 @@
                                 <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
                             </div>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-primary open-btn" style="border-color: #2B2757;">...</button>
+                                <div class="dropdown show">
+                                  <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    ...
+                                  </a>
+                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" onclick="addkickmemberpopup(${inv.id_groupe_member},event)">Kick from group</a>
+                                    <a class="dropdown-item" onclick="addinvitasadminpopup(${inv.id_groupe_member},event)">Invit as admin</a>
+                                    <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member},event)">View profile</a>
+                                  </div>
+                                </div>
                             </div>
                         </div><br>`
                     )
                 })
             },
         });
+        function fetchMembres() {
+            $.ajax({
+                url: 'index.php?action=select_membres_group',
+                method: 'POST',
+                data: {
+                    id_groupe: <?=$id_group?>,
+                },
+                success: function (data, status) {
+                    $("#invitationsection").empty()
+                    $("#invitationsection").append(`
+                        <div class="d-flex justify-content-center mt-3">
+                            <button class="btn btn-primary" onclick="fetchMembres()"><i class="bi bi-arrow-clockwise"></i></button>
+                        </div>
+                    `)
+                    $.each(data, function(index, inv){
+                        $("#invitationsection").append(`
+                            <div class="person-card d-flex justify-content-between person-card-inv-groupe bg-white" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
+                                    <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <div class="dropdown show">
+                                        <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            ...
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                            <a class="dropdown-item" onclick="addkickmemberpopup(${inv.id_groupe_member},event)">Kick from group</a>
+                                            <a class="dropdown-item" onclick="addinvitasadminpopup(${inv.id_user},event)">Invit as admin</a>
+                                            <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member},event)">View profile</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><br>`
+                        )
+                    })
+                },
+            });
+        }
+
+        function kickmember(id_groupe_member, event) {
+            if (id_groupe_member) {
+                $.ajax({
+                    url: 'index.php?action=kickmember',
+                    method: 'POST',
+                    data: {
+                        id_groupe_member: id_groupe_member,
+                    },
+                    success: function(){
+                        var form = document.getElementById('addkickmemberpopup');
+                        var overlay = document.getElementById('overlay');
+
+                        fetchMembres();
+
+                        form.style.display = 'none';
+                        overlay.style.display = 'none';
+                    },
+                    error: function(){
+                        var form = document.getElementById('addkickmemberpopup');
+                        var overlay = document.getElementById('overlay');
+
+                        fetchMembres();
+
+                        form.style.display = 'none';
+                        overlay.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function invitasadmin(id_groupe_member, event) {
+            if (id_groupe_member) {
+                $.ajax({
+                    url: 'index.php?action=invitasadmin',
+                    method: 'POST',
+                    data: {
+                        id_groupe_member: id_groupe_member,
+                        id_groupe: <?=$id_group?>,
+                    },
+                    success: function(res){
+                        alert(res);
+                        var form = document.getElementById('addinvitasadminpopup');
+                        var overlay = document.getElementById('overlayinvit');
+
+                        fetchMembres();
+
+                        form.style.display = 'none';
+                        overlay.style.display = 'none';
+                    },
+                    error: function(){
+                        var form = document.getElementById('addinvitasadminpopup');
+                        var overlay = document.getElementById('overlayinvit');
+
+                        fetchMembres();
+
+                        form.style.display = 'none';
+                        overlay.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function () {
+            window.kickmember = kickmember;
+        });
     </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -155,7 +155,7 @@ position: fixed;
 background-color: #ffffff;
 height: 86vh;
 top: 100px;
-z-index: 1;
+z-index: 5;
 }
 
 .navhome2_sidebar h3{
@@ -422,7 +422,7 @@ font-size: small;
   height: 80px;
   position: fixed;
   background-color: #ffffff;
-  z-index: 1;
+  z-index: 5;
   top: 0;
   left: 0;
 }
@@ -776,12 +776,53 @@ border-radius: 50%;
   z-index: 1000;
 }
 
+#addkickmemberpopup{
+  display: none;
+  position: fixed;
+  flex-direction: column;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(43, 39, 87, 1);
+  z-index: 1000;
+}
+
+#addinvitasadminpopup{
+  display: none;
+  position: fixed;
+  flex-direction: column;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(43, 39, 87, 1);
+  z-index: 1000;
+}
+
 #addGroupForm form{
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
+#inviteMemberForm{
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(43, 39, 87, 1);
+  z-index: 1000;
+}
+
 .overlay {
   display: none;
   position: fixed;
@@ -819,6 +860,20 @@ border-radius: 50%;
 
 .person-card-inv-groupe{
   width: 50%;
+}
+
+.edit-banner-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+.groupe-banner-container {
+  position: relative;
+  width: 100%;
+}
+
+#inviteMemberForm::-webkit-scrollbar {
+  display: none;
 }
 
 @media screen and (max-width: 992px){
@@ -990,6 +1045,19 @@ border-radius: 50%;
   #addGroupForm{
     width: 80%;
   }
+
+  #addkickmemberpopup{
+    width: 80%;
+  }
+
+  #addinvitasadminpopup{
+    width: 80%;
+  }
+
+  #inviteMemberForm{
+    width: 80%;
+  }
+
 
   .person-card-inv-groupe{
     width: 90%;

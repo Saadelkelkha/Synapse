@@ -16,13 +16,13 @@
                         <i class="navhome2_sidebar_logo bi bi-people"></i>
                         <h3>Groupes</h3>
                     </a>
-                    <a class="menu-item">
+                    <a class="menu-item" href="index.php?action=afficherProfil">
                         <i class="navhome2_sidebar_logo uil uil-analytics"></i>
-                        <h3>Analytics</h3>
+                        <h3>Profile</h3>
                     </a>
-                    <a class="menu-item">
+                    <a class="menu-item" href="index.php?action=enregistrerposts">
                         <i class="navhome2_sidebar_logo uil uil-palette"></i>
-                        <h3>Theme</h3>
+                        <h3>Enregistrer</h3>
                     </a>
                     <a class="menu-item">
                         <i class="navhome2_sidebar_logo uil uil-setting"></i>
