@@ -27,7 +27,7 @@
                 <?php require_once 'vue/layout/groupenav.php'; ?>
                 <div class="d-flex flex-column align-items-center w-100 pt-5 pb-5" id="invitationsection">
                     <div class="d-flex justify-content-end mt-3">
-                        <button class="btn btn-primary" onclick="fetchMembres()"><i class="bi bi-arrow-clockwise"></i></button>
+                        <button class="btn btn-primary" onclick="fetchInvitations()"><i class="bi bi-arrow-clockwise"></i></button>
                     </div>
                 </div>
               </div>
@@ -101,10 +101,10 @@
                                 id_user: id_user,
                             },
                             success: function(){
-                                fetchMembres();
+                                fetchInvitations();
                             },
                             error: function(){
-                                fetchMembres();
+                                fetchInvitations();
                             }
                         });
                 }
@@ -131,6 +131,8 @@
                 }
             }
         });
+
+        
     </script>
 </body>
 </html>

@@ -357,57 +357,6 @@
             <div class="explore_groupe">
                 <?php require_once 'vue/layout/groupenav.php'; ?>
                 <div class="content flex-grow-1">
-                    <!-- Formulaire de création de post -->
-                    <form class="create-post mb-3 mt-4" >
-                        <div class="profile-pic mb-3 d-flex">
-                            <img src="<?= $user['photo_profil'] ?>" alt="" >
-                            <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="create-post">
-                        </div>
-                        <div class="photo-i" style="display: flex; justify-content: space-between; margin-left: 2%;">
-                            <a href="" style="color: #b8bec4;text-decoration: none; display:flex;gap: 8px;align-items: center;"><i class="bi bi-clock-history"></i></i>Stories</a>
-                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-image"></i>Photos</a>
-                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-face-smile"></i>Feelings</a>
-                            <button type="submit" class="btn btn-primary m-0" style="border-color: #2B2757; margin-right: 2%; width: 20%;" id="openPopup">Post</button>
-                        </div>
-                    </form>
-                    <!-- Popup -->
-                    <div class="overlay" id="overlay"></div>
-                    <div class="popup" id="popup">
-                        <div class="creer-poste">
-                            <div class="container_creer">
-                                <div class="wrapper">
-                                    <section class="post">
-                                        <header>Create Post</header>
-                                        <form id="createPostForm" enctype="multipart/form-data">
-                                            <textarea name="text_content" placeholder="What's on your mind, SynapseNt?" ></textarea>
-                                            <div id="uploadedImageContainer"></div>
-                                            <div class="options">
-                                                <p>Ajouter à votre poste</p>
-                                                <ul class="list">
-                                                    <li>
-                                                        <label for="imageInput">
-                                                            <i class="bi bi-images"></i>
-                                                        </label>
-                                                        <input type="file" id="imageInput" accept="image/*" name="image">
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <input type="hidden" value="<?= $id_group ?>" name="id_groupe">
-                                            <input type="submit" value="Post" name="post">
-                                        </form>
-                                    </section>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Feed -->
-                <?php  
-
-                if (empty($group_posts)) {
-                    echo "<p>No posts available.</p>";
-                } else {
-                    foreach($group_posts as $post) { ?>
                     <div class="feed feed-<?= $post->id_groupe_post ?>" width="100%">
                         <div class="user">
                             <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
@@ -452,32 +401,27 @@
                                     $isliked = false;
                                     foreach($group_posts_likes as $liker) {
                                         if($post->id_groupe_post == $liker->id_post){  
-                                                echo '<button name="like_grp" class="btn-like_grp border-0 bg-white is-liked" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up text-primary" style="font-size: x-large;"></i></button>';
+                                                echo '<button name="like_grp" class="btn-like_grp border-0 is-liked" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up text-primary" style="font-size: x-large;"></i></button>';
                                                 $isliked = true;
                                                 break;
                                         }
                                     }
                                     if(!$isliked){
-                                        echo '<button name="like_grp" class="btn-like_grp border-0 bg-white" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button>';
+                                        echo '<button name="like_grp" class="btn-like_grp border-0" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button>';
                                     }
                                 ?>
-                                <span data-name="span" onclick="affichecommentlist(event)"  style="cursor: pointer;"><i class="uil uil-comment" data-name="span" style="font-size: x-large;"></i></span>
-                                <span onclick="affichesharemenu(event)"  style="cursor: pointer;"><i class="uil uil-share" style="font-size: x-large;"></i></span>
+                                <span><i class="uil uil-comment" style="font-size: x-large;"></i></span>
+                                <span onclick="affichesharemenu(event)"><i class="uil uil-share" style="font-size: x-large;"></i></span>
                                 <div class="share-menu" style="display: none; position: absolute; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px; z-index: 1000;">
                                     <button onclick="copyLink(<?php echo $post->id_groupe_post; ?>)">Copy Link</button>
                                 </div>
                             </div>
                             <div class="bookmark">
                                 <?php
-                                    $isbookmarked = false;
-                                    foreach($enregistrerpostes as $bookmarker) {
-                                        if($post->id_groupe_post == $bookmarker->id_post_groupe){  
+                                    if(!empty($enregistrerpostes)){  
                                                 echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0 is-saved" onclick="save_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'"><i class="uil uil-bookmark text-primary" style="font-size: x-large;"></i></button>';
-                                                $isbookmarked = true;
-                                                break;
-                                        }
                                     }
-                                    if(!$isbookmarked){
+                                    else{
                                         echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0" onclick="save_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>';
                                     }
                                 ?>
@@ -502,24 +446,8 @@
                                 }
                             ?></b> personnes</p>
                         </div>
-                        <?php 
-                        foreach($countcomment as $count){
-                            if($count->id_groupe_post == $post->id_groupe_post){
-                                if($count->comment_count == 0){
-                                    echo '<div class="comments text-muted">Aucun commentaire</div>';
-                                }else{
-                                    echo '<div onclick="affichecommentlist(event)" class="comments text-muted" style="cursor: pointer;">Voir les ' . $count->comment_count . ' commentaires</div>';
-                                }
-                                break;
-                            }
-                        }
-                        ?>
-                        <div class="comments-list bg-secondary text-white ps-2 pe-2 pb-1" style="display: none; border-radius: 5px;" postId=<?=$post->id_groupe_post?> ></div>
+                        <div class="comments text-muted">View all 130 comments</div>
                     </div>
-
-            <?php
-            }}
-            ?>
 
                 </div>
             </div>
@@ -559,50 +487,6 @@
         </form>
     </div>
     <script>
-        function affichecommentlist(event){
-            if(event.currentTarget.getAttribute("data-name") == "span"){
-                var commentList = event.currentTarget.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
-            }else{
-                var commentList = event.currentTarget.nextElementSibling;
-            }
-
-            const postId = commentList.getAttribute('postId');
-
-            $.ajax({
-                url: 'index.php?action=allcomments',
-                type: 'POST',
-                data: {
-                    id_groupe_post : postId,
-                },
-                success: function(res) {
-                    commentList.innerHTML = res.map(comment => `
-                        <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
-                            <div class="profile-pic">
-                                <img src="${comment.photo_profil}" alt="">
-                            </div>
-                            <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
-                                <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom}</p>
-                                <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
-                            </div>
-
-
-                        </div>
-                    `).join('<br>');
-
-                    commentList.innerHTML += `
-                        <form class="comment-form" style="display: flex; gap: 10px; margin-top: 10px;">
-                            <input type="hidden" name="id_groupe_post" value="${postId}">
-                            <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
-                            <button type="submit" class="btn btn-primary">Commenter</button>
-                        </form>
-                    `;
-
-
-                    commentList.style.display = commentList.style.display === 'block' ? 'none' : 'block';
-                }
-            });
-
-        }
         function affichesharemenu(event){
             const shareMenu = event.currentTarget.nextElementSibling;
             shareMenu.style.display = shareMenu.style.display === 'block' ? 'none' : 'block';

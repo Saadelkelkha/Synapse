@@ -118,7 +118,11 @@
             if(check_email($email)){
                 if(check_password($email,$pass)){
                     $_SESSION['conn'] = true;
-                    header("Location: index.php?action=home");
+                    if(isset($_POST['id_groupe_post_partager'])){
+                        header("Location: index.php?action=exploregroup&id=" . $_POST['id_groupe_post_partager']);
+                    }else{                
+                        header("Location: index.php?action=home");
+                    }
                     exit;
                 }else{
                     $pass_error = "Mot de passe incorrect";

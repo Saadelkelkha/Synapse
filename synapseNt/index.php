@@ -229,6 +229,11 @@
                     $id_group = $_POST['id_group'];
                     exploregroupe($id_group);
                     break;
+                }elseif(isset($_GET['id'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_GET['id'];
+                    affichepostgroupe($id_post_groupe);
+                    break;
                 }
             case 'invitationgroup':
                 if(isset($_POST['id_group'])){
@@ -365,12 +370,36 @@
                     unlikePostgroup($id_post_groupe);
                     break;
                 }
+            case 'savePostgroup':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    savePostgroup($id_post_groupe);
+                    break;
+                }
+            case 'unsavePostgroup':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    unsavePostgroup($id_post_groupe);
+                    break;
+                }
             case 'supprimerPostgroup':
                 if(isset($_POST['id_groupe_post'])){
                     require_once 'controller/group.php';
                     $id_post_groupe = $_POST['id_groupe_post'];
 
                     supprimerPostgroup($id_post_groupe);
+                    break;
+                }
+            case 'allcomments':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    allcomments($id_post_groupe);
                     break;
                 }
             case 'post':
@@ -385,6 +414,7 @@
                     enregistrerPosts();
                     afficherPosts();
                     break;
+
             case "gestionposts":
                 require_once 'controller/user.php';
                 if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){

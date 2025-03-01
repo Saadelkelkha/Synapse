@@ -77,6 +77,12 @@
         $sqlstate = $db->prepare('INSERT INTO groupe(id_admin,name_group,description_group) VALUES(?,?,?)');
         $sqlstate->execute([$id, $name, $description]);
 
+        $sqlstate = $db->prepare('SELECT id_group FROM groupe ORDER BY id_group DESC LIMIT 1');
+        $sqlstate->execute([]);
+        $id_group = $sqlstate->fetch(PDO::FETCH_OBJ)->id_group;
+
+        $sqlstate = $db->prepare('INSERT INTO group_membre(id_groupe,id_user) VALUES(?,?)');
+        $sqlstate->execute([$id_group,$id]);
         
     }
 
@@ -261,5 +267,74 @@
         $sqlstate = $db->prepare('SELECT COUNT(*) as countlike FROM groupe_post_like where id_post = ?');
         $sqlstate->execute([$id_post_groupe]);
         return $sqlstate->fetch(PDO::FETCH_OBJ);
+    }
+
+    function selectenregistrementgroupepost($id_user,$id_groupe){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM enregistrer_posts LEFT JOIN groupe_post ON enregistrer_posts.id_post_groupe = groupe_post.id_groupe_post WHERE enregistrer_posts.id_user = ? AND groupe_post.id_groupe = ?');
+        $sqlstate->execute([$id_user,$id_groupe]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function savePostgroupe($id_post_groupe,$id_user){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('INSERT INTO enregistrer_posts(id_post_groupe,id_user) VALUES(?,?)');
+        $sqlstate->execute([$id_post_groupe,$id_user]);
+    }
+
+    function unsavePostgroupe($id_post_groupe,$id_user){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('DELETE FROM enregistrer_posts WHERE id_post_groupe = ? AND id_user = ?');
+        $sqlstate->execute([$id_post_groupe,$id_user]);
+    }
+
+    function selectpostgroupe($id_post_groupe){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM groupe_post JOIN user ON user.id_user = groupe_post.id_user WHERE id_groupe_post = ?');
+        $sqlstate->execute([$id_post_groupe]);
+        return $sqlstate->fetch(PDO::FETCH_OBJ);
+    }   
+
+    function selectenregistrementgroupepostpartage($id_user,$id_post_groupe){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM enregistrer_posts  WHERE id_user = ? AND id_post_groupe = ?');
+        $sqlstate->execute([$id_user,$id_post_groupe]);
+        return $sqlstate->fetch(PDO::FETCH_OBJ);
+    }
+
+    function selectid_groupe($id_post_groupe){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT id_groupe FROM groupe_post WHERE id_groupe_post = ?');
+        $sqlstate->execute([$id_post_groupe]);
+        return $sqlstate->fetch(PDO::FETCH_OBJ);
+    }
+
+    function isingroup($id,$id_groupe){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM group_membre WHERE id_user = ? AND id_groupe = ?');
+        $sqlstate->execute([$id,$id_groupe]);
+        return empty($sqlstate->fetchAll(PDO::FETCH_OBJ));
+    }
+
+    function countcommentsgroupe($id_group){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT groupe_post.id_groupe_post, COUNT(groupe_comment.id_post_groupe) AS comment_count FROM groupe_post LEFT JOIN groupe_comment ON groupe_comment.id_post_groupe = groupe_post.id_groupe_post WHERE groupe_post.id_groupe = ? GROUP BY groupe_post.id_groupe_post');
+        $sqlstate->execute([$id_group]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+    function selectcommentsgroupe($id_post_groupe){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM groupe_comment JOIN group_membre ON group_membre.id_groupe_member = groupe_comment.id_user JOIN user ON user.id_user = group_membre.id_user WHERE id_post_groupe = ?');
+        $sqlstate->execute([$id_post_groupe]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
     }
 ?>
