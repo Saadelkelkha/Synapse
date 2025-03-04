@@ -333,7 +333,7 @@
     function selectcommentsgroupe($id_post_groupe){
         $db = database_connection();
 
-        $sqlstate = $db->prepare('SELECT * FROM groupe_comment JOIN group_membre ON group_membre.id_groupe_member = groupe_comment.id_user JOIN user ON user.id_user = group_membre.id_user WHERE id_post_groupe = ?');
+        $sqlstate = $db->prepare('SELECT * FROM groupe_comment JOIN group_membre ON group_membre.id_groupe_member = groupe_comment.id_user JOIN user ON user.id_user = group_membre.id_user WHERE id_post_groupe = ? ORDER BY id_groupe_comment DESC');
         $sqlstate->execute([$id_post_groupe]);
         return $sqlstate->fetchAll(PDO::FETCH_OBJ);
     }

@@ -560,6 +560,25 @@
         </form>
     </div>
     <script>
+        function calculerdate(datec){
+            var date1 = new Date(datec);
+            var date2 = new Date();
+            var diffTime = Math.abs(date2 - date1);
+            var diffSeconds = Math.floor(diffTime / 1000);
+            var diffMinutes = Math.floor(diffSeconds / 60);
+            var diffHours = Math.floor(diffMinutes / 60);
+            var diffDays = Math.floor(diffHours / 24);
+
+            if (diffDays > 0) {
+            return diffDays + " days ago";
+            } else if (diffHours > 0) {
+            return diffHours + " hours ago";
+            } else if (diffMinutes > 0) {
+            return diffMinutes + " minutes ago";
+            } else {
+            return diffSeconds + " seconds ago";
+            }
+        }
         function submitcommentgroup(e,postId) {
             var comment_content = e.target.previousElementSibling.value;
             var commentList = e.target.parentElement.parentElement;
@@ -580,7 +599,7 @@
                         },
                         success: function(res) {
                             commentList.innerHTML = res.map(comment => `
-                                <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                <div class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
                                     <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
                                         <div class="profile-pic">
                                             <img src="${comment.photo_profil}" alt="">
@@ -590,15 +609,15 @@
                                             <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
                                         </div>
                                     </div>
-                                    <div>
-                                        <button>Répondre</button>
-                                        <button><i class="bi bi-heart"></i></button>
+                                    <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                        <p>Répondre</p>
+                                        <p><i class="bi bi-heart"></i></p>
                                     </div>
                                 </div>
                             `).join('<br>');
                         
                             commentList.innerHTML += `
-                                <div class="comment-form"  style="display: flex; gap: 10px; margin-top: 10px; position: absolute; bottom: 0; width: 100%;">
+                                <div class="comment-form"  style="display: flex; gap: 10px; margin-top: 10px; width: 100%; position: sticky; bottom: 0;">
                                     <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
                                     <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
                                 </div>
@@ -634,7 +653,7 @@
                                     <img src="${comment.photo_profil}" alt="">
                                 </div>
                                 <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
-                                    <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom}</p>
+                                    <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom} ${calculerdate(comment.date_groupe_comment)}</p>
                                     <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
                                 </div>
                             </div>
