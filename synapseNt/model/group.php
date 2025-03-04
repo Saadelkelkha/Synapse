@@ -337,4 +337,19 @@
         $sqlstate->execute([$id_post_groupe]);
         return $sqlstate->fetchAll(PDO::FETCH_OBJ);
     }
+
+    function selectidmember($id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT id_groupe_member FROM group_membre WHERE id_user = ?');
+        $sqlstate->execute([$id]);
+        return $sqlstate->fetch(PDO::FETCH_OBJ);
+    }
+
+    function submitcommentgroup($id,$id_groupe_post,$groupe_comment){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('INSERT INTO groupe_comment(id_post_groupe,id_user,groupe_comment_content) VALUES (?,?,?)');
+        $sqlstate->execute([$id_groupe_post,$id,$groupe_comment]);
+    }
 ?>

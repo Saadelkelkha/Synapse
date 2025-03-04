@@ -402,6 +402,16 @@
                     allcomments($id_post_groupe);
                     break;
                 }
+            case 'submitcommentgroup':
+                if(isset($_POST['id_groupe_post']) && isset($_POST['groupe_comment'])){
+                    require_once 'controller/group.php';
+                    $id_groupe_post = $_POST['id_groupe_post'];
+                    $groupe_comment = $_POST['groupe_comment'];
+
+                    submitcommentgroupe($id_groupe_post,$groupe_comment);
+                    break;
+                }
+
             case 'post':
                 if (isset($_SESSION['id_user']) && isset($_POST['post'])) {
                     require_once 'controller/user.php';

@@ -415,4 +415,16 @@
         header('Content-Type: application/json');
         echo json_encode($comments);
     }
+
+    function submitcommentgroupe($id_groupe_post,$groupe_comment){
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
+        submitcommentgroup($idm,$id_groupe_post,$groupe_comment);
+
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
 ?>

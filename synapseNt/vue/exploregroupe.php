@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/home.css"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/htmx.org"></script>
     <style>
         #group_discussion{
             border-bottom: 2px solid #2B2757;
@@ -514,7 +515,7 @@
                             }
                         }
                         ?>
-                        <div class="comments-list bg-secondary text-white ps-2 pe-2 pb-1" style="display: none; border-radius: 5px;" postId=<?=$post->id_groupe_post?> ></div>
+                        <div class="comments-list bg-secondary text-white ps-2 pe-2 pb-1" style="display: none; border-radius: 5px;overflow-y: auto; border-radius: 5px; -ms-overflow-style: none; scrollbar-width: none;max-height:400px" postId=<?=$post->id_groupe_post?> ></div>
                     </div>
 
             <?php
@@ -559,6 +560,57 @@
         </form>
     </div>
     <script>
+        function submitcommentgroup(e,postId) {
+            var comment_content = e.target.previousElementSibling.value;
+            var commentList = e.target.parentElement.parentElement;
+            $.ajax({
+                url: 'index.php?action=submitcommentgroup',
+                type: 'POST',
+                data: {
+                    groupe_comment : comment_content,
+                    id_groupe_post : postId
+                },
+                success: function(res) {
+                    e.target.previousElementSibling.value = "";
+                    $.ajax({
+                        url: 'index.php?action=allcomments',
+                        type: 'POST',
+                        data: {
+                            id_groupe_post : postId,
+                        },
+                        success: function(res) {
+                            commentList.innerHTML = res.map(comment => `
+                                <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                    <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                        <div class="profile-pic">
+                                            <img src="${comment.photo_profil}" alt="">
+                                        </div>
+                                        <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                            <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom}</p>
+                                            <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button>Répondre</button>
+                                        <button><i class="bi bi-heart"></i></button>
+                                    </div>
+                                </div>
+                            `).join('<br>');
+                        
+                            commentList.innerHTML += `
+                                <div class="comment-form"  style="display: flex; gap: 10px; margin-top: 10px; position: absolute; bottom: 0; width: 100%;">
+                                    <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
+                                    <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+            });
+        }
+
+
+
         function affichecommentlist(event){
             if(event.currentTarget.getAttribute("data-name") == "span"){
                 var commentList = event.currentTarget.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
@@ -576,25 +628,28 @@
                 },
                 success: function(res) {
                     commentList.innerHTML = res.map(comment => `
-                        <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
-                            <div class="profile-pic">
-                                <img src="${comment.photo_profil}" alt="">
+                        <div class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                            <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                <div class="profile-pic">
+                                    <img src="${comment.photo_profil}" alt="">
+                                </div>
+                                <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                    <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom}</p>
+                                    <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
+                                </div>
                             </div>
-                            <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
-                                <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom}</p>
-                                <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
+                            <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                <p>Répondre</p>
+                                <p><i class="bi bi-heart"></i></p>
                             </div>
-
-
                         </div>
                     `).join('<br>');
 
                     commentList.innerHTML += `
-                        <form class="comment-form" style="display: flex; gap: 10px; margin-top: 10px;">
-                            <input type="hidden" name="id_groupe_post" value="${postId}">
+                        <div class="comment-form"  style="display: flex; gap: 10px; margin-top: 10px; width: 100%; position: sticky; bottom: 0;">
                             <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
-                            <button type="submit" class="btn btn-primary">Commenter</button>
-                        </form>
+                            <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                        </div>
                     `;
 
 
