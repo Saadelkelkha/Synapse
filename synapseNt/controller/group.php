@@ -49,6 +49,8 @@
 
         $countmembres = $countmemberGroup->count + 1;
 
+        $group_posts = selectgroupeposts($id_group);
+
         require_once 'vue/exploregroupe.php';
     }
 
@@ -122,5 +124,168 @@
         rejectinvitation($id_user,$id_groupe);
 
         header('Content-Type: application/json');
+    }
+
+    function kickmember($id_groupe_member){
+        kickmembergroup($id_groupe_member);
+
+        header('Content-Type: application/json');
+    }
+
+    function invitasadmin($id_groupe_member,$id_groupe){
+        invitasadmingroup($id_groupe_member,$id_groupe);
+
+        header('Content-Type: application/json');
+    }
+
+    function select_amie($id_user){
+        $amis = select_amie_group($id_user);
+        header('Content-Type: application/json');
+        echo json_encode($amis);
+    }
+
+    function invit_amie_group($id_user,$id_groupe){
+        invit_amie_groupe($id_user,$id_groupe);
+
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'success']);
+    }
+
+    function cancel_invit_group($id_user,$id_groupe){
+        cancel_invit_groupe($id_user,$id_groupe);
+
+
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'success']);
+    }
+
+    function creergroupPosts($id_user,$id_groupe){
+        // Récupération des données du formulaire
+        $text_content = $_POST['text_content'];
+        $currentDate = date("Y-m-d H:i:s");
+
+        // Vérifier si le dossier existe, sinon le créer
+        if ($_FILES['image']['name']) {
+            $groupDir = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/groupes/' . $id_groupe;
+
+            if (!is_dir($groupDir)) {
+                mkdir($groupDir, 0777, true);
+            }
+            // Traitement de l'image
+            $countpostgroupe = countpostgroupe($id_groupe);
+            $countpostgroupe = $countpostgroupe->count + 1;
+            //$_SERVER['DOCUMENT_ROOT'] houwa repertoire racine
+            $tmpName = $_FILES['image']['tmp_name'];
+            $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $image = $countpostgroupe . '.' . $imageExtension;
+            $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/groupes/' . $id_groupe . '/'. $image;
+
+            //kat7t f database
+            $imageUrl = 'img/groupes/' . $id_groupe . '/'. $image;
+
+
+            // Déplacer l'image dans le répertoire "uploads"
+            move_uploaded_file($tmpName, $imagePath);
+        } else {
+            $imageUrl = "";
+        }
+
+        insertgroupPost($text_content, $imageUrl, $currentDate, $id_user, $id_groupe);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'id_groupe' => $id_groupe,
+        ]);
+    }
+
+    function selectpostgroupinfo($id_post){
+        $infos = selectpostgroupeinfo($id_post);
+
+        header('Content-Type: application/json');
+        echo json_encode($infos);
+    }
+
+    function modifierpostgroup($id_post_groupe,$text_content){
+
+        $infos = selectpostgroupeinfo($id_post_groupe);
+        $id_groupe = $infos->id_groupe;
+        $oldimage = $infos->image_path_groupe;
+
+        if ($_FILES['image']['name']) {            
+            // Traitement de l'image
+            // Define the directory where the images are stored
+            $imageDirectory = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/groupes/' . $id_groupe . '/';
+                    
+            // Get all image files in the directory (you can adjust the extensions as needed)
+            $imageFiles = glob($imageDirectory . '*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE);
+                    
+            // Initialize the highest number to 0
+            $highestNumber = 0;
+                    
+            // Loop through the files to find the highest numbered image
+            foreach ($imageFiles as $imageFile) {
+                // Extract the number from the filename (assuming filenames are like 1.jpg, 2.jpg, 3.jpg, etc.)
+                if (preg_match('/(\d+)\.(jpg|jpeg|png|gif|webp)$/i', basename($imageFile), $matches)) {
+                    $imageNumber = (int)$matches[1];
+                    if ($imageNumber > $highestNumber) {
+                        $highestNumber = $imageNumber;
+                    }
+                }
+            }
+            
+            // Increment the highest number by 1 to create the next image name
+            $newImageNumber = $highestNumber + 1;
+
+            // Delete the old image
+            if($oldimage !== ""){
+                if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage)) {
+                    unlink($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage);
+                }
+            }
+
+
+            //$_SERVER['DOCUMENT_ROOT'] houwa repertoire racine
+            
+            $tmpName = $_FILES['image']['tmp_name'];
+            $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $image = $newImageNumber . '.' . $imageExtension;
+            $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/groupes/' . $id_groupe . '/'. $image;
+            
+            //kat7t f database
+            $imageUrl = 'img/groupes/' . $id_groupe . '/'. $image;
+            
+            
+            // Déplacer l'image dans le répertoire "uploads"
+            move_uploaded_file($tmpName, $imagePath);
+        } else {
+            if($_POST['imagehere'] === "true"){
+                $imageUrl = $oldimage;
+            }else{
+                if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage)) {
+                    unlink($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage);
+                }
+                $imageUrl = "";
+            }
+        }
+
+        modifiergroupePost($text_content, $imageUrl, $id_post_groupe);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'text_content' => $text_content,
+            'image_url' => $imageUrl,
+            'id_post_groupe' => $id_post_groupe
+        ]);
+    }
+
+    function supprimerPostgroup($id_post_groupe){
+        supprimerPostgroupe($id_post_groupe);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'id_post_groupe' => $id_post_groupe
+        ]);
     }
 ?>

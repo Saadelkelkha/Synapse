@@ -1,6 +1,7 @@
 <?php
     require_once 'model/users.php';
     require_once 'model/home.php';
+    require_once 'model/admin.php';
 
     function login_signup(){
         require_once 'vue/login.php';
@@ -213,7 +214,6 @@
             header("Location: index.php?action=add&email2_error=" . $email2_error );
             exit;
         }else{
-            $logdate = $year . "-" . $month . "-" . $day;
             $password = password_hash($pass, PASSWORD_DEFAULT);
             addUser($prenom,$nom,$date,$email,$password);
             
@@ -378,4 +378,39 @@
             modifierPost($text_content, $imageUrl, $id_post);
         }
     }
+
+  
+
+    function AfficherInfoUserSurProfilControler() {
+        $id = $_SESSION['id_user'];
+        $user = selectuser($id);
+        $fullname = $user['prenom'] . " " . $user['nom'];
+        require_once "vue/profil.php";
+    }
+
+    function afficherEnregistrerPostController(){
+        $posts = afficherEnregistrerPost();
+        require 'vue/enregistrer_post.php';
+
+    }
+
+    function afficherPostsadmin() {
+        $id = $_SESSION['id_admin'];
+        $admin = selectadmin($id);
+        $fullname = $admin['prenom'] . " " . $admin['nom'];;
+
+        $posts = obtenirTousLesPosts();
+        require_once 'vue/gpost.php';
+    }
+
+    function afficherModifierPostAdmin($id_post) {
+        $post = obtenirPostParId($id_post);
+        if ($post) {
+            require 'vue/modifierPostAdmin.php';
+        } else {
+            echo "Erreur : Aucun post trouvé avec cet ID.";
+        }
+    }
+
+
 ?>

@@ -9,6 +9,344 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/home.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #group_discussion{
+            border-bottom: 2px solid #2B2757;
+            color:#2B2757;
+        }
+
+        /* Popup styles */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none; /* Hidden by default */
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .popup h2 {
+            margin-bottom: 10px;
+        }
+
+        .popup button {
+            background-color: #2B2757;
+        }
+
+        /* Overlay to dim background */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none; /* Hidden by default */
+            z-index: 999;
+        }
+
+        .creer-poste {
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container_creer{
+            width: 400px;
+            overflow: hidden;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            z-index: 300;
+            position: relative;
+        }
+
+        .post header {
+            font-size: 22px;
+            font-weight: 600;
+            padding: 17px 0;
+            text-align: center;
+        }
+
+        .post form {
+            margin: 20px 25px;
+        }
+
+        form textarea {
+            width: 100%;
+            resize: none;
+            font-size: 18px;
+            min-height: 100px;
+            outline: none;
+            border: none;
+            margin-bottom: 15px;
+        }
+
+        #uploadedImageContainer img {
+            height: 100px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 80%;
+            margin-top: 10px;
+        }
+
+        #uploadedImageContainer {
+            display: flex;
+            justify-content: center;
+        }
+
+        .options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 57px;
+            margin: 15px 0;
+            padding: 0 15px;
+            border-radius: 7px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .options p {
+            color: #595959;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: default;
+        }
+
+        .options .list {
+            display: flex;
+            list-style: none;
+        }
+
+        .options .list li {
+            cursor: pointer;
+        }
+
+        .options .list li label {
+            cursor: pointer;
+            display: inline-block;
+            padding: 10px;
+        }
+
+        .options .list li input[type="file"] {
+            display: none;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background-color: #2B2757;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+
+        }
+
+        input[type="submit"]:hover {
+            background-color:rgb(47, 41, 112);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .dropdown {
+                    position: relative;
+                    display: inline-block;
+                }
+        .dropdown-btn {
+            background-color: while;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown.show .dropdown-content {
+            display: block;
+        }
+        .btn-enregsitrer{
+            color:black;
+            background-color:white;
+        }
+        .btn-enregistrer i:hover{
+            color:white;
+        }
+
+        .hidden-modifier {
+            display: none;
+        }
+
+        .overlay-modifier {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+        }
+
+        .overlay-supprimer{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+        }
+
+        .popup-modifier {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            z-index: 1100;
+            width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .popup-modifier header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .popup-modifier textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .popup-modifier .options-modifier {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .popup-modifier .options-modifier p {
+            margin: 0;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .popup-modifier .options-modifier label {
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .popup-modifier .options-modifier label img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .popup-modifier button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 5px;
+            width: calc(50% - 10px);
+        }
+
+        .popup-modifier button:hover {
+            background-color: #45a049;
+        }
+
+        .popup-modifier .close-popup-btn-modifier {
+            background-color: #f44336;
+        }
+
+        .popup-modifier .close-popup-btn-modifier:hover {
+            background-color: #e53935;
+        }
+
+        .dropdown-modifier {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content-modifier {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .dropdown-content-modifier button,
+        .dropdown-content-modifier a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            text-align: left;
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .dropdown-content-modifier button:hover,
+        .dropdown-content-modifier a:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dropdown-modifier .dropdown-btn-modifier:focus + .dropdown-content-modifier {
+            display: block;
+        }
+
+        .enregistrer-annuler-btn{
+            display:flex;
+        }
+    </style>
 </head>
 <body>
     <div class="mt-3">
@@ -17,91 +355,384 @@
         <main class="mt-1 d-flex">
             <?php require_once 'vue/layout/navhome2.php'; ?>
             <div class="explore_groupe">
-                <img class="groupe-banner" src="img/groupe.jpg" width="100%">
-                <div class="groupe-info w-100 p-2 ps-3 pe-3 bg-white">
-                    <h1 class="w-100"><b><?= $group_info->name_group  ?></b></h1>
-                    <p><?= $group_info->description_group  ?></p>
-                    <p class="w-100"><?= $countmembres ?> membres</p>
-                    <div class="d-flex justify-content-between w-100">
-                        <div class="d-flex align-items-center">
-                            <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" width="50px" height="50px">
-                        </div>  
-                        <div>
-                            <button class="btn btn-primary">inviter</button>
-                            <button class="btn btn-secondary">Partager</button>
+                <?php require_once 'vue/layout/groupenav.php'; ?>
+                <div class="content flex-grow-1">
+                    <!-- Formulaire de création de post -->
+                    <form class="create-post mb-3 mt-4" >
+                        <div class="profile-pic mb-3 d-flex">
+                            <img src="<?= $user['photo_profil'] ?>" alt="" >
+                            <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="create-post">
+                        </div>
+                        <div class="photo-i" style="display: flex; justify-content: space-between; margin-left: 2%;">
+                            <a href="" style="color: #b8bec4;text-decoration: none; display:flex;gap: 8px;align-items: center;"><i class="bi bi-clock-history"></i></i>Stories</a>
+                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-image"></i>Photos</a>
+                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-face-smile"></i>Feelings</a>
+                            <button type="submit" class="btn btn-primary m-0" style="border-color: #2B2757; margin-right: 2%; width: 20%;" id="openPopup">Post</button>
+                        </div>
+                    </form>
+                    <!-- Popup -->
+                    <div class="overlay" id="overlay"></div>
+                    <div class="popup" id="popup">
+                        <div class="creer-poste">
+                            <div class="container_creer">
+                                <div class="wrapper">
+                                    <section class="post">
+                                        <header>Create Post</header>
+                                        <form id="createPostForm" enctype="multipart/form-data">
+                                            <textarea name="text_content" placeholder="What's on your mind, SynapseNt?" ></textarea>
+                                            <div id="uploadedImageContainer"></div>
+                                            <div class="options">
+                                                <p>Ajouter à votre poste</p>
+                                                <ul class="list">
+                                                    <li>
+                                                        <label for="imageInput">
+                                                            <img src="img/fb-icons/gallery.svg" alt="gallery">
+                                                        </label>
+                                                        <input type="file" id="imageInput" accept="image/*" name="image">
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <input type="hidden" value="<?= $id_group ?>" name="id_groupe">
+                                            <input type="submit" value="Post" name="post">
+                                        </form>
+                                    </section>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <nav class="border-top border-2 mt-2 pt-1 d-flex gap-3">
-                        <form action="index.php?action=exploregroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit" style="border-bottom: 2px solid #2B2757;color:#2B2757" class="btn" id="group_discussion">Discussion</button>
-                        </form>
-                        <form action="index.php?action=invitationgroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit" class="btn" id="group_invitation">Invitation</button>
-                        </form>
-                        <form action="index.php?action=membresgroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit" class="btn" id="group_Membres">Membres</button>
-                        </form>
-                    </nav>
-                </div>
-                <form action="index.php?action=post" method="post" class="create-post mb-3 mt-4" >
-                      <div class="profile-pic mb-3 d-flex">
-                          <img src="img/Profile/Julia Clarke.png" alt="" >
-                          <input type="text" name="postdescription" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="create-post">
-                      </div>
-                      <div class="photo-i" style="display: flex; justify-content: space-between; margin-left: 2%;">
-                          <a href="" style="color: #b8bec4;text-decoration: none; display:flex;gap: 8px;align-items: center;"><i class="bi bi-clock-history"></i></i>Stories</a>
-                          <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-image"></i>Photos</a>
-                          <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-face-smile"></i>Feelings</a>
-                          <input type="submit" name="postbutton" value="Post" class="btn btn-primary m-0" style="border-color: #2B2757; margin-right: 2%; width: 20%;">
-                      </div>
-                  </form>
-                
-                  <!-- Feed -->
-                  <div class="feed" width="100%">
-                      <div class="user">
-                          <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-                              <img src="img/Profile/Julia Clarke.png" alt="">
-                              <div class="name1">
-                              <h5 class=" mb-0" >Ahmed Said</h5>
-                              <small style="font-size:small; color: #777;">Dubai-Emirates, 15 MINUTES AGO</small>
-                              </div>
-                          </div>
+                    
+                    <!-- Feed -->
+                <?php  
+
+                if (empty($group_posts)) {
+                    echo "<p>No posts available.</p>";
+                } else {
+                    foreach($group_posts as $post) { ?>
+                    <div class="feed feed-<?= $post->id_groupe_post ?>" width="100%">
+                        <div class="user">
+                            <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
+                                <img src="<?= $post->photo_profil; ?>" alt="">
+                                <div class="name1">
+                                    <h5 class=" mb-0" ><?= $post->prenom; ?><?= " " .$post->nom; ?></h5>
+                                    <input type="hidden" name="id_post" value="<?php echo $post->id_post; ?>">
+                                    <small style="font-size:small; color: #777;"><?php echo $post->date_post_groupe; ?></small>
+                                    <div class="caption mt-4">
+                                        <span class="hash-tag hash-tag-<?= $post->id_groupe_post ?>"><?php echo $post->text_content_groupe; ?></span></p>
+                                    </div>
+                                </div>
+                                <div class="dropdown-modifier">
+                                    <button class="btn btn-primary dropdown-btn-modifier">...</button>
+                                    <div class="dropdown-content-modifier">
+                                        <button class="open-popup-btn-modifier" onclick="affichemodifier(<?php echo $post->id_groupe_post; ?>)">Modifier</button>
+                                        <button class="open-popup-btn-supprimer" onclick="affichesupprimer(<?php echo $post->id_groupe_post; ?>)">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="imageorvideopost bg-dark d-flex justify-content-center">
+                        <?php
+                            // Récupérer l'extension du fichier
+                            $fileExtension = pathinfo($post->image_path_groupe, PATHINFO_EXTENSION);
+
+                            // Vérifier si c'est une image ou une vidéo
+                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                            $videoExtensions = ['mp4', 'webm', 'ogg'];
+
+                            if (in_array(strtolower($fileExtension), $imageExtensions)) {
+                                // Si c'est une image
+                                echo '<img class="image-width" style="max-heigth:20vh;max-width:100%"  src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" />';
+                            } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
+                                // Si c'est une vidéo
+                                echo '<video src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" controls></video>';
+                            }
+                        ?>
+                        </div>
+                        <div class="action-button" style="display: flex; justify-content: space-between;">
+                            <div class="interaction-button">
+                                <span><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></span>
+                                <span><i class="uil uil-comment" style="font-size: x-large;"></i></span>
+                                <span><i class="uil uil-share" style="font-size: x-large;"></i></span>
+                            </div>
+                            <div class="bookmark">
+                              <form action="index.php?action=enregistrerPost" method="post">
+                              <input type="hidden" name="id_post" value="<?= $post->id_groupe_post; ?>">
+                              <button name="enregistrer" class="btn-enregsitrer"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>
+
+                              </form>
+                            </div>
+                        </div>
                         
-                          <span class="edit"><i class="uil uil-ellipsis-h"></i></span>
-                      </div>
-                    
-                        <img class="image-width" height="500px" width="100%" src="img/Profile/Julia Clarke.png" alt="">
-                    
-                      <div class="action-button" style="display: flex; justify-content: space-between;">
-                          <div class="interaction-button">
-                              <span><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></span>
-                              <span><i class="uil uil-comment" style="font-size: x-large;"></i></span>
-                              <span><i class="uil uil-share" style="font-size: x-large;"></i></span>
-                          </div>
-                          <div class="bookmark">
-                              <span><i class="uil uil-bookmark" style="font-size: x-large;"></i></span>
-                          </div>
-                      </div>
-                    
-                      <div class="liked-by" style="display: flex; ">
-                          <span class="liked1"><img  src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                          <span class="liked2"><img src="img/Profile/Julia Clarke.png" height="25px"width="25px" style="border-radius: 50%;"></span>
-                          <span class="liked3"><img src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                          <p class="liked4">Liked by <b>Enrest Achiever</b> and <b>220 others</b></p>
-                      </div>
-                    
-                      <div class="caption">
-                          <p><b>Ahmed said</b> Lorem ipsum dolor storiesquiquam eius.
-                              <span class="hash-tag">#lifestyle</span></p>
-                      </div>
-                      <div class="comments text-muted">View all 130 comments</div>
-                  </div>
-              </div>
+                        <div class="liked-by" style="display: flex; ">
+                            <span class="liked1"><img  src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
+                            <span class="liked2"><img src="img/Profile/Julia Clarke.png" height="25px"width="25px" style="border-radius: 50%;"></span>
+                            <span class="liked3"><img src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
+                            <p class="liked4">Liked by <b>Enrest Achiever</b> and <b>220 others</b></p>
+                        </div>
+                        <div class="comments text-muted">View all 130 comments</div>
+                    </div>
+
+            <?php
+            }}
+            ?>
+
+                </div>
             </div>
         </main>
     </div>
+    <div class="overlay-supprimer hidden-modifier" id="overlay-supprimer"></div>
+
+    <div class="popup-modifier hidden-modifier" id="popup-supprimer">
+        <header>Supprimer le Post</header>
+        <button name="supprimer" type="submit">Supprimer</button>
+        <button type="button" class="close-popup-btn-supprimer">Annuler</button>
+    </div>
+
+    <div class="overlay-modifier hidden-modifier" id="overlay-modifier"></div>
+
+    <div class="popup-modifier hidden-modifier" id="popup-modifier">
+        <header>Modifier le Post</header>
+        <form id="modifierPostForm" enctype="multipart/form-data">
+            <input type="hidden" name="imagehere" id="imagehere_modifier" value="">
+            <input type="hidden" name="post_groupe_id" id="group_post_id_modifier" value="">
+            <textarea name="text_content" placeholder="Modifier le contenu" id="group_post_content_modifier"></textarea>
+            <div class="w-100 bg-dark" id="modifierPostFormdivimage">
+                <p type="button" class="btn" style="position: absolute; top: 210px; left: 330px;" onclick="removepostimage()"><i style="font-size: 20px;color:grey;" class="bi bi-x-lg"></i></p>
+                <img id="group_post_image_modifier" style="max-width: 100%; height: 200px;" src="" alt="">
+            </div>
+            <div class="options-modifier w-100 d-flex justify-content-center">
+                <label for="imageInput-modifier" align="center">
+                    <i class="bi bi-card-image" style="background-color: #dfdfdf; border-radius: 50%; padding: 5px;"></i>
+                    <p>Changer l'image</p>
+                </label>
+                <input type="file" id="imageInput-modifier" accept="image/*" name="image" style="display:none;">
+            </div>
+            <div class="enregistrer-annuler-btn">
+            <button type="submit">Modifier</button>
+            <button type="button" class="close-popup-btn-modifier">Annuler</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function removepostimage(){
+            document.getElementById('group_post_image_modifier').src = '';
+            document.getElementById('modifierPostFormdivimage').style.display = "none";
+            document.getElementById('imagehere_modifier').value = "false";
+        }
+
+        document.getElementById("imageInput-modifier").addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageElement = document.getElementById("group_post_image_modifier");
+                    imageElement.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                if (document.getElementById('modifierPostFormdivimage').style.display === "none") {
+                    document.getElementById('modifierPostFormdivimage').style.display = "block";
+                }
+                document.getElementById('imagehere_modifier').value = "true";
+            }
+        });
+
+        $(document).ready(function() {
+            $('#modifierPostForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: 'index.php?action=modifierpostgroup',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        // Clear the content of .hash-tag-{res.id_post_groupe}
+                        document.querySelector('.hash-tag-' + res.id_post_groupe).innerHTML = ''; // Use innerHTML to clear content
+                        document.querySelector('.hash-tag-' + res.id_post_groupe).append(res.text_content);
+
+                        // Clear the content of .imageorvideopost
+                        document.querySelector('.imageorvideopost').innerHTML = ''; // Use innerHTML to clear content
+                    
+                        if(res.image_url !== ""){
+                            let fileUrl = res.image_url; // Assuming res.image_url contains the image or video URL
+                            let fileExtension = fileUrl.split('.').pop().toLowerCase(); // Get the file extension
+
+                            let element; // This will be the element we append
+
+                            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                                // If it's an image, create an <img> element
+                                element = document.createElement('img');
+                                element.classList.add('image-width');
+                                element.style.maxWidth = '100%';
+                                element.src = fileUrl;
+                            } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                                // If it's a video, create a <video> element
+                                element = document.createElement('video');
+                                element.controls = true;
+                                element.src = fileUrl;
+                            }
+
+                            // Append the created element to the target container
+                            document.querySelector('.imageorvideopost').append(element);
+                        }
+
+                        // Hide the popup and overlay
+                        document.getElementById('popup-modifier').classList.add('hidden-modifier');
+                        document.getElementById('overlay-modifier').classList.add('hidden-modifier');
+
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error occurred: " + error);
+                        alert("An error occurred: " + xhr.responseText);
+    }
+                });
+            });
+        });
+
+        $(document).ready(function() {
+            $('#createPostForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: 'index.php?action=grouppost',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function() {
+                        // Optionally, you can refresh the page or update the feed dynamically
+                        location.reload();
+                    }
+                });
+            });
+        });
+
+        document.getElementById("imageInput").addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const uploadedImageContainer = document.getElementById("uploadedImageContainer");
+                    uploadedImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Get elements
+        const openPopupButton = document.getElementById('openPopup');
+        const closePopupButton = document.getElementById('closePopup');
+        const popup = document.getElementById('popup');
+        const overlay = document.getElementById('overlay');
+        // Open popup
+        openPopupButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        });
+
+
+
+        // Close popup by clicking outside the popup
+        overlay.addEventListener('click', (e) => {
+            e.preventDefault();
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        document.querySelectorAll('.dropdown-btn-modifier').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const dropdownContent = button.nextElementSibling;
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
+        function affichemodifier(id){
+                document.getElementById('popup-modifier').classList.remove('hidden-modifier');
+                document.getElementById('overlay-modifier').classList.remove('hidden-modifier');
+
+                $.ajax({
+                    url: 'index.php?action=selectpostgroupinfo',
+                    type: 'POST',
+                    data: {
+                        id_post: id,
+                    },
+                    success: function(res){
+                        document.getElementById('group_post_id_modifier').value = res.id_groupe_post;
+                        document.getElementById('group_post_content_modifier').value = res.text_content_groupe;
+                        document.getElementById('group_post_image_modifier').src = res.image_path_groupe;
+                        if (document.getElementById('modifierPostFormdivimage').style.display === "none") {
+                            document.getElementById('modifierPostFormdivimage').style.display = "block";
+                        }
+
+                        if(res.image_path_groupe == ""){
+                            document.getElementById('modifierPostFormdivimage').style.display = "none";
+                            document.getElementById('imagehere_modifier').value = "false";
+                        }else{
+                            document.getElementById('imagehere_modifier').value = "true";
+                        }
+                    }
+                });
+        }
+
+        // Open delete popup
+        function affichesupprimer(id){
+            document.getElementById('popup-supprimer').classList.remove('hidden-modifier');
+            document.getElementById('overlay-supprimer').classList.remove('hidden-modifier');
+            const firstInput = document.querySelector('#popup-supprimer button');
+            firstInput.addEventListener('click', function() {
+                supprimerPostgroup(id);
+            });
+        }
+
+        function supprimerPostgroup(id){
+            $.ajax({
+                url: 'index.php?action=supprimerPostgroup',
+                type: 'POST',
+                data: {
+                    id_groupe_post : id,
+                },
+                success: function(res) {
+                    document.getElementById('popup-supprimer').classList.add('hidden-modifier');
+                    document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
+
+                    document.querySelector('.feed-' + res.id_post_groupe).remove();
+                }
+            });
+        }
+
+        // Close popup
+        document.querySelectorAll('.close-popup-btn-modifier').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('popup-modifier').classList.add('hidden-modifier');
+                document.getElementById('overlay-modifier').classList.add('hidden-modifier');
+                document.getElementById('group_post_id_modifier').value = '';
+                document.getElementById('group_post_content_modifier').value = '';
+                document.getElementById('group_post_image_modifier').src = '';
+            });
+        });
+
+        // Close delete popup
+        document.querySelectorAll('.close-popup-btn-supprimer').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('popup-supprimer').classList.add('hidden-modifier');
+                document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
+            });
+        });
+
+        // Close by clicking outside the popup
+        document.getElementById('overlay-modifier').addEventListener('click', () => {
+            document.getElementById('popup-modifier').classList.add('hidden-modifier');
+            document.getElementById('overlay-modifier').classList.add('hidden-modifier');
+        });
+
+        document.getElementById('overlay-supprimer').addEventListener('click', () => {
+            document.getElementById('popup-supprimer').classList.add('hidden-modifier');
+            document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
+        });    
+    </script>
 </body>
 </html>

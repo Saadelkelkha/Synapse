@@ -67,4 +67,12 @@
         return $sqlstate->execute([$text_content , $imagePath,  $id_post]);
     }
 
+    function afficherEnregistrerPost(){
+        $db = database_connection();
+        $sqlState = $db->query('SELECT * FROM post inner join enregistrer_posts on post.id_post = enregistrer_posts.id_post where post.id_post = enregistrer_posts.id_post');
+        return $sqlState->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    
+
 ?>

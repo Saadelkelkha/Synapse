@@ -30,33 +30,7 @@
                       <img class="g" src="img/logop.png" width="50%">
                         <p class="par2">Gérez vos tâches administratives efficacement.</p>
                         <h3 class="login2">Mise à jour du compte utilisateur par l'administrateur</h3>
-                      <form action="index.php?action=valide_update_user" method="POST" class="myForm2">
-                        <div class="form-group">
-                          <div class="form-group">
-                            <input type="text" name="logprenom" class="form-style" value="<?php echo $prenom ;?>" placeholder="Prenom" id="logprenom" oninput="handlePrenom(event)">
-                            <i class="input-icon uil uil-user"></i>
-                            <div class="error-message" id="prenomerror"></div>
-                          </div>
-                          <div class="form-group">
-                            <input type="text" name="lognom" class="form-style" value="<?php echo $nom ;?>" placeholder="Nom" id="lognom" oninput="handleNom(event)">
-                            <i class="input-icon uil uil-user"></i>
-                            <div class="error-message" id="nomerror"></div>
-                          </div>
-                        </div>
-                        <label for="" style="align-self: flex-start;margin-left: 15%; margin-top: 15px; margin-bottom: -10px;">Date de naissance</label>
-                        <div class="form-group mt-2">
-                            <input type="date" name="logdate" value="<?php echo $date ;?>"  class="form-style" id="date">
-                            <i class="input-icon bi bi-calendar-week"></i>
-                            <div class="error-message" id="dateerror"></div>
-                        </div>  
-                        <div class="form-group mt-2">
-                          <input type="email" name="logemail" value="<?php echo $email ;?>" class="form-style" placeholder="Email" id="email" oninput="handleEmail(event)">
-                          <i class="input-icon uil uil-at"></i>
-                          <div class="error-message" id="email2error"></div>
-                        </div>  
-                        <input type="hidden" name="id" value="<?php echo $id_user; ?>">
-                        <input type="submit" value="submit" class="btn submit_register mt-4">
-                      </form>
+                      
                       
                     </div>
                 </div>

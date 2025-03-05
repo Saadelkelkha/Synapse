@@ -15,7 +15,7 @@ if(isset($_POST['annulerModifier'])){
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.6/css/line.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="assets/homee.css" />
+    <link rel="stylesheet" href="assets/home.css" />
     <style>
         textarea {
             width: 100%;
@@ -111,6 +111,8 @@ input[type="submit"]:hover {
         <main class="mt-1 d-flex">
             <!-- Sidebar -->
             <?php require_once 'vue/layout/navhome2.php'; ?>
+           
+
             <!-- Formulaire de création de post -->
             <div class="content_chat">
               <div class="content flex-grow-1">
@@ -149,6 +151,7 @@ input[type="submit"]:hover {
               
             </div>
         </div>
+       
     </div>
 <?php } else { ?>
     <p>Erreur : Aucun post trouvé.</p>
@@ -157,6 +160,7 @@ input[type="submit"]:hover {
 
 
         </main>
+        <?php include 'chatbot1.php'; ?>
     </div>
 
     <script>

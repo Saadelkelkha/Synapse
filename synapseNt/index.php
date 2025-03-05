@@ -37,9 +37,11 @@
             case 'reset-password':
                 if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){
                     header('Location: index.php?action=home');
+                    break;
                 }else{
                     require_once 'controller/user.php';
                     reset_password();
+                    break;
                 }
                 
             case 'change_password':
@@ -272,6 +274,89 @@
                     rejectinvit($id_user,$id_groupe);
                     break;
                 }
+            case 'kickmember':
+                if (isset($_POST['id_groupe_member'])) {
+                    require_once 'controller/group.php';
+
+                    $id_groupe_member = $_POST['id_groupe_member'];
+
+                    kickmember($id_groupe_member);
+                    break;
+                }
+            case 'invitasadmin':
+                if (isset($_POST['id_groupe_member']) && isset($_POST['id_groupe'])) {
+                    require_once 'controller/group.php';
+
+                    $id_groupe_member = $_POST['id_groupe_member'];
+                    $id_groupe = $_POST['id_groupe'];
+
+                    invitasadmin($id_groupe_member,$id_groupe);
+                    break;
+                }
+            case 'select_amie':
+                if (isset($_POST['id_user'])){
+                    require_once 'controller/group.php';
+
+                    $id_user = $_POST['id_user'];
+
+                    select_amie($id_user);
+                    break;
+                }
+            case 'invit_amie_group':
+                if (isset($_POST['id_user']) && isset($_POST['id_groupe'])){
+                    require_once 'controller/group.php';
+
+                    $id_user = $_POST['id_user'];
+                    $id_groupe = $_POST['id_groupe'];
+
+                    invit_amie_group($id_user,$id_groupe);
+                    break;
+                }
+            case 'cancel_invit_group':
+                if (isset($_POST['id_user']) && $_POST['id_groupe']){
+                    require_once 'controller/group.php';
+
+                    $id_user = $_POST['id_user'];
+                    $id_groupe = $_POST['id_groupe'];
+
+                    cancel_invit_group($id_user,$id_groupe);
+                    break;
+                }
+            case 'grouppost':
+                if (isset($_SESSION['id_user']) && $_POST['id_groupe']) {
+                    require_once 'controller/group.php';
+
+                    $id_user = $_SESSION['id_user'];
+                    $id_groupe = $_POST['id_groupe'];
+                    
+                    creergroupPosts($id_user,$id_groupe);
+                    break;
+                }
+            case 'selectpostgroupinfo':
+                if(isset($_POST['id_post'])){
+                    require_once 'controller/group.php';
+                    $id_post = $_POST['id_post'];
+                    
+                    selectpostgroupinfo($id_post);
+                    break;
+                }
+            case 'modifierpostgroup':
+                if(isset($_POST['post_groupe_id'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['post_groupe_id'];
+                    $text_content = $_POST['text_content'];
+
+                    modifierpostgroup($id_post_groupe,$text_content);
+                    break;
+                }
+            case 'supprimerPostgroup':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    supprimerPostgroup($id_post_groupe);
+                    break;
+                }
             case 'post':
                 if (isset($_SESSION['id_user']) && isset($_POST['post'])) {
                     require_once 'controller/user.php';
@@ -284,13 +369,33 @@
                     enregistrerPosts();
                     afficherPosts();
                     break;
+            case "gestionposts":
+                require_once 'controller/user.php';
+                if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){
+                    if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == true){
+                        afficherPostsadmin();
+                    }else{
+                        header('Location: index.php');
+                    }
+                }else{
+                    header('Location: index.php');
+                }
+                break;
             
-            
-                    
+            case "enregistrerposts":
+              require_once 'controller/user.php';
+              afficherEnregistrerPostController();
+              break;
+              
             case 'afficherModifierPost':
                 require_once 'controller/user.php';
                 afficherModifierPost($_GET['id_post']);
                 break;
+            
+                case 'afficherModifierPostAdmin':
+                    require_once 'controller/user.php';
+                    afficherModifierPostAdmin($_GET['id_post']);
+                    break;
 
             case 'supprimerPost':
                     if(isset($_POST['supprimer'])){
@@ -303,6 +408,20 @@
                     require_once 'controller/user.php';
                     modifierPostControler();
                     break;
+                
+                    case "modifierPostAdmin":
+              
+                        require_once 'controller/user.php';
+                        modifierPostControler();
+                        break;
+            case "afficherProfil":
+                require_once 'controller/user.php';
+                AfficherInfoUserSurProfilControler();
+                break;
+            case 'ajouterStory':
+                require_once 'controller/storyController.php';
+                creerStory(); // Appel à la fonction modifierStoryController dans storyController
+                break;
         }
     }else{
         require_once 'controller/user.php';
