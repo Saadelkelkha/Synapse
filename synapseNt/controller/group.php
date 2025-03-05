@@ -51,6 +51,14 @@
 
         $group_posts = selectgroupeposts($id_group);
 
+        $group_posts_likes = selectgroupepostslikes($id);
+
+        $countlikes = countlikesgroupe();
+
+        $enregistrerpostes = selectenregistrementgroupepost($id,$id_group);
+
+        $countcomment = countcommentsgroupe($id_group);
+
         require_once 'vue/exploregroupe.php';
     }
 
@@ -286,6 +294,137 @@
         echo json_encode([
             'status' => 'success',
             'id_post_groupe' => $id_post_groupe
+        ]);
+    }
+
+    function likePostgroup($id_post_groupe){
+        $id_user = $_SESSION['id_user'];
+        likePostgroupe($id_post_groupe,$id_user);
+        $countlike = countlikespost($id_post_groupe);
+        $countlike = $countlike->countlike;
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'id_post_groupe' => $id_post_groupe,
+            'countlike' => $countlike
+        ]);
+    }
+
+    function unlikePostgroup($id_post_groupe){
+        $id_user = $_SESSION['id_user'];
+        unlikePostgroupe($id_post_groupe,$id_user);
+        $countlike = countlikespost($id_post_groupe);
+        $countlike = $countlike->countlike;
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'id_post_groupe' => $id_post_groupe,
+            'countlike' => $countlike
+        ]);
+    }
+
+    function savePostgroup($id_post_groupe){
+        $id_user = $_SESSION['id_user'];
+        savePostgroupe($id_post_groupe,$id_user);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'id_post_groupe' => $id_post_groupe
+        ]);
+    }
+
+    function unsavePostgroup($id_post_groupe){
+        $id_user = $_SESSION['id_user'];
+        unsavePostgroupe($id_post_groupe,$id_user);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'id_post_groupe' => $id_post_groupe
+        ]);
+    }
+
+    function affichepostgroupe($id_post_groupe){
+        if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){
+            $id = $_SESSION['id_user'];
+            $user = selectuser($id);
+            $fullname = $user['prenom'] . " " . $user['nom'];
+
+            $id_groupe = selectid_groupe($id_post_groupe)->id_groupe;
+
+            if (!isingroup($id,$id_groupe)) {
+                $_SESSION['id_groupe'] = $id_groupe;
+                $id_groupe = $_SESSION['id_groupe'];
+                $id_group = $id_groupe;
+
+                $group_info = selectGroup($id_groupe);
+                $group_info = $group_info[0];
+
+                $countmemberGroup = countmemberGroup($id_groupe);
+                $countmemberGroup = $countmemberGroup[0];
+
+                $countmembres = $countmemberGroup->count + 1;
+
+                $post = selectpostgroupe($id_post_groupe);
+                $group_posts_likes = selectgroupepostslikes($id_post_groupe);
+                $countlikes = countlikesgroupe();
+                $enregistrerpostes = selectenregistrementgroupepostpartage($id,$id_post_groupe);
+
+                require_once 'vue/affichepostgroupe.php';
+            } else {
+                $_SESSION['id_groupe'] = $id_groupe;
+                $id_groupe = $_SESSION['id_groupe'];
+                $group_info = selectGroup($id_groupe);
+                $group_info = $group_info[0];
+
+                $countmemberGroup = countmemberGroup($id_groupe);
+                $countmemberGroup = $countmemberGroup[0];
+
+                $countmembres = $countmemberGroup->count + 1;
+
+                $invitations = selectinvitationgroup();
+
+                require_once 'vue/joingroupe.php';
+
+            }
+        }else{
+            $id_groupe = selectid_groupe($id_post_groupe)->id_groupe;
+
+            $_SESSION['id_groupe'] = $id_groupe;
+            $id_groupe = $_SESSION['id_groupe'];
+            $group_info = selectGroup($id_groupe);
+            $group_info = $group_info[0];
+
+            $countmemberGroup = countmemberGroup($id_groupe);
+            $countmemberGroup = $countmemberGroup[0];
+
+            $countmembres = $countmemberGroup->count + 1;
+
+            $invitations = selectinvitationgroup();
+
+            require_once 'vue/partagepostlogin.php';
+        }
+    }
+
+    function allcomments($id_post_groupe){
+        $comments = selectcommentsgroupe($id_post_groupe);
+
+        header('Content-Type: application/json');
+        echo json_encode($comments);
+    }
+
+    function submitcommentgroupe($id_groupe_post,$groupe_comment){
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
+        submitcommentgroup($idm,$id_groupe_post,$groupe_comment);
+
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'status' => 'success'
         ]);
     }
 ?>

@@ -229,6 +229,11 @@
                     $id_group = $_POST['id_group'];
                     exploregroupe($id_group);
                     break;
+                }elseif(isset($_GET['id'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_GET['id'];
+                    affichepostgroupe($id_post_groupe);
+                    break;
                 }
             case 'invitationgroup':
                 if(isset($_POST['id_group'])){
@@ -349,6 +354,38 @@
                     modifierpostgroup($id_post_groupe,$text_content);
                     break;
                 }
+            case 'likePostgroup':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    likePostgroup($id_post_groupe);
+                    break;
+                }
+            case 'unlikePostgroup':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    unlikePostgroup($id_post_groupe);
+                    break;
+                }
+            case 'savePostgroup':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    savePostgroup($id_post_groupe);
+                    break;
+                }
+            case 'unsavePostgroup':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    unsavePostgroup($id_post_groupe);
+                    break;
+                }
             case 'supprimerPostgroup':
                 if(isset($_POST['id_groupe_post'])){
                     require_once 'controller/group.php';
@@ -357,6 +394,24 @@
                     supprimerPostgroup($id_post_groupe);
                     break;
                 }
+            case 'allcomments':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/group.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    allcomments($id_post_groupe);
+                    break;
+                }
+            case 'submitcommentgroup':
+                if(isset($_POST['id_groupe_post']) && isset($_POST['groupe_comment'])){
+                    require_once 'controller/group.php';
+                    $id_groupe_post = $_POST['id_groupe_post'];
+                    $groupe_comment = $_POST['groupe_comment'];
+
+                    submitcommentgroupe($id_groupe_post,$groupe_comment);
+                    break;
+                }
+
             case 'post':
                 if (isset($_SESSION['id_user']) && isset($_POST['post'])) {
                     require_once 'controller/user.php';
@@ -369,6 +424,7 @@
                     enregistrerPosts();
                     afficherPosts();
                     break;
+
             case "gestionposts":
                 require_once 'controller/user.php';
                 if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){

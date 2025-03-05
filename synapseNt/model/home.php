@@ -73,6 +73,4 @@
         return $sqlState->fetchAll(PDO::FETCH_OBJ);
     }
 
-    
-
 ?>

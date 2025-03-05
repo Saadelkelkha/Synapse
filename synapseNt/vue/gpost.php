@@ -64,6 +64,7 @@
                                  echo "<td class='action'><a href='index.php?action=afficherModifierPostAdmin&id_post=".$post->id_post."'><i class='uil uil-pen'></i></a>";
                                 // echo "<td class='action'><a href="index.php?action=afficherModifierPostAdmin&id_post=$post->id_post."'><i class='uil uil-pen'></i></a>";
 
+                                echo "<td class='action'><a href=''><i class='uil uil-pen'></i></a>";
                                 echo "<a href='index.php?action='><i class='uil uil-trash-alt'></i></a></td>";
                                 echo "</tr>";
                             }
