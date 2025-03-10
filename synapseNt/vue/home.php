@@ -9,6 +9,8 @@ $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
 
+
+
 $id_post = $_GET['id_post'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -381,6 +383,7 @@ $id_post = $_GET['id_post'] ?? null;
             <!-- Formulaire de création de post -->
             <div class="content_chat">
                 <div class="content flex-grow-1">
+                <?php require_once 'afficherStories.php'; ?>
                 <button id="openStoryPopup">Ajouter une Story</button>
              
 

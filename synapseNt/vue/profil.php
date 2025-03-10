@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="assets/home.css"/>
     <style>
         .content_chat{
-            width:80%;
+            width:40%;
             left:0;
         }
         .img_profil{
@@ -19,6 +19,58 @@
             
             
         }
+        .profile-banner {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block; /* Supprime les marges automatiques */
+    margin: 0; /* Enlève toute marge */
+    padding: 0; /* Enlève tout padding */
+}
+
+.profile-container {
+    position: relative;
+    margin-top: -80px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrage sans décalage */
+    justify-content: center;
+    width: 100%; /* Pour s'assurer que tout est bien aligné */
+    padding: 0; /* Enlève tout padding */
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid white;
+    background-color: white;
+    object-fit: cover;
+    margin: 0; /* Supprime toute marge */
+    padding: 0; /* Supprime tout padding */
+}
+
+.profile-info {
+    text-align: center;
+    margin: 0; /* Enlève les marges */
+    padding: 0; /* Supprime les espaces inutiles */
+}
+
+.profile-info h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 5px; /* Ajustement pour éviter le décalage */
+}
+
+.btn-edit {
+    margin-top: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 20px;
+}
+
     </style>
 </head>
 <body>
@@ -30,27 +82,30 @@
             <!-- Sidebar -->
             
             <!-- Formulaire de création de post -->
-            <div class="content_chat">
-              <div class="content flex-grow-1"> <?php 
-              
-                
-              
-              ?>
-                  <!-- Formulaire de création de post -->
-                  <form action="index.php?action=" method="post" class="create-post mb-3 mt-4" >
-                    <img src="<?php  echo $user['banner']; ?>" alt="" width="100%" height="200px">
-                    <?php   ?>
-                          <img src="<?php  echo $user['photo_profil']; ?>" alt="" class="img_profil">
-                    <h3><?php if(isset($fullname)){echo $fullname;} ?></h3>
-                    <p></p>                          
-                     <input type="submit" name="follow" value="Modifier Profil" class="btn btn-primary m-0" style="border-color: #2B2757; margin-right: 2%; width: 20%;">
-                     
-                  </form>
+            <div class="container mt-4">
+        <!-- Profile Banner -->
+        <img src="<?php echo $user['banner']; ?>" alt="Banner" class="profile-banner">
+        
+        <!-- Profile Info -->
+        <div class="profile-container">
+            <img src="<?php echo $user['photo_profil']; ?>" alt="Profile Picture" class="profile-img">
+            <div class="profile-info">
+                <h3><?php if(isset($fullname)){echo $fullname;} ?></h3>
+                <p>Lead Product Designer at Apple</p>
+                <button class="btn btn-primary btn-edit">Modifier Profil</button>
+            </div>
+        </div>
+        
+        <!-- Followers and Connections -->
+        <div class="text-center mt-3">
+            <span class="fw-bold">6,476</span> followers 
+    </div>
+
                 
                   <!-- Feed -->
                   
 
-              <nav class="navhome3">
+              <!-- <nav class="navhome3">
                   <form>
                       <input class="form-control search-bar" type="search" placeholder="Search" aria-label="Search">
                   </form>
@@ -90,7 +145,7 @@
                           <i class="uil uil-comment-alt-dots"></i>
                       </div>
                   </div>
-              </nav>
+              </nav> -->
             </div>
         </main>
     </div>

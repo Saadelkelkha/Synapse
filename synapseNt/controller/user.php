@@ -294,7 +294,8 @@
 
         insertPost($text_content, $imageUrl, $currentDate, $id_user);
         //tzad
-        header("Location: index.php");
+        // header("Location: index.php");
+        echo $tmpName, $imagePath;
     }
 
     function afficherPosts() {
