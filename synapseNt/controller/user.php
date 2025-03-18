@@ -283,7 +283,7 @@
         //$_SERVER['DOCUMENT_ROOT'] houwa repertoire racine
         $tmpName = $_FILES['image']['tmp_name'];
         $image = $_FILES['image']['name'];
-        $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/vue/uploads/' . $image;
+        $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse2/Synapse/synapseNt/vue/uploads/' . $image;
 
         //kat7t f database
         $imageUrl = 'vue/uploads/' . $image;
@@ -294,7 +294,8 @@
 
         insertPost($text_content, $imageUrl, $currentDate, $id_user);
         //tzad
-        header("Location: index.php");
+        // header("Location: index.php");
+        echo $tmpName, $imagePath;
     }
 
     function afficherPosts() {
@@ -383,6 +384,8 @@
         }
     }
 
+  
+
     function AfficherInfoUserSurProfilControler() {
         $id = $_SESSION['id_user'];
         $user = selectuser($id);
@@ -403,6 +406,15 @@
 
         $posts = obtenirTousLesPosts();
         require_once 'vue/gpost.php';
+    }
+
+    function afficherModifierPostAdmin($id_post) {
+        $post = obtenirPostParId($id_post);
+        if ($post) {
+            require 'vue/modifierPostAdmin.php';
+        } else {
+            echo "Erreur : Aucun post trouvé avec cet ID.";
+        }
     }
 
 

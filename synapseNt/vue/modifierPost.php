@@ -111,6 +111,8 @@ input[type="submit"]:hover {
         <main class="mt-1 d-flex">
             <!-- Sidebar -->
             <?php require_once 'vue/layout/navhome2.php'; ?>
+           
+
             <!-- Formulaire de création de post -->
             <div class="content_chat">
               <div class="content flex-grow-1">
@@ -149,6 +151,7 @@ input[type="submit"]:hover {
               
             </div>
         </div>
+       
     </div>
 <?php } else { ?>
     <p>Erreur : Aucun post trouvé.</p>
@@ -157,6 +160,7 @@ input[type="submit"]:hover {
 
 
         </main>
+        <?php include 'chatbot1.php'; ?>
     </div>
 
     <script>

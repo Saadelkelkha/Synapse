@@ -526,6 +526,11 @@
                 require_once 'controller/user.php';
                 afficherModifierPost($_GET['id_post']);
                 break;
+            
+                case 'afficherModifierPostAdmin':
+                    require_once 'controller/user.php';
+                    afficherModifierPostAdmin($_GET['id_post']);
+                    break;
 
             case 'supprimerPost':
                     if(isset($_POST['supprimer'])){
@@ -538,10 +543,29 @@
                     require_once 'controller/user.php';
                     modifierPostControler();
                     break;
+                
+                    case "modifierPostAdmin":
+              
+                        require_once 'controller/user.php';
+                        modifierPostControler();
+                        break;
             case "afficherProfil":
                 require_once 'controller/user.php';
                 AfficherInfoUserSurProfilControler();
                 break;
+            case 'ajouterStory':
+                require_once 'controller/storyController.php';
+                creerStory(); // Appel à la fonction modifierStoryController dans storyController
+                break;
+            case 'afficherModifierPostAdmin':
+                    require_once 'controller/profile.php';
+                    afficherPostProfileController($_SESSION['id_user']);
+                    break;
+                    
+                    case 'afficherPhotos':
+                        require_once 'controller/profile.php';
+                        afficherPostProfileController($_SESSION['id_user']);
+                        break;
         }
     }else{
         require_once 'controller/user.php';

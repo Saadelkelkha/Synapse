@@ -9,6 +9,8 @@ $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
 
+
+
 $id_post = $_GET['id_post'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -370,14 +372,24 @@ $id_post = $_GET['id_post'] ?? null;
     <div class=" mt-3">
         <!-- Navbar -->
         <?php require_once 'vue/layout/navhome1.php'; ?>
+       
 
         <main class="mt-1 d-flex">
             <!-- Sidebar -->
-            <?php require_once 'vue/layout/navhome2.php'; ?>
+            <?php require_once 'vue/layout/navhome2.php';   ?>
+            
+
             
             <!-- Formulaire de création de post -->
             <div class="content_chat">
                 <div class="content flex-grow-1">
+                <?php require_once 'afficherStories.php'; ?>
+                <button id="openStoryPopup">Ajouter une Story</button>
+             
+
+             <?php include 'storyPopup.php'; ?>
+
+
                     <!-- Formulaire de création de post -->
                     <form class="create-post mb-3 mt-4" >
                         <div class="profile-pic mb-3 d-flex">
@@ -536,7 +548,7 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
                           <div class="home_make_story">
                               <img src="img/Profile/Julia Clarke.png">
                               <b>+</b>
-                              <p>Add</p>
+                              <p>Add</p>echo $post->;
                           </div>
                           <div class="home_story">
                               <img src="img/Profile/Julia Clarke.png">

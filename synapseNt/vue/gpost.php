@@ -53,6 +53,7 @@
                             <th>Date de publication</th>
                             <th>Actions</th>
                         </tr>
+                       
                         <?php
                             foreach ($posts as $post) {
                                 echo "<tr>";
@@ -60,6 +61,9 @@
                                 echo "<td>".$post->text_content."</td>";
                                 echo "<td><img src='".$post->image_path."' alt='Image du post' style='max-width: 100px; max-height: 100px;'></td>";
                                 echo "<td>".$post->date_post."</td>";
+                                 echo "<td class='action'><a href='index.php?action=afficherModifierPostAdmin&id_post=".$post->id_post."'><i class='uil uil-pen'></i></a>";
+                                // echo "<td class='action'><a href="index.php?action=afficherModifierPostAdmin&id_post=$post->id_post."'><i class='uil uil-pen'></i></a>";
+
                                 echo "<td class='action'><a href=''><i class='uil uil-pen'></i></a>";
                                 echo "<a href='index.php?action='><i class='uil uil-trash-alt'></i></a></td>";
                                 echo "</tr>";
