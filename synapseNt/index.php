@@ -412,6 +412,85 @@
                     break;
                 }
 
+            case 'submitreplygroup':
+                if(isset($_POST['groupe_comment']) && isset($_POST['reply_to'])){
+                    require_once 'controller/group.php';
+                    $groupe_comment = $_POST['groupe_comment'];
+                    $reply_to = $_POST['reply_to'];
+
+                    submitreplygroupe($groupe_comment,$reply_to);
+                    break;
+                }
+            case 'getresponses':
+                if(isset($_POST['id_comment'])){
+                    require_once 'controller/group.php';
+                    $id_comment = $_POST['id_comment'];
+
+                    getresponsegroup($id_comment);
+                    break;
+                }
+            case 'commentlike':
+                if(isset($_POST['id_comment'])){
+                    require_once 'controller/group.php';
+                    $id_comment = $_POST['id_comment'];
+
+                    commentlike($id_comment);
+                    break;
+                }
+            case 'removecommentlike':
+                if(isset($_POST['id_comment'])){
+                    require_once 'controller/group.php';
+                    $id_comment = $_POST['id_comment'];
+
+                    removecommentlike($id_comment);
+                    break;
+                }
+            case 'replylike':
+                if(isset($_POST['id_reply'])){
+                    require_once 'controller/group.php';
+                    $id_reply = $_POST['id_reply'];
+
+                    replylike($id_reply);
+                    break;
+                }
+            case 'removereplylike':
+                if(isset($_POST['id_reply'])){
+                    require_once 'controller/group.php';
+                    $id_reply = $_POST['id_reply'];
+
+                    removereplylike($id_reply);
+                    break;
+                }
+            case 'delete_group':
+                if(isset($_POST['id_group'])){
+                    require_once 'controller/group.php';
+                    $id_group = $_POST['id_group'];
+                    deletegroup($id_group);
+                    break;
+                }
+            case 'leave_group':
+                if(isset($_POST['id_group']) && isset($_POST['id_user'])){
+                    require_once 'controller/group.php';
+                    $id_group = $_POST['id_group'];
+                    $id_user = $_POST['id_user'];
+                    leavegroup($id_group, $id_user);
+                    break;
+                }
+            case 'change_group_banner':
+                if(isset($_POST['id_group'])){
+                    require_once 'controller/group.php';
+                    $id_group = $_POST['id_group'];
+                    change_group_banner($id_group);
+                    break;
+                }
+            case 'multimedia_groupe':
+                if(isset($_POST['id_group'])){
+                    require_once 'controller/group.php';
+                    $id_group = $_POST['id_group'];
+                    multimedia_groupe($id_group);
+                    break;
+                }
+
             case 'post':
                 if (isset($_SESSION['id_user']) && isset($_POST['post'])) {
                     require_once 'controller/user.php';

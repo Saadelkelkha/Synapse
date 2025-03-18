@@ -315,12 +315,16 @@
         .dropdown-content-modifier {
             display: none;
             position: absolute;
+            right: 0;
+            left: auto;
             background-color: #fff;
             min-width: 160px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             z-index: 1;
             border-radius: 5px;
         }
+
+        
 
         .dropdown-content-modifier button,
         .dropdown-content-modifier a {
@@ -411,13 +415,15 @@
                     foreach($group_posts as $post) { ?>
                     <div class="feed feed-<?= $post->id_groupe_post ?>" width="100%">
                         <div class="user">
-                            <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-                                <img src="<?= $post->photo_profil; ?>" alt="">
-                                <div class="name1">
-                                    <h5 class=" mb-0" ><?= $post->prenom; ?><?= " " .$post->nom; ?></h5>
-                                    <small style="font-size:small; color: #777;"><?php echo $post->date_post_groupe; ?></small>
-                                    <div class="caption mt-4">
-                                        <span class="hash-tag hash-tag-<?= $post->id_groupe_post ?>"><?php echo $post->text_content_groupe; ?></span></p>
+                            <div class="profile-pic" width="100%" style="display: flex; gap: 10px;justify-content:space-between">
+                                <div class="d-flex">
+                                    <img src="<?= $post->photo_profil; ?>" alt="">
+                                    <div class="name1">
+                                        <h5 class=" mb-0" ><?= $post->prenom; ?><?= " " .$post->nom; ?></h5>
+                                        <small style="font-size:small; color: #777;"><?php echo $post->date_post_groupe; ?></small>
+                                        <div class="caption mt-4">
+                                            <span class="hash-tag hash-tag-<?= $post->id_groupe_post ?>"><?php echo $post->text_content_groupe; ?></span></p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="dropdown-modifier">
@@ -443,7 +449,7 @@
                                 echo '<img class="image-width" style="max-heigth:20vh;max-width:100%"  src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" />';
                             } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
                                 // Si c'est une vidéo
-                                echo '<video src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" controls></video>';
+                                echo '<video class="image-width" style="max-heigth:20vh;max-width:100%" src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" controls></video>';
                             }
                         ?>
                         </div>
@@ -465,7 +471,7 @@
                                 <span data-name="span" onclick="affichecommentlist(event)"  style="cursor: pointer;"><i class="uil uil-comment" data-name="span" style="font-size: x-large;"></i></span>
                                 <span onclick="affichesharemenu(event)"  style="cursor: pointer;"><i class="uil uil-share" style="font-size: x-large;"></i></span>
                                 <div class="share-menu" style="display: none; position: absolute; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px; z-index: 1000;">
-                                    <button onclick="copyLink(<?php echo $post->id_groupe_post; ?>)">Copy Link</button>
+                                    <button class="btn rounded-circle" style="background-color:#F5F5F5;" onclick="copyLink(<?= $post->id_groupe_post; ?>)"><i class="fas fa-link"></i></button>
                                 </div>
                             </div>
                             <div class="bookmark">
@@ -515,7 +521,7 @@
                             }
                         }
                         ?>
-                        <div class="comments-list bg-secondary text-white ps-2 pe-2 pb-1" style="display: none; border-radius: 5px;overflow-y: auto; border-radius: 5px; -ms-overflow-style: none; scrollbar-width: none;max-height:400px" postId=<?=$post->id_groupe_post?> ></div>
+                        <div id="comments-list" class="comments-list text-white ps-2 pe-2 pb-1" style="display: none; border-radius: 5px;overflow-y: auto; border-radius: 5px; -ms-overflow-style: none; scrollbar-width: none;max-height:400px;background-color:#2B2757;" postId=<?=$post->id_groupe_post?> ></div>
                     </div>
 
             <?php
@@ -543,7 +549,7 @@
             <input type="hidden" name="post_groupe_id" id="group_post_id_modifier" value="">
             <textarea name="text_content" placeholder="Modifier le contenu" id="group_post_content_modifier"></textarea>
             <div class="w-100 bg-dark" id="modifierPostFormdivimage">
-                <p type="button" class="btn" style="position: absolute; top: 210px; left: 330px;" onclick="removepostimage()"><i style="font-size: 20px;color:grey;" class="bi bi-x-lg"></i></p>
+                <p type="button" class="btn" style="position: absolute; top: 210px; left: 330px;z-index:999" onclick="removepostimage()"><i style="font-size: 20px;color:grey;" class="bi bi-x-lg"></i></p>
                 <img id="group_post_image_modifier" style="max-width: 100%; height: 200px;" src="" alt="">
             </div>
             <div class="options-modifier w-100 d-flex justify-content-center">
@@ -560,6 +566,156 @@
         </form>
     </div>
     <script>
+        function commentlike(event){
+            var id_comment = event.target.parentElement.parentElement.parentElement.getAttribute('id_comment');
+            
+            if(event.target.classList.contains('is-liked')){
+                $.ajax({
+                    url: 'index.php?action=removecommentlike',
+                    type: 'POST',
+                    data: {
+                        id_comment : id_comment
+                    },
+                    success: function(res) {
+                        event.target.classList.remove('is-liked');
+                        event.target.classList.remove('text-primary');
+                        event.target.nextElementSibling.textContent = parseInt(event.target.nextElementSibling.textContent) - 1;
+                    }
+                });
+            }else{
+                $.ajax({
+                    url: 'index.php?action=commentlike',
+                    type: 'POST',
+                    data: {
+                        id_comment : id_comment
+                    },
+                    success: function(res) {
+                        event.target.classList.add('is-liked');
+                        event.target.classList.add('text-primary');
+                        event.target.nextSibling.textContent = parseInt(event.target.nextSibling.textContent) + 1;
+                    }
+                });
+            }
+        }
+
+        function replylike(event){
+            var id_reply = event.target.parentElement.parentElement.parentElement.getAttribute('id_reply');
+            if(event.target.classList.contains('is-liked')){
+                $.ajax({
+                    url: 'index.php?action=removereplylike',
+                    type: 'POST',
+                    data: {
+                        id_reply : id_reply
+                    },
+                    success: function(res) {
+                        event.target.classList.remove('is-liked');
+                        event.target.classList.remove('text-primary');
+                        event.target.nextElementSibling.nextElementSibling.textContent = parseInt(event.target.nextElementSibling.nextElementSibling.textContent) - 1;
+                    }
+                });
+            }else{
+                $.ajax({
+                    url: 'index.php?action=replylike',
+                    type: 'POST',
+                    data: {
+                        id_reply : id_reply
+                    },
+                    success: function(res) {
+                        event.target.classList.add('is-liked');
+                        event.target.classList.add('text-primary');
+                        event.target.nextElementSibling.nextElementSibling.textContent = parseInt(event.target.nextElementSibling.nextElementSibling.textContent) + 1;
+                    }
+                });
+            }
+        }
+
+        function onoffreponses(event,id_comment){
+            var reponses = event.target.parentElement.parentElement.nextElementSibling;
+            if(reponses.style.display === 'block'){
+                reponses.style.display = 'none';
+            }else{
+                $.ajax({
+                    url: 'index.php?action=getresponses',
+                    type: 'POST',
+                    data:{
+                        id_comment : id_comment,
+                    },
+                    success: function(res) {
+                        document.querySelector('div[id_comment="'+id_comment+'"] .reply-div').innerHTML = res.response.map(resp=>{
+                        var likes = 0;
+                        var likebutton = '<i onclick="replylike(event)" class="bi bi-heart" style="cursor:pointer"></i>';
+                    
+                        res.replylikes.forEach(like => {
+                            if (like.id_reply_grp === resp.id_reply_grp) {
+                                if (like.id_user === res.id_member) {
+                                    likebutton = '<i onclick="replylike(event)" class="bi bi-heart is-liked text-primary" style="cursor:pointer"></i>';
+                                }
+                                likes++;
+                            }
+                        });
+                        
+                        
+                        
+                        return `
+                            <div id_reply="${resp.id_reply_grp}" class="reply w-100 gap-2 pt-1 pb-1" style="min-height: 40px;padding-left: 50px;">
+                                <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                    <div class="profile-pic">
+                                        <img src="${resp.photo_profil}" alt="">
+                                    </div>
+                                    <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                        <p class="m-0 p-0" style="font-size: small;">${resp.prenom} ${resp.nom} ${calculerdate(resp.reply_grp_at)}</p>
+                                        <p class="m-0 p-0" style="font-size: small;">${resp.content_reply_grp}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                    <p class="text-center">${likebutton}<br><span>${likes}</span></p>
+                                </div>
+                            </div>
+                        `}).join('<br>');
+                    }
+                });
+                reponses.style.display = 'block';
+            }
+        }
+        function removereply(event) {
+            event.target.parentElement.nextElementSibling.querySelector('input[name="reply_to"]').remove();
+            event.target.parentElement.remove();
+        }
+        function replygrp(event,id, name) {
+            const commentform = event.target.parentElement.parentElement.parentElement.parentElement.querySelector('div[class="comment-form"]');
+
+            if(commentform.querySelector('#reply_to') != null){
+                commentform.querySelector('#reply_to').remove();
+            }
+            
+            const hiddenInput = document.createElement('input');
+            hiddenInput.id = 'reply_to';
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'reply_to';
+            hiddenInput.value = id;
+            const commentInput = commentform.querySelector('input[name="groupe_comment_content"]');
+            commentInput.parentElement.appendChild(hiddenInput);
+            commentInput.focus();
+
+            if(commentform.querySelector('.reply_to') != null){
+                commentform.querySelector('.reply_to').remove();
+            }
+
+            const div = document.createElement('div');
+            div.classList.add('reply_to');
+            div.classList.add('w-100');
+            div.classList.add('d-flex');
+            div.classList.add('justify-content-between');
+            div.classList.add('align-items-center');
+            div.classList.add('p-1');
+            div.innerHTML = `
+                <p class="m-0">Répondre à ${name}</p>
+                <i class="bi bi-x" style="cursor:pointer" onclick="removereply(event)"></i>
+                `;
+            commentform.insertBefore(div, commentform.firstChild);
+
+        }
+
         function calculerdate(datec){
             var date1 = new Date(datec);
             var date2 = new Date();
@@ -581,51 +737,110 @@
         }
         function submitcommentgroup(e,postId) {
             var comment_content = e.target.previousElementSibling.value;
-            var commentList = e.target.parentElement.parentElement;
-            $.ajax({
-                url: 'index.php?action=submitcommentgroup',
-                type: 'POST',
-                data: {
-                    groupe_comment : comment_content,
-                    id_groupe_post : postId
-                },
-                success: function(res) {
-                    e.target.previousElementSibling.value = "";
-                    $.ajax({
-                        url: 'index.php?action=allcomments',
-                        type: 'POST',
-                        data: {
-                            id_groupe_post : postId,
-                        },
-                        success: function(res) {
-                            commentList.innerHTML = res.map(comment => `
-                                <div class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
-                                    <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
-                                        <div class="profile-pic">
-                                            <img src="${comment.photo_profil}" alt="">
-                                        </div>
-                                        <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
-                                            <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom}</p>
-                                            <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
-                                        </div>
+            var commentList = e.target.parentElement.parentElement.parentElement;
+            if(e.target.nextElementSibling != null){
+                var reply_to = e.target.nextElementSibling.value;
+                $.ajax({
+                    url: 'index.php?action=submitreplygroup',
+                    type: 'POST',
+                    data: {
+                        groupe_comment : comment_content,
+                        reply_to : reply_to
+                    },
+                    success: function(res) {
+                        e.target.previousElementSibling.value = "";
+                        document.querySelector('div[id_comment="'+reply_to+'"] .reply-div').innerHTML = `
+                            <div id_reply="${res.id_reply_grp}" class="reply w-100 gap-2 pt-1 pb-1" style="min-height: 40px;padding-left: 50px;">
+                                <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                    <div class="profile-pic">
+                                        <img src="${res.photo_profile}" alt="">
                                     </div>
-                                    <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
-                                        <p>Répondre</p>
-                                        <p><i class="bi bi-heart"></i></p>
+                                    <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                        <p class="m-0 p-0" style="font-size: small;">${res.fullname} ${calculerdate(res.date_reply)}</p>
+                                        <p class="m-0 p-0" style="font-size: small;">${res.reply}</p>
                                     </div>
                                 </div>
-                            `).join('<br>');
-                        
-                            commentList.innerHTML += `
-                                <div class="comment-form"  style="display: flex; gap: 10px; margin-top: 10px; width: 100%; position: sticky; bottom: 0;">
-                                    <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
-                                    <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                                <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                    <p class="text-center"><i class="bi bi-heart" style="cursor:pointer" onclick="replylike(event)"></i><br><span>0</span></p>
                                 </div>
-                            `;
-                        }
-                    });
-                }
-            });
+                            </div>
+                        `;
+                        document.querySelector('div[id_comment="'+reply_to+'"] .reply-div').style.display = 'block';
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+
+            }else{
+                $.ajax({
+                    url: 'index.php?action=submitcommentgroup',
+                    type: 'POST',
+                    data: {
+                        groupe_comment : comment_content,
+                        id_groupe_post : postId
+                    },
+                    success: function(res) {
+                        e.target.previousElementSibling.value = "";
+                        $.ajax({
+                            url: 'index.php?action=allcomments',
+                            type: 'POST',
+                            data: {
+                                id_groupe_post : postId,
+                            },
+                            success: function(res) {
+                                commentList.previousElementSibling.setAttribute('onclick', 'affichecommentlist(event)');
+                                commentList.previousElementSibling.setAttribute('style', 'cursor: pointer;');
+                                commentList.previousElementSibling.innerHTML = `Voir les ${res.comments.length} commentaires`;
+                                commentList.innerHTML = res.comments.map(comment =>{
+                                    var likes = 0;
+                                    var likebutton = '<i onclick="commentlike(event)" class="bi bi-heart" style="cursor:pointer"></i>';
+                                
+                                    res.likesofcomment.forEach(like => {
+                                        if (like.id_comment === comment.id_groupe_comment) {
+                                            if (like.id_user === res.id_user) {
+                                                likebutton = '<i onclick="commentlike(event)" class="bi bi-heart is-liked text-primary" style="cursor:pointer"></i>';
+                                            }
+                                            likes++;
+                                        }
+                                    });
+
+
+                                    return `
+                                    <div id_comment="${comment.id_groupe_comment}" class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                        <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                            <div class="profile-pic">
+                                                <img src="${comment.photo_profil}" alt="">
+                                            </div>
+                                            <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                                <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom} ${calculerdate(comment.date_groupe_comment)}</p>
+                                                <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                            <div class="d-flex w-100 gap-2">
+                                                <p onclick="replygrp(event,${comment.id_groupe_comment},'${comment.prenom} ${comment.nom}')" style="cursor:pointer">Répondre</p>
+                                                <p onclick="onoffreponses(event,${comment.id_groupe_comment})" style="cursor:pointer">Réponses</p>
+                                            </div>
+                                            <p class="text-center">${likebutton}<span>${likes}</span></p>
+                                        </div>
+                                        <div class="reply-div"></div>
+                                    </div>
+                                `}).join('<br>');
+
+                                commentList.innerHTML += `
+                                    <div class="comment-form"  style="margin-top: 10px; width: 100%; position: sticky; bottom: 0; background-color:rgb(0, 0, 0); border-radius: 5px 5px 0 0;">
+                                        <div style="display: flex; gap: 10px; position: sticky; bottom: 0;"> 
+                                            <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
+                                            <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                });
+            }
         }
 
 
@@ -646,8 +861,26 @@
                     id_groupe_post : postId,
                 },
                 success: function(res) {
-                    commentList.innerHTML = res.map(comment => `
-                        <div class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+
+                    commentList.previousElementSibling.setAttribute('onclick', 'affichecommentlist(event)');
+                    commentList.previousElementSibling.setAttribute('style', 'cursor: pointer;');
+                    commentList.previousElementSibling.innerHTML = `Voir les ${res.comments.length} commentaires`;
+                    commentList.innerHTML = res.comments.map(comment =>{
+                        var likes = 0;
+                        var likebutton = '<i onclick="commentlike(event)" class="bi bi-heart" style="cursor:pointer"></i>';
+                    
+                        res.likesofcomment.forEach(like => {
+                            if (like.id_comment === comment.id_groupe_comment) {
+                                if (like.id_user === res.id_user) {
+                                    likebutton = '<i onclick="commentlike(event)" class="bi bi-heart is-liked text-primary" style="cursor:pointer"></i>';
+                                }
+                                likes++;
+                            }
+                        });
+                        
+                        
+                        return `
+                        <div id_comment="${comment.id_groupe_comment}" class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
                             <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
                                 <div class="profile-pic">
                                     <img src="${comment.photo_profil}" alt="">
@@ -658,21 +891,30 @@
                                 </div>
                             </div>
                             <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
-                                <p>Répondre</p>
-                                <p><i class="bi bi-heart"></i></p>
+                                <div class="d-flex w-100 gap-2">
+                                    <p onclick="replygrp(event,${comment.id_groupe_comment},'${comment.prenom} ${comment.nom}')" style="cursor:pointer">Répondre</p>
+                                    <p onclick="onoffreponses(event,${comment.id_groupe_comment})" style="cursor:pointer">Réponses</p>
+                                </div>
+                                <p class="text-center">${likebutton}<span>${likes}</span></p>
                             </div>
+                            <div class="reply-div"></div>
                         </div>
-                    `).join('<br>');
-
+                    `}).join('<br>');
+                            
                     commentList.innerHTML += `
-                        <div class="comment-form"  style="display: flex; gap: 10px; margin-top: 10px; width: 100%; position: sticky; bottom: 0;">
-                            <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
-                            <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                        <div class="comment-form"  style="margin-top: 10px; width: 100%; position: sticky; bottom: 0; background-color:rgb(0, 0, 0); border-radius: 5px 5px 0 0;">
+                            <div style="display: flex; gap: 10px; position: sticky; bottom: 0;"> 
+                                <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
+                                <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                            </div>
                         </div>
                     `;
 
-
-                    commentList.style.display = commentList.style.display === 'block' ? 'none' : 'block';
+                    if (commentList.style.display === 'block') {
+                        commentList.style.display = 'none';
+                    } else {
+                        commentList.style.display = 'block';
+                    }
                 }
             });
 
@@ -689,7 +931,27 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert('Link copied to clipboard');
+            const popupMessage = document.createElement('div');
+            popupMessage.innerHTML = '<i class="fas fa-check-circle" style="color: white; background-color: green; border-radius: 50%; padding: 5px;"></i> Lien copié dans le presse-papiers';
+            popupMessage.style.position = 'fixed';
+            popupMessage.style.bottom = '20px';
+            popupMessage.style.left = '50%';
+            popupMessage.style.transform = 'translateX(-50%)';
+            popupMessage.style.backgroundColor = '#333';
+            popupMessage.style.color = '#fff';
+            popupMessage.style.padding = '10px 20px';
+            popupMessage.style.borderRadius = '5px';
+            popupMessage.style.zIndex = '1000';
+            document.body.appendChild(popupMessage);
+
+            popupMessage.style.transition = 'opacity 0.5s ease';
+            popupMessage.style.opacity = '1';
+            setTimeout(() => {
+                popupMessage.style.opacity = '0';
+                setTimeout(() => {
+                    popupMessage.remove();
+                }, 500); 
+            }, 2000);
         }
 
         function save_post_groupe(event){
@@ -875,12 +1137,22 @@
         document.getElementById("imageInput").addEventListener("change", function () {
             const file = this.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const uploadedImageContainer = document.getElementById("uploadedImageContainer");
-                    uploadedImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
-                };
-                reader.readAsDataURL(file);
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const uploadedImageContainer = document.getElementById("uploadedImageContainer");
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                // If it's an image
+                uploadedImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                // If it's a video
+                uploadedImageContainer.innerHTML = `<video controls style="width: 100%; height: auto;"><source src="${e.target.result}" type="video/${fileExtension}">Your browser does not support the video tag.</video>`;
+                } else {
+                uploadedImageContainer.innerHTML = `<p>Unsupported file type</p>`;
+                }
+            };
+            reader.readAsDataURL(file);
             }
         });
 
@@ -926,7 +1198,20 @@
                     success: function(res){
                         document.getElementById('group_post_id_modifier').value = res.id_groupe_post;
                         document.getElementById('group_post_content_modifier').value = res.text_content_groupe;
-                        document.getElementById('group_post_image_modifier').src = res.image_path_groupe;
+                        const fileExtension = res.image_path_groupe.split('.').pop().toLowerCase();
+                        const imageContainer = document.getElementById('group_post_image_modifier');
+                        
+                        if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                            const videoElement = document.createElement('video');
+                            videoElement.controls = true;
+                            videoElement.src = res.image_path_groupe;
+                            videoElement.style.maxWidth = '100%';
+                            videoElement.style.height = '200px';
+                            imageContainer.replaceWith(videoElement);
+                            videoElement.id = 'group_post_image_modifier';
+                        } else {
+                            imageContainer.src = res.image_path_groupe;
+                        }
                         if (document.getElementById('modifierPostFormdivimage').style.display === "none") {
                             document.getElementById('modifierPostFormdivimage').style.display = "block";
                         }
@@ -962,7 +1247,7 @@
                     document.getElementById('popup-supprimer').classList.add('hidden-modifier');
                     document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
 
-                    document.querySelector('.feed-' + res.id_post_groupe).remove();
+                    document.querySelector('.feed-' + id).remove();
                 }
             });
         }

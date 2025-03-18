@@ -15,6 +15,40 @@
             border-bottom: 2px solid #2B2757;
             color:#2B2757;
         }
+
+        .dropdown-content-modifier {
+            display: none;
+            position: absolute;
+            right: 0;
+            left: auto;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        .dropdown-content-modifier button,
+        .dropdown-content-modifier a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            text-align: left;
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .dropdown-content-modifier button:hover,
+        .dropdown-content-modifier a:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dropdown-modifier .dropdown-btn-modifier:focus + .dropdown-content-modifier {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -35,6 +69,14 @@
         </main>
     </div>
     <script>
+        document.querySelectorAll('.dropdown-btn-modifier').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const dropdownContent = button.nextElementSibling;
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
         $.ajax({
                 url: 'index.php?action=select_invitation_group',
                 method: 'POST',

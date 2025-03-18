@@ -44,6 +44,12 @@
         $group_info = selectGroup($id_group);
         $group_info = $group_info[0];
 
+        if($group_info->id_admin == $id){
+            $is_admin = true;
+        }else{
+            $is_admin = false;
+        }
+
         $countmemberGroup = countmemberGroup($id_group);
         $countmemberGroup = $countmemberGroup[0];
 
@@ -82,6 +88,12 @@
         $group_info = selectGroup($id_group);
         $group_info = $group_info[0];
 
+        if($group_info->id_admin == $id){
+            $is_admin = true;
+        }else{
+            $is_admin = false;
+        }
+
         $countmemberGroup = countmemberGroup($id_group);
         $countmemberGroup = $countmemberGroup[0];
 
@@ -98,6 +110,12 @@
         
         $group_info = selectGroup($id_group);
         $group_info = $group_info[0];
+
+        if($group_info->id_admin == $id){
+            $is_admin = true;
+        }else{
+            $is_admin = false;
+        }
 
         $countmemberGroup = countmemberGroup($id_group);
         $countmemberGroup = $countmemberGroup[0];
@@ -269,8 +287,10 @@
             if($_POST['imagehere'] === "true"){
                 $imageUrl = $oldimage;
             }else{
-                if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage)) {
-                    unlink($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage);
+                if($oldimage !== ""){
+                    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage)) {
+                        unlink($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage);
+                    }
                 }
                 $imageUrl = "";
             }
@@ -372,6 +392,7 @@
                 $group_posts_likes = selectgroupepostslikes($id_post_groupe);
                 $countlikes = countlikesgroupe();
                 $enregistrerpostes = selectenregistrementgroupepostpartage($id,$id_post_groupe);
+                $countcomment = countcommentsgroupe($id_groupe);
 
                 require_once 'vue/affichepostgroupe.php';
             } else {
@@ -411,9 +432,17 @@
 
     function allcomments($id_post_groupe){
         $comments = selectcommentsgroupe($id_post_groupe);
+        $likesofcomment = getlikescomment($id_post_groupe);
+
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
 
         header('Content-Type: application/json');
-        echo json_encode($comments);
+        echo json_encode([
+            'comments' => $comments,
+            'likesofcomment' => $likesofcomment,
+            'id_user' => $idm
+        ]);
     }
 
     function submitcommentgroupe($id_groupe_post,$groupe_comment){
@@ -426,5 +455,165 @@
         echo json_encode([
             'status' => 'success'
         ]);
+    }
+
+    function submitreplygroupe($groupe_comment,$reply_to){
+        $id = $_SESSION['id_user'];
+        $user = selectuser($id);
+        $fullname = $user['prenom'] . " " . $user['nom'];
+
+        $idm = selectidmember($id)->id_groupe_member;
+        submitreplygroup($idm,$groupe_comment,$reply_to);
+        $reply = selectreplygroup($idm);
+
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'status' => 'success',
+            'fullname' => $fullname,
+            'photo_profile' => $reply->photo_profil,
+            'date_reply' => $reply->reply_grp_at,
+            'reply' => $groupe_comment
+        ]);
+    }
+
+    function getresponsegroup($id_comment){
+        $response = selectresponsegroup($id_comment);
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
+        $replylikes = getlikesreplycomment($id_comment);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'response' => $response,
+            'id_user' => $id,
+            'id_member' => $idm,
+            'replylikes' => $replylikes
+        ]);
+    }
+
+    function commentlike($id_comment){
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
+
+        submitcommentlike($id_comment,$idm);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function removecommentlike($id_comment){
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
+
+        removeecommentlike($id_comment,$idm);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function replylike($id_reply){
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
+
+        submitreplylike($id_reply,$idm);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function removereplylike($id_reply){
+        $id = $_SESSION['id_user'];
+        $idm = selectidmember($id)->id_groupe_member;
+
+        removeereplylike($id_reply,$idm);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function deletegroup($id_group){
+        deletegroupe($id_group);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function leavegroup($id_group, $id_user){
+        leavegroupe($id_group, $id_user);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]); 
+    }
+
+    function change_group_banner($id_group) {
+        if (!isset($_FILES['group_banner'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Aucun fichier reçu.']);
+            exit;
+        }
+    
+        $groupDir = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/groupes/' . $id_group;
+        if (!is_dir($groupDir)) {
+            mkdir($groupDir, 0777, true);
+        }
+    
+        // Count posts to generate unique filename
+        $countpostgroupe = countpostgroupe($id_group);
+        $countpostgroupe = $countpostgroupe->count + 1;
+    
+        $tmpName = $_FILES['group_banner']['tmp_name']; // Match AJAX key
+        $imageExtension = pathinfo($_FILES['group_banner']['name'], PATHINFO_EXTENSION);
+        $image = $countpostgroupe . '.' . $imageExtension;
+        $imagePath = $groupDir . '/' . $image;
+    
+        // Move uploaded file
+        if (move_uploaded_file($tmpName, $imagePath)) {
+            $imageUrl = 'img/groupes/' . $id_group . '/' . $image;
+    
+            // Update database (Ensure function exists)
+            change_groupe_banner($id_group, $imageUrl);
+    
+            echo json_encode(['status' => 'success', 'image_url' => $imageUrl]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Échec du téléchargement.']);
+        }
+    }
+    
+    function multimedia_groupe($id_group){
+        $id = $_SESSION['id_user'];
+        $user = selectuser($id);
+        $fullname = $user['prenom'] . " " . $user['nom'];
+
+        
+        $group_info = selectGroup($id_group);
+        $group_info = $group_info[0];
+
+        if($group_info->id_admin == $id){
+            $is_admin = true;
+        }else{
+            $is_admin = false;
+        }
+
+        $countmemberGroup = countmemberGroup($id_group);
+        $countmemberGroup = $countmemberGroup[0];
+
+        $countmembres = $countmemberGroup->count + 1;
+
+        $postes_contenu = select_postes_contenu($id_group);
+
+        require_once 'vue/multimediagroup.php';
     }
 ?>

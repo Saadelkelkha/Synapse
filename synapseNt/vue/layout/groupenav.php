@@ -1,7 +1,10 @@
                 <div class="groupe-banner-container">
                     <img class="groupe-banner" src="<?= $group_info->group_banner ?>" width="100%" alt="Group banner">
                     <div class="edit-banner-btn">
-                        <button class="btn btn-light d-flex align-items-center justify-content-center gap-2"><i class="bi bi-pencil-fill"></i>Edit</button>
+                        <button class="btn btn-light d-flex align-items-center justify-content-center gap-2 dropdown-btn-modifier"><i class="bi bi-pencil-fill"></i>Edit</button>
+                        <div class="dropdown-content-modifier" style="width:180px">
+                            <button class="" onclick="changeBanner()">Changer la bannière</button>   
+                        </div>
                     </div>
                 </div>
                 <div class="groupe-info w-100 p-2 ps-3 pe-3 bg-white">
@@ -16,19 +19,44 @@
                             <button class="btn btn-primary" onclick="addamiepopup(event)">Inviter</button>
                         </div>
                     </div>
-                    <nav class="border-top border-2 mt-2 pt-1 d-flex gap-3">
-                        <form action="index.php?action=exploregroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit" class="btn" id="group_discussion">Discussion</button>
-                        </form>
-                        <form action="index.php?action=invitationgroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit" class="btn" id="group_invitation">Invitation</button>
-                        </form>
-                        <form action="index.php?action=membresgroup" method="post" style="display:inline;">
-                            <input type="hidden" value="<?= $id_group; ?>" name="id_group">
-                            <button type="submit" class="btn" id="group_Membres">Membres</button>
-                        </form>
+                    <nav class="border-top border-2 mt-2 pt-1 d-flex gap-3 justify-content-between">
+                        <div  class="d-flex gap-3">
+                            <form action="index.php?action=exploregroup" method="post" style="display:inline;">
+                                <input type="hidden" value="<?= $id_group; ?>" name="id_group">
+                                <button type="submit" class="btn" id="group_discussion">Discussion</button>
+                            </form>
+                            <?php
+                                    if($is_admin){
+                                    
+                                ?>
+                            <form action="index.php?action=invitationgroup" method="post" style="display:inline;">
+                                <input type="hidden" value="<?= $id_group; ?>" name="id_group">
+                                <button type="submit" class="btn" id="group_invitation">Invitation</button>
+                            </form>
+                            <?php
+                                    }
+                                    
+                                ?>
+                            <form action="index.php?action=membresgroup" method="post" style="display:inline;">
+                                <input type="hidden" value="<?= $id_group; ?>" name="id_group">
+                                <button type="submit" class="btn" id="group_Membres">Membres</button>
+                            </form>
+                            <form action="index.php?action=multimedia_groupe" method="post" style="display:inline;">
+                                <input type="hidden" value="<?= $id_group; ?>" name="id_group">
+                                <button type="submit" class="btn" id="group_multimedia">Multimédia</button>
+                            </form>
+                        </div>
+                        <div >
+                            <button class="btn btn-secondary dropdown-btn-modifier">...</button>
+                            <div class="dropdown-content-modifier">
+                                <?php
+                                    if($is_admin){
+                                        echo '<button class="" onclick="deleteGroup()">Supprimer le groupe</button>';
+                                    }else{
+                                        echo '<button class="" onclick="leaveGroup()">Quitter le groupe</button>';
+                                    }
+                                ?>
+                            </div>
                     </nav>
                 </div>
 
@@ -49,6 +77,163 @@
                 </div>
                 <div class="overlay" id="overlayamie" onclick="addamiepopup(event)"></div>
                 <script>
+                    function changeBanner() {
+                        var overlay = document.createElement('div');
+                        overlay.id = 'changeBannerOverlay';
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100%';
+                        overlay.style.height = '100%';
+                        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                        overlay.style.zIndex = '1000';
+                        overlay.style.display = 'flex';
+                        overlay.style.justifyContent = 'center';
+                        overlay.style.alignItems = 'center';
+
+                        var popup = document.createElement('div');
+                        popup.style.backgroundColor = 'white';
+                        popup.style.padding = '20px';
+                        popup.style.borderRadius = '5px';
+                        popup.style.textAlign = 'center';
+                        popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        popup.style.width = '400px';
+                        popup.innerHTML = `
+                            <p>Choisissez une nouvelle bannière pour le groupe :</p>
+                            <input type="file" id="bannerInput" accept="image/*" class="form-control mb-3">
+                            <button class="btn btn-primary" id="confirmChangeBanner">Changer</button>
+                            <button class="btn btn-secondary" id="cancelChangeBanner">Annuler</button>
+                        `;
+
+                        overlay.appendChild(popup);
+                        document.body.appendChild(overlay);
+
+                        document.getElementById('confirmChangeBanner').onclick = function () {
+                            var fileInput = document.getElementById('bannerInput');
+                            if (fileInput.files.length > 0) {
+                                var formData = new FormData();
+                                formData.append('group_banner', fileInput.files[0]);
+                                formData.append('id_group', <?= $id_group ?>);
+
+                                $.ajax({
+                                    url: 'index.php?action=change_group_banner',
+                                    method: 'POST',
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function (res) {
+                                        window.location.reload();
+                                    },
+                                    error: function () {
+                                        alert('Une erreur est survenue lors du changement de la bannière.');
+                                    },
+                                });
+                            } else {
+                                alert('Veuillez sélectionner une image.');
+                            }
+                        };
+
+                        document.getElementById('cancelChangeBanner').onclick = function () {
+                            document.body.removeChild(overlay);
+                        };
+                    }              
+                    function deleteGroup() {
+                        var overlay = document.createElement('div');
+                        overlay.id = 'deleteGroupOverlay';
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100%';
+                        overlay.style.height = '100%';
+                        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                        overlay.style.zIndex = '1000';
+                        overlay.style.display = 'flex';
+                        overlay.style.justifyContent = 'center';
+                        overlay.style.alignItems = 'center';
+
+                        var popup = document.createElement('div');
+                        popup.style.backgroundColor = 'white';
+                        popup.style.padding = '20px';
+                        popup.style.borderRadius = '5px';
+                        popup.style.textAlign = 'center';
+                        popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        popup.innerHTML = `
+                            <p>Êtes-vous sûr de vouloir supprimer ce groupe ?</p>
+                            <button class="btn btn-danger" id="confirmDeleteGroup">Supprimer</button>
+                            <button class="btn btn-secondary" id="cancelDeleteGroup">Annuler</button>
+                        `;
+
+                        overlay.appendChild(popup);
+                        document.body.appendChild(overlay);
+
+                        document.getElementById('confirmDeleteGroup').onclick = function () {
+                            $.ajax({
+                                url: 'index.php?action=delete_group',
+                                method: 'POST',
+                                data: {
+                                    id_group: <?= $id_group ?>,
+                                },
+                                success: function () {
+                                    window.location.href = 'index.php?action=groups';
+                                },
+                            });
+                            document.body.removeChild(overlay);
+                        };
+
+                        document.getElementById('cancelDeleteGroup').onclick = function () {
+                            document.body.removeChild(overlay);
+                        };
+                    }
+
+                    function leaveGroup() {
+                        var overlay = document.createElement('div');
+                        overlay.id = 'leaveGroupOverlay';
+                        overlay.style.position = 'fixed';
+                        overlay.style.top = '0';
+                        overlay.style.left = '0';
+                        overlay.style.width = '100%';
+                        overlay.style.height = '100%';
+                        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                        overlay.style.zIndex = '1000';
+                        overlay.style.display = 'flex';
+                        overlay.style.justifyContent = 'center';
+                        overlay.style.alignItems = 'center';
+
+                        var popup = document.createElement('div');
+                        popup.style.backgroundColor = 'white';
+                        popup.style.padding = '20px';
+                        popup.style.borderRadius = '5px';
+                        popup.style.textAlign = 'center';
+                        popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                        popup.innerHTML = `
+                            <p>Êtes-vous sûr de vouloir quitter ce groupe ?</p>
+                            <button class="btn btn-danger" id="confirmLeaveGroup">Quitter</button>
+                            <button class="btn btn-secondary" id="cancelLeaveGroup">Annuler</button>
+                        `;
+
+                        overlay.appendChild(popup);
+                        document.body.appendChild(overlay);
+
+                        document.getElementById('confirmLeaveGroup').onclick = function () {
+                            $.ajax({
+                                url: 'index.php?action=leave_group',
+                                method: 'POST',
+                                data: {
+                                    id_group: <?= $id_group ?>,
+                                    id_user: <?= $id ?>,
+                                },
+                                success: function () {
+                                    window.location.href = 'index.php?action=groups';
+                                },
+                            });
+                            document.body.removeChild(overlay);
+                        };
+
+                        document.getElementById('cancelLeaveGroup').onclick = function () {
+                            document.body.removeChild(overlay);
+                        };
+                    } 
+
                     function addamiepopup(event) {
                         var form = document.getElementById('inviteMemberForm');
                         var overlay = document.getElementById('overlayamie');

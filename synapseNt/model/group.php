@@ -352,4 +352,100 @@
         $sqlstate = $db->prepare('INSERT INTO groupe_comment(id_post_groupe,id_user,groupe_comment_content) VALUES (?,?,?)');
         $sqlstate->execute([$id_groupe_post,$id,$groupe_comment]);
     }
+
+    function submitreplygroup($id,$groupe_comment,$reply_to){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('INSERT INTO reply_comment_grp(id_comment_grp,id_user,content_reply_grp) VALUES (?,?,?)');
+        $sqlstate->execute([$reply_to,$id,$groupe_comment]);
+    }
+
+    function selectreplygroup($idm){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM reply_comment_grp join group_membre on reply_comment_grp.id_user = group_membre.id_groupe_member join user on group_membre.id_user = user.id_user where reply_comment_grp.id_user = ?  order by id_reply_grp desc limit 1;');
+        $sqlstate->execute([$idm]);
+        return $sqlstate->fetch(PDO::FETCH_OBJ);
+    }
+
+    function selectresponsegroup($id_comment){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM reply_comment_grp join group_membre on reply_comment_grp.id_user = group_membre.id_groupe_member join user on group_membre.id_user = user.id_user where reply_comment_grp.id_comment_grp = ?');
+        $sqlstate->execute([$id_comment]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function getlikescomment($id_groupe_post){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM groupe_comment_like join groupe_comment on groupe_comment_like.id_comment = groupe_comment.id_groupe_comment WHERE groupe_comment.id_post_groupe = ?');
+        $sqlstate->execute([$id_groupe_post]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function getlikesreplycomment($id_comment){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM grp_reply_like join reply_comment_grp on grp_reply_like.id_reply_grp = reply_comment_grp.id_reply_grp WHERE reply_comment_grp.id_comment_grp = ?');
+        $sqlstate->execute([$id_comment]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function submitcommentlike($id_comment,$idm){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('INSERT INTO groupe_comment_like(id_comment,id_user) VALUES(?,?)');
+        $sqlstate->execute([$id_comment,$idm]);
+    }
+
+    function submitreplylike($id_reply,$idm){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('INSERT INTO grp_reply_like(id_reply_grp,id_user) VALUES(?,?)');
+        $sqlstate->execute([$id_reply,$idm]);
+    }
+
+    function removeecommentlike($id_comment,$idm){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('DELETE FROM groupe_comment_like WHERE id_comment = ? AND id_user = ?');
+        $sqlstate->execute([$id_comment,$idm]);
+    }
+
+    function removeereplylike($id_reply,$idm){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('DELETE FROM grp_reply_like WHERE id_reply_grp = ? AND id_user = ?');
+        $sqlstate->execute([$id_reply,$idm]);
+    }
+
+    function deletegroupe($id_group){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('DELETE FROM groupe WHERE id_group = ?');
+        $sqlstate->execute([$id_group]);
+    }
+
+    function leavegroupe($id_group, $id_user){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('DELETE FROM group_membre WHERE id_user = ? AND id_groupe = ?');
+        $sqlstate->execute([$id_user, $id_group]);
+    }
+
+    function change_groupe_banner($id_group,$group_banner){
+        $db = database_connection();
+        
+        $sqlstate = $db->prepare('UPDATE groupe SET group_banner = ? WHERE id_group = ?');
+        $sqlstate->execute([$group_banner, $id_group]);
+    }
+
+    function select_postes_contenu($id_group){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM groupe_post WHERE id_groupe = ?');
+        $sqlstate->execute([$id_group]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
 ?>
