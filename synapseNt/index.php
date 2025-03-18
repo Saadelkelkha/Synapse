@@ -478,6 +478,15 @@
                 require_once 'controller/storyController.php';
                 creerStory(); // Appel à la fonction modifierStoryController dans storyController
                 break;
+            case 'afficherModifierPostAdmin':
+                    require_once 'controller/profile.php';
+                    afficherPostProfileController($_SESSION['id_user']);
+                    break;
+                    
+                    case 'afficherPhotos':
+                        require_once 'controller/profile.php';
+                        afficherPostProfileController($_SESSION['id_user']);
+                        break;
         }
     }else{
         require_once 'controller/user.php';

@@ -31,7 +31,6 @@ function creerStory(){
     insertStory($imageUrl, $currentDate, $id_user);
     //tzad
     header("Location: index.php");
-    // echo $tmpName, $imagePath;
 }
 
 

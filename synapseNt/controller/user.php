@@ -283,7 +283,7 @@
         //$_SERVER['DOCUMENT_ROOT'] houwa repertoire racine
         $tmpName = $_FILES['image']['tmp_name'];
         $image = $_FILES['image']['name'];
-        $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/vue/uploads/' . $image;
+        $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse2/Synapse/synapseNt/vue/uploads/' . $image;
 
         //kat7t f database
         $imageUrl = 'vue/uploads/' . $image;

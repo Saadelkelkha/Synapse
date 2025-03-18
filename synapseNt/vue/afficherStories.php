@@ -92,15 +92,35 @@ $stories = $sqlState->fetchAll(PDO::FETCH_OBJ);
             color: white;
             cursor: pointer;
         }
+        .home_stories{
+            z-index: 798;
+        }
     </style>
 </head>
 <body>
 
     <div class="stories_body">
         <div class="stories-container" id="stories">
+        <div class="home_stories">
+                          <div class="home_make_story">
+                              <img  src="img/Profile/Julia Clarke.png">
+                              <b>+</b>
+                             
+                              
+                          </div>
+                        
+                         
+                      </div>
+       
+            
             <?php foreach($stories as $story) { ?>
                 <div class="story" onclick="viewStory('<?php echo $story->image_path; ?>')">
-                    <img src="<?php echo $story->image_path; ?>" alt="Story">
+                    
+                   
+                   
+                      <img src="<?php echo $story->image_path; ?>" alt="Story">
+                      
+                    
                     
                 </div>
             <?php } ?>

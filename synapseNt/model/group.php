@@ -9,6 +9,7 @@
         return $sqlstate->fetchAll(PDO::FETCH_OBJ);
     }
 
+
     function rechercherjoinGroup($id){
         $db = database_connection();
 
@@ -100,6 +101,7 @@
         $sqlstate->execute([$id]);
         return $sqlstate->fetchAll(PDO::FETCH_OBJ);
     }
+        
 
     function countmemberGroup($id){
         $db = database_connection();
