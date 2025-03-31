@@ -1,11 +1,19 @@
                 <div class="groupe-banner-container">
                     <img class="groupe-banner" src="<?= $group_info->group_banner ?>" width="100%" alt="Group banner">
+                    <?php
+                    if($is_admin){
+                                    
+                    ?>
                     <div class="edit-banner-btn">
                         <button class="btn btn-light d-flex align-items-center justify-content-center gap-2 dropdown-btn-modifier"><i class="bi bi-pencil-fill"></i>Edit</button>
                         <div class="dropdown-content-modifier" style="width:180px">
                             <button class="" onclick="changeBanner()">Changer la bannière</button>   
                         </div>
                     </div>
+                    <?php
+                    }
+                                    
+                    ?>
                 </div>
                 <div class="groupe-info w-100 p-2 ps-3 pe-3 bg-white">
                     <h1 class="w-100"><b><?= $group_info->name_group ?></b></h1>
@@ -13,7 +21,17 @@
                     <p class="w-100"><?= $countmembres ?> membres</p>
                     <div class="d-flex justify-content-between w-100">
                         <div class="d-flex align-items-center">
-                            <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" width="50px" height="50px">
+                             <?php
+                                                $countmembershow = 0;
+                                                foreach ($imgmembres as $index => $img) {
+                                                    $positionStyle = 'position: relative; margin-left: ' . ($index * -40) . 'px;';
+                                                    echo '<img class="navhome1_profile" src="' . htmlspecialchars($img->photo_profil, ENT_QUOTES, 'UTF-8') . '" width="50px" height="50px" alt="Member profile picture" style="' . $positionStyle . '">';
+                                                    $countmembershow++;
+                                                    if ($countmembershow >= 10) {
+                                                        break;
+                                                    }
+                                                }                
+                                                ?>                
                         </div>
                         <div>
                             <button class="btn btn-primary" onclick="addamiepopup(event)">Inviter</button>

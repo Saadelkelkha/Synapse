@@ -2,6 +2,7 @@
             <div class="navhome1_left">
                 <img src="img/logop.png" height="50">
                 <?php  include 'vue/chatbot1.php';?>
+                <?php  include 'vue/message.php';?>
             </div>
             <form action="index.php?action=search" method="POST" style="display:flex; gap:10px">
                 <input type="text" name="keywords" id="" class="form-control search-bar">

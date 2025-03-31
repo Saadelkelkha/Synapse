@@ -76,15 +76,6 @@
         </div>
     </div>
     <div class="overlay" id="overlay" onclick="addkickmemberpopup()"></div>
-
-    <div id="addinvitasadminpopup">
-        <p>Are you sure you want to invite this member as an admin?</p>
-        <div class="d-flex w-100 justify-content-around">
-            <button type="submit" name="submit_invit_group" class="btn btn-primary">Oui</button>
-            <button type="button" class="btn btn-secondary" onclick="addinvitasadminpopup()">Annuler</button>
-        </div>
-    </div>
-    <div class="overlay" id="overlayinvit" onclick="addinvitasadminpopup()"></div>
     <script>
         document.querySelectorAll('.dropdown-btn-modifier').forEach(button => {
             button.addEventListener('click', (e) => {
@@ -109,52 +100,65 @@
             }
         }
 
-        function addinvitasadminpopup(id_groupe_member, event) {
-            var form = document.getElementById('addinvitasadminpopup');
-            var overlay = document.getElementById('overlayinvit');
-            if (form.style.display === 'none' || form.style.display === '') {
-                form.style.display = 'flex';
-                overlay.style.display = 'block';
-                form.querySelector('button[name="submit_invit_group"]').setAttribute('onclick', `invitasadmin(${id_groupe_member}, event)`);
-                  
-
-            } else {
-                form.style.display = 'none';
-                overlay.style.display = 'none';
-            }
-        }
-
         $.ajax({
             url: 'index.php?action=select_membres_group',
             method: 'POST',
             data: {
-                id_groupe: <?=$id_group?>,
+            id_groupe: <?=$id_group?>,
             },
             success: function (data, status) {
-                $.each(data, function(index, inv){
-                    $("#invitationsection").append(`
-                        <div class="person-card d-flex justify-content-between person-card-inv-groupe bg-white" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
-                            <div class="d-flex gap-2 align-items-center">
-                                <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
-                                <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <div class="dropdown show">
-                                  <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    ...
-                                  </a>
-                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <a class="dropdown-item" onclick="addkickmemberpopup(${inv.id_groupe_member},event)">Kick from group</a>
-                                    <a class="dropdown-item" onclick="addinvitasadminpopup(${inv.id_groupe_member},event)">Invit as admin</a>
-                                    <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member},event)">View profile</a>
-                                  </div>
-                                </div>
-                            </div>
-                        </div><br>`
-                    )
-                })
+            $("#invitationsection").append(`<h1>Administrateurs</h1>`);
+            $.each(data.membres, function(index, inv) {
+                if (data.id_admin == inv.id_user) {
+                $("#invitationsection").append(`
+                    <div class="person-card d-flex justify-content-between person-card-inv-groupe bg-white" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                    <div class="d-flex gap-2 align-items-center">
+                        <img class="navhome1_profile" src="${inv.photo_profil}" height="50" width="50" style="border-radius: 50%;">
+                        <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="dropdown show">
+                        <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ...
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member}, event)">View profile</a>
+                        </div>
+                        </div>
+                    </div>
+                    </div><br>
+                `);
+                }
+            });
+            $("#invitationsection").append(`<h1>Membres</h1>`);
+            $.each(data.membres, function(index, inv) {
+                if (data.id_admin !== inv.id_user) {
+                $("#invitationsection").append(`
+                    <div class="person-card d-flex justify-content-between person-card-inv-groupe bg-white" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                    <div class="d-flex gap-2 align-items-center">
+                        <img class="navhome1_profile" src="${inv.photo_profil}" height="50" width="50" style="border-radius: 50%;">
+                        <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="dropdown show">
+                        <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ...
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <?php if ($is_admin) { ?>
+                            <a class="dropdown-item" onclick="addkickmemberpopup(${inv.id_groupe_member}, event)">Kick from group</a>
+                            <?php } ?>
+                            <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member}, event)">View profile</a>
+                        </div>
+                        </div>
+                    </div>
+                    </div><br>
+                `);
+                }
+            });
             },
         });
+
         function fetchMembres() {
             $.ajax({
                 url: 'index.php?action=select_membres_group',
@@ -169,28 +173,55 @@
                             <button class="btn btn-primary" onclick="fetchMembres()"><i class="bi bi-arrow-clockwise"></i></button>
                         </div>
                     `)
-                    $.each(data, function(index, inv){
+                    $("#invitationsection").append(`<h1>Administrateurs</h1>`);
+                    $.each(data.membres, function(index, inv) {
+                        if (data.id_admin == inv.id_user) {
                         $("#invitationsection").append(`
                             <div class="person-card d-flex justify-content-between person-card-inv-groupe bg-white" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
-                                <div class="d-flex gap-2 align-items-center">
-                                    <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
-                                    <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
+                            <div class="d-flex gap-2 align-items-center">
+                                <img class="navhome1_profile" src="${inv.photo_profil}" height="50" width="50" style="border-radius: 50%;">
+                                <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <div class="dropdown show">
+                                <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    ...
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member}, event)">View profile</a>
                                 </div>
-                                <div class="d-flex gap-2">
-                                    <div class="dropdown show">
-                                        <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            ...
-                                        </a>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <a class="dropdown-item" onclick="addkickmemberpopup(${inv.id_groupe_member},event)">Kick from group</a>
-                                            <a class="dropdown-item" onclick="addinvitasadminpopup(${inv.id_user},event)">Invit as admin</a>
-                                            <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member},event)">View profile</a>
-                                        </div>
-                                    </div>
                                 </div>
-                            </div><br>`
-                        )
-                    })
+                            </div>
+                            </div><br>
+                        `);
+                        }
+                    });
+                    $("#invitationsection").append(`<h1>Membres</h1>`);
+                    $.each(data.membres, function(index, inv) {
+                        if (data.id_admin !== inv.id_user) {
+                        $("#invitationsection").append(`
+                            <div class="person-card d-flex justify-content-between person-card-inv-groupe bg-white" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                            <div class="d-flex gap-2 align-items-center">
+                                <img class="navhome1_profile" src="${inv.photo_profil}" height="50" width="50" style="border-radius: 50%;">
+                                <h6 style="font-weight: 600; margin: 0;">${inv.prenom} ${inv.nom}</h6>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <div class="dropdown show">
+                                <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    ...
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <?php if ($is_admin) { ?>
+                                    <a class="dropdown-item" onclick="addkickmemberpopup(${inv.id_groupe_member}, event)">Kick from group</a>
+                                    <?php } ?>
+                                    <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member}, event)">View profile</a>
+                                </div>
+                                </div>
+                            </div>
+                            </div><br>
+                        `);
+                        }
+                    });
                 },
             });
         }
@@ -215,38 +246,6 @@
                     error: function(){
                         var form = document.getElementById('addkickmemberpopup');
                         var overlay = document.getElementById('overlay');
-
-                        fetchMembres();
-
-                        form.style.display = 'none';
-                        overlay.style.display = 'none';
-                    }
-                });
-            }
-        }
-
-        function invitasadmin(id_groupe_member, event) {
-            if (id_groupe_member) {
-                $.ajax({
-                    url: 'index.php?action=invitasadmin',
-                    method: 'POST',
-                    data: {
-                        id_groupe_member: id_groupe_member,
-                        id_groupe: <?=$id_group?>,
-                    },
-                    success: function(res){
-                        alert(res);
-                        var form = document.getElementById('addinvitasadminpopup');
-                        var overlay = document.getElementById('overlayinvit');
-
-                        fetchMembres();
-
-                        form.style.display = 'none';
-                        overlay.style.display = 'none';
-                    },
-                    error: function(){
-                        var form = document.getElementById('addinvitasadminpopup');
-                        var overlay = document.getElementById('overlayinvit');
 
                         fetchMembres();
 

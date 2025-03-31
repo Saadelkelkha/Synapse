@@ -490,7 +490,29 @@
                     multimedia_groupe($id_group);
                     break;
                 }
-
+            case 'selectmessages':
+                if(isset($_POST['id_user'])){
+                    require_once 'controller/messages.php';
+                    $id_user = $_POST['id_user'];
+                    selectmessages($id_user);
+                    break;
+                }
+            case 'selectmessagesamie':
+                if(isset($_POST['id_amie']) && isset($_POST['id_user'])){
+                    require_once 'controller/messages.php';
+                    $id_amie = $_POST['id_amie'];
+                    $id_user = $_POST['id_user'];
+                    selectmessagesamie($id_amie,$id_user);
+                    break;
+                }
+            case 'sendMessage':
+                if(isset($_POST['id_destinataire']) && isset($_POST['message'])){
+                    require_once 'controller/messages.php';
+                    $id_amie = $_POST['id_destinataire'];
+                    $message = $_POST['message'];
+                    sendMessage($id_amie,$message);
+                    break;
+                }
             case 'post':
                 if (isset($_SESSION['id_user']) && isset($_POST['post'])) {
                     require_once 'controller/user.php';

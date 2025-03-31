@@ -548,7 +548,7 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
                           <div class="home_make_story">
                               <img src="img/Profile/Julia Clarke.png">
                               <b>+</b>
-                              <p>Add</p>echo $post->;
+                              <p>Add</p>
                           </div>
                           <div class="home_story">
                               <img src="img/Profile/Julia Clarke.png">

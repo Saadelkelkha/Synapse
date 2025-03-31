@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Chatbot</title>
     <style>
         .chatbot {
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            right: 80px;
             width: 300px;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -74,7 +75,7 @@
         #toggleChatbot {
             position: fixed;
             bottom: 20px;
-            right: 330px;
+            right: 20px;
             padding: 10px 15px;
             background-color: #2B2757;
             color: white;
@@ -86,12 +87,18 @@
         #toggleChatbot:hover {
             background-color: #1F1B4D;
         }
+
+        @media screen and (max-width: 550px){
+            .chatbot{
+                width:250px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <!-- Bouton pour afficher/masquer le chatbot -->
-<button id="toggleChatbot">Ouvrir le Chatbot</button>
+<button id="toggleChatbot" style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-robot"></i></button>
 
 <!-- Chatbot intégré -->
 <div id="chatbot" class="chatbot">
@@ -101,15 +108,21 @@
     <div class="chatbot-body">
         <div id="chatMessages" class="chat-messages"></div>
     </div>
-    <div class="chatbot-footer">
-        <input type="text" id="userMessage" placeholder="Écrivez un message..." onkeypress="handleKeyPress(event)">
-        <button id="sendMessage" onclick="sendMessage()">Envoyer</button>
+    <div class="chatbot-footer d-flex">
+        <input type="text" id="userMessage" class="form-control me-2" placeholder="Écrivez un message..." onkeypress="handleKeyPress(event)">
+        <button id="sendMessage" class="btn btn-primary" onclick="sendMessage()">Envoyer</button>
     </div>
 </div>
 
 <script>
 document.getElementById('toggleChatbot').addEventListener('click', function() {
     var chatbot = document.getElementById('chatbot');
+    var chat = document.getElementById('chat');
+
+    if(chat.style.display === 'flex'){
+        chat.style.display = 'none';
+    }
+
     chatbot.style.display = (chatbot.style.display === 'none' || chatbot.style.display === '') ? 'flex' : 'none';
 });
 

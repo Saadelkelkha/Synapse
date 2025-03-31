@@ -53,7 +53,7 @@
         $countmemberGroup = countmemberGroup($id_group);
         $countmemberGroup = $countmemberGroup[0];
 
-        $countmembres = $countmemberGroup->count + 1;
+        $countmembres = $countmemberGroup->count;
 
         $group_posts = selectgroupeposts($id_group);
 
@@ -64,6 +64,8 @@
         $enregistrerpostes = selectenregistrementgroupepost($id,$id_group);
 
         $countcomment = countcommentsgroupe($id_group);
+
+        $imgmembres = selectmembresgroupparid($id_group);
 
         require_once 'vue/exploregroupe.php';
     }
@@ -97,7 +99,9 @@
         $countmemberGroup = countmemberGroup($id_group);
         $countmemberGroup = $countmemberGroup[0];
 
-        $countmembres = $countmemberGroup->count + 1;
+        $countmembres = $countmemberGroup->count;
+
+        $imgmembres = selectmembresgroupparid($id_group);
 
         require_once 'vue/invitationgroup.php';
     }
@@ -120,7 +124,9 @@
         $countmemberGroup = countmemberGroup($id_group);
         $countmemberGroup = $countmemberGroup[0];
 
-        $countmembres = $countmemberGroup->count + 1;
+        $countmembres = $countmemberGroup->count;
+
+        $imgmembres = selectmembresgroupparid($id_group);
 
         require_once 'vue/membresgroup.php';
     }
@@ -133,8 +139,16 @@
     }
 
     function select_membres_group($id_group){
+        $id = $_SESSION['id_user'];
+
+        $group_info = selectGroup($id_group);
+        $group_info = $group_info[0];
+
         $membres = selectmembresgroupparid($id_group);
-        echo json_encode($membres);
+        echo json_encode([
+            'membres' => $membres,
+            'id_admin' => $group_info->id_admin
+        ]);
 
         header('Content-Type: application/json');
     }
@@ -610,9 +624,11 @@
         $countmemberGroup = countmemberGroup($id_group);
         $countmemberGroup = $countmemberGroup[0];
 
-        $countmembres = $countmemberGroup->count + 1;
+        $countmembres = $countmemberGroup->count;
 
         $postes_contenu = select_postes_contenu($id_group);
+
+        $imgmembres = selectmembresgroupparid($id_group);
 
         require_once 'vue/multimediagroup.php';
     }

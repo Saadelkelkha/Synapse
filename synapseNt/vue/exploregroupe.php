@@ -426,6 +426,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <?php if($post->id_user == $id){ ?>
                                 <div class="dropdown-modifier">
                                     <button class="btn btn-primary dropdown-btn-modifier">...</button>
                                     <div class="dropdown-content-modifier">
@@ -433,6 +434,7 @@
                                         <button class="open-popup-btn-supprimer" onclick="affichesupprimer(<?php echo $post->id_groupe_post; ?>)">Supprimer</button>
                                     </div>
                                 </div>
+                                <?php } ?>
                             </div>
                         </div>
                         <div class="imageorvideopost bg-dark d-flex justify-content-center">
