@@ -513,6 +513,21 @@
                     sendMessage($id_amie,$message);
                     break;
                 }
+            case 'sendAudio':
+                if(isset($_POST['id_destinataire']) && isset($_POST['finalTime'])){
+                    require_once 'controller/messages.php';
+                    $finalTime = $_POST['finalTime'];
+                    $id_amie = $_POST['id_destinataire'];
+                    sendAudio($id_amie,$finalTime);
+                    break;
+                }
+            case 'vue':
+                if(isset($_POST['id_message'])){
+                    require_once 'controller/messages.php';
+                    $id_message = $_POST['id_message'];
+                    vue($id_message);
+                    break;
+                }
             case 'post':
                 if (isset($_SESSION['id_user']) && isset($_POST['post'])) {
                     require_once 'controller/user.php';

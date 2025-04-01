@@ -40,4 +40,42 @@ function sendMessage($id_amie,$message){
 
 }
 
+function sendAudio($id_amie, $finalTime){
+    $id_user = $_SESSION['id_user'];
+
+    $groupDir = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/messages/' . $id_user . '/'. $id_amie . '/';
+    
+    if (!is_dir($groupDir)) {
+        mkdir($groupDir, 0777, true);
+    }
+    // Traitement de l'image
+    $files = glob($groupDir . '/*'); 
+    $countpostgroupe = count($files) + 1; 
+    //$_SERVER['DOCUMENT_ROOT'] houwa repertoire racine
+    $file_name = $countpostgroupe . "_" . basename($_FILES["audio"]["name"]);
+    $target_file  = $groupDir . $file_name;
+    //kat7t f database
+    $imageUrl = 'img/messages/' . $id_user . '/'. $id_amie . '/'. $file_name;
+    // Déplacer l'image dans le répertoire "uploads"
+    move_uploaded_file($_FILES["audio"]["tmp_name"], $target_file);
+
+    send_audio($id_user,$id_amie,$imageUrl,$finalTime);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Message sent successfully'
+    ]);
+
+}
+
+function vue($id_message){
+    vue_message($id_message);
+    
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Message marked as read'
+    ]);
+}
+
 ?>

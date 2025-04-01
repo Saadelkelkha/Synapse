@@ -14,6 +14,9 @@
                 m.id_expediteur,
                 m.id_destinataire,
                 m.message,
+                m.audio,
+                m.audio_dure,
+                m.vue,
                 m.date_envoi
             FROM followers f
             JOIN user u ON u.id_user = f.id_amie
@@ -48,6 +51,9 @@
                 m.id_expediteur,
                 m.id_destinataire,
                 m.message, 
+                m.audio,
+                m.audio_dure,
+                m.vue,
                 m.date_envoi
             FROM message m
             WHERE 
@@ -76,6 +82,22 @@
         $sqlstate = $db->prepare('INSERT INTO message (id_expediteur, id_destinataire, message) VALUES (?, ?, ?)');
     
         $sqlstate->execute([$id_user,$id_amie,$message]);
+    }
+
+    function send_audio($id_user,$id_amie,$message,$finalTime){
+        $db = database_connection();
+    
+        $sqlstate = $db->prepare('INSERT INTO message (id_expediteur, id_destinataire, audio, audio_dure) VALUES (?, ?, ?, ?)');
+    
+        $sqlstate->execute([$id_user,$id_amie,$message,$finalTime]);
+    }
+
+    function vue_message($id_message){
+        $db = database_connection();
+    
+        $sqlstate = $db->prepare('UPDATE message SET vue = 1 WHERE id_message = ?');
+    
+        $sqlstate->execute([$id_message]);
     }
     
 ?>

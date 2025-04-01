@@ -42,6 +42,8 @@
 
         .chat-footer {
             display: flex;
+            align-items: center; 
+            justify-content: space-between;
             padding: 10px;
             border-top: 1px solid #ddd;
         }
@@ -50,6 +52,13 @@
             flex-grow: 1;
             margin-right: 10px;
             padding: 5px;
+        }
+
+        .chat-footer .btn {
+            background-color: #2B2757;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
 
         .chat-messages {
@@ -93,7 +102,7 @@
 
         .chat-msg{
             display: block;
-            width: 190px; 
+            width: 150px; 
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -131,11 +140,13 @@
 
             .chat-msg{
                 display: block;
-                width: 140px; 
+                width: 100px; 
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+
+            
         }
 
         .chat-div {
@@ -156,7 +167,7 @@
         }
 
         .message {
-            max-width: 70%;
+            max-width: 85%;
             padding: 8px 12px;
             border-radius: 20px;
             margin-bottom: 8px;
@@ -165,7 +176,7 @@
         }
 
         .sent {
-            background: black;
+            background: #2B2757;
             color: white;
             align-self: flex-end;
             text-align: right;
@@ -189,6 +200,55 @@
             margin-top: 20px;
         }
 
+        .visualizer {
+          width: 200px;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 3px;
+        }
+        
+        .bar {
+          width: 6px;
+          height: 10px;
+          background: white;
+          border-radius: 3px;
+          animation: equalize 1.5s infinite alternate;
+        }
+        
+        @keyframes equalize {
+          0% { height: 10px; }
+          100% { height: 40px; }
+        }
+        
+        .bar:nth-child(1) { animation-delay: 0.1s; }
+        .bar:nth-child(2) { animation-delay: 0.3s; }
+        .bar:nth-child(3) { animation-delay: 0.5s; }
+        .bar:nth-child(4) { animation-delay: 0.2s; }
+        .bar:nth-child(5) { animation-delay: 0.4s; }
+
+          
+        .custom-audio-player {
+          width: 200px;
+          height: 40px;
+          filter: invert(0);
+        }
+        
+        
+        @media (max-width: 550px) {
+            .audio-player-container {
+              padding: 0 15px;
+            }
+            
+              .audio-player {
+              padding: 15px;
+            }
+          
+            .custom-audio-player {
+                width: 150px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -210,6 +270,12 @@
 </div>
 
 <script>
+    let data1 = [];
+    let data2 = [];
+    let finalTime;
+    let mediaRecorder;
+    let audioChunks = [];
+
 document.getElementById('toggleChat').addEventListener('click', function () {
     var chat = document.getElementById('chat');
 
@@ -220,6 +286,7 @@ document.getElementById('toggleChat').addEventListener('click', function () {
             id_user: <?= $id ?>
         },
         success: function (res) {
+            data1 = res.data;
             var chatBody = document.querySelector('.chat-body');
             chatBody.innerHTML = '';
             if (res.data && res.data.length > 0) {
@@ -257,13 +324,39 @@ document.getElementById('toggleChat').addEventListener('click', function () {
                         displayDate = messageDate.toLocaleDateString();
                     }
 
-                    messageContent.innerHTML = `
-                        <div class='d-flex justify-content-between w-100'>
-                            <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
-                            ${message.message ? `<small style="align-self: center;">${displayDate}</small>` : ""}
-                        </div>
-                        <p class='chat-msg'>${message.message ? message.message : "No messages yet"}</p>
-                    `;
+                    if (message.message) {
+                        messageContent.innerHTML = `
+                            <div class='d-flex justify-content-between w-100'>
+                                <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
+                                ${message.message ? `<small style="align-self: center;">${displayDate}</small>` : ""}
+                            </div>
+                            <p class='d-flex align-items-center justify-content-between' >
+                                <span class="chat-msg">${message.message}</span>
+                                ${message.id_destinataire == <?= $id ?> ? `<span>${message.vue == 0 ? '<i class="fa-solid fa-circle me-1" style="color:#440af7;font-size: 0.8em;"></i>' : ""}<i class="fa-solid fa-check" style='color: ${message.vue == 1 ? "blue" : "grey"};'></i></span>` : ""}
+                            </p>
+                        `;
+                    }else{
+                        if (message.audio) {
+                            messageContent.innerHTML = `
+                                <div class='d-flex justify-content-between w-100'>
+                                    <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
+                                    ${message.audio ? `<small style="align-self: center;">${displayDate}</small>` : ""}
+                                </div>
+                                <p class='d-flex align-items-center justify-content-between'>
+                                    <span class="chat-msg"><i class="fas fa-microphone pe-1" style="font-size: 1em;"></i>${message.audio_dure}</span>
+                                    ${message.id_destinataire == <?= $id ?> ? `<span>${message.vue == 0 ? '<i class="fa-solid fa-circle me-1" style="color:#440af7;font-size: 0.8em;"></i>' : ""}<i class="fa-solid fa-check" style='color: ${message.vue == 1 ? "blue" : "grey"};'></i></span>` : ""}
+                                </p>
+                            `;
+                        } else {
+                            messageContent.innerHTML = `
+                                <div class='d-flex justify-content-between w-100'>
+                                    <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
+                                    ${message.message ? `<small style="align-self: center;">${displayDate}</small>` : ""}
+                                </div>
+                                <p class='chat-msg'>No messages yet</p>
+                            `;
+                        }
+                    }
 
                     messageElement.appendChild(profileImage);
                     messageElement.appendChild(messageContent);
@@ -278,6 +371,8 @@ document.getElementById('toggleChat').addEventListener('click', function () {
         chatbot.style.display = 'none';
     }
     chat.style.display = (chat.style.display === 'none' || chat.style.display === '') ? 'flex' : 'none';
+    var footer = document.querySelector('.chat-footer');
+    footer.innerHTML = ``;
 });
 
 function toggleChat(){
@@ -290,10 +385,12 @@ function toggleChat(){
             id_user: <?= $id ?>
         },
         success: function (res) {
+            data1 = res.data;
             var chatBody = document.querySelector('.chat-body');
             chatBody.innerHTML = '';
             if (res.data && res.data.length > 0) {
                 res.data.forEach(function (message) {
+
                     var messageElement = document.createElement('div');
                     messageElement.onclick = function() {
                         show_chat(message.id_amie);
@@ -327,13 +424,39 @@ function toggleChat(){
                         displayDate = messageDate.toLocaleDateString();
                     }
 
-                    messageContent.innerHTML = `
-                        <div class='d-flex justify-content-between w-100'>
-                            <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
-                            ${message.message ? `<small style="align-self: center;">${displayDate}</small>` : ""}
-                        </div>
-                        <p class='chat-msg'>${message.message ? message.message : "No messages yet"}</p>
-                    `;
+                    if (message.message) {
+                        messageContent.innerHTML = `
+                            <div class='d-flex justify-content-between w-100'>
+                                <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
+                                ${message.message ? `<small style="align-self: center;">${displayDate}</small>` : ""}
+                            </div>
+                            <p class='d-flex align-items-center justify-content-between' >
+                                <span class="chat-msg">${message.message}</span>
+                                ${message.id_destinataire == <?= $id ?> ? `<span>${message.vue == 0 ? '<i class="fa-solid fa-circle me-1" style="color:#440af7;font-size: 0.8em;"></i>' : ""}<i class="fa-solid fa-check" style='color: ${message.vue == 1 ? "blue" : "grey"};'></i></span>` : ""}
+                            </p>
+                        `;
+                    }else{
+                        if (message.audio) {
+                            messageContent.innerHTML = `
+                                <div class='d-flex justify-content-between w-100'>
+                                    <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
+                                    ${message.audio ? `<small style="align-self: center;">${displayDate}</small>` : ""}
+                                </div>
+                                <p class='d-flex align-items-center justify-content-between'>
+                                    <span class="chat-msg"><i class="fas fa-microphone pe-1" style="font-size: 1em;"></i>${message.audio_dure}</span>
+                                    ${message.id_destinataire == <?= $id ?> ? `<span>${message.vue == 0 ? '<i class="fa-solid fa-circle me-1" style="color:#440af7;font-size: 0.8em;"></i>' : ""}<i class="fa-solid fa-check" style='color: ${message.vue == 1 ? "blue" : "grey"};'></i></span>` : ""}
+                                </p>
+                            `;
+                        } else {
+                            messageContent.innerHTML = `
+                                <div class='d-flex justify-content-between w-100'>
+                                    <strong class='chat-name'>${message.prenom} ${message.nom}</strong>
+                                    ${message.message ? `<small style="align-self: center;">${displayDate}</small>` : ""}
+                                </div>
+                                <p class='chat-msg'>No messages yet</p>
+                            `;
+                        }
+                    }
 
                     messageElement.appendChild(profileImage);
                     messageElement.appendChild(messageContent);
@@ -347,6 +470,45 @@ function toggleChat(){
     footer.innerHTML = ``;
 }
 
+setInterval(() => {
+    if (document.getElementById('chat').style.display === 'flex') {
+        var footer = document.querySelector('.chat-footer');
+        if (footer.innerHTML === ``) {
+            $.ajax({
+                url: 'index.php?action=selectmessages',
+                type: 'POST',
+                data: {
+                    id_user: <?= $id ?>
+                },
+                success: function (res) {
+                    if(JSON.stringify(res.data) !== JSON.stringify(data2)){
+                        toggleChat();
+                        data1 = res.data;
+                    }
+                    
+                }
+            });
+        }else{
+            var id_amie = document.querySelector('#msg_amie').getAttribute('id_amie');
+            $.ajax({
+                    url: 'index.php?action=selectmessagesamie',
+                    type: 'POST',
+                    data: {
+                        id_user: <?= $id ?>,
+                        id_amie: id_amie
+                    },
+                    success: function (res) {
+                        if (JSON.stringify(res.data) !== JSON.stringify(data2)) {
+                            show_chat(id_amie);
+                            data2 = res.data;
+                        }
+                    }
+                });
+        }
+    }
+}, 1000);
+
+
 function show_chat(id_amie) {
     $.ajax({
         url: 'index.php?action=selectmessagesamie',
@@ -356,6 +518,7 @@ function show_chat(id_amie) {
             id_amie: id_amie
         },
         success: function (res) {
+            data2 = res.data;
             var chatBody = document.querySelector('.chat-body');
             chatBody.innerHTML = ''; // Clear previous messages
 
@@ -380,7 +543,7 @@ function show_chat(id_amie) {
                 userInfo.style.alignItems = 'center';
                 userInfo.style.marginBottom = '10px';
                 userInfo.style.backgroundColor = 'white';
-                userName.innerHTML = `<strong>${res.amieinfo.prenom} ${res.amieinfo.nom}</strong>`;
+                userName.innerHTML = `<strong id="msg_amie" id_amie="${id_amie}">${res.amieinfo.prenom} ${res.amieinfo.nom}</strong>`;
                 
                 var backbtn = document.createElement('i');
                 backbtn.className = "fas fa-arrow-left";
@@ -400,8 +563,20 @@ function show_chat(id_amie) {
                 chatBody.appendChild(userInfo);
                 
                 let lastMessageDate = null;
-
                 res.data.forEach(function (message) {
+                    if(message.id_expediteur != <?= $id ?>){
+                        $.ajax({
+                            url: 'index.php?action=vue',
+                            type: 'POST',
+                            data: {
+                                id_message: message.id_message
+                            },
+                            success: function (res) {
+
+                            }
+                        });
+                    }
+
                     var messageDate = new Date(message.date_envoi);
                     var formattedDate = messageDate.toLocaleDateString();
                     
@@ -432,7 +607,9 @@ function show_chat(id_amie) {
 
                     // Display message content with time on the same line
                     messageElement.innerHTML = `
-                        <span style="word-wrap: break-word;overflow-wrap: break-word;word-break: break-word;white-space: normal"> ${message.message}</span>
+                        <span style="word-wrap: break-word;overflow-wrap: break-word;word-break: break-word;white-space: normal">
+                            ${message.message ? message.message : `<audio class="custom-audio-player" src="${message.audio}" controls></audio>`}
+                        </span>
                         <small style="font-size: 10px; color: gray; margin-left: 10px;">${formattedTime}</small>
                     `;
 
@@ -444,13 +621,123 @@ function show_chat(id_amie) {
 
                 var footer = document.querySelector('.chat-footer');
                 footer.innerHTML = `
-                    <input type="text" id="userMessage" class="form-control me-2" placeholder="Écrivez un message..." style="width: 100%;">
-                    <button id="sendMessage" class="btn btn-primary" onclick="sendMessage(${id_amie})"><i class="fas fa-paper-plane"></i></button>
+                    <button id="sendMessage" class="btn" onclick="start_audio(${id_amie})"><i class="fas fa-microphone" style="font-size: 1.2em;"></i></button>
+                    <input type="text" id="userMessage" class="form-control ms-1 me-1" placeholder="Écrivez un message..." style="width: 100%;">
+                    <button id="sendMessage" class="btn" onclick="sendMessage(${id_amie})"><i class="fas fa-paper-plane" style="font-size: 1.2em;" ></i></button>
                 `;
             }
         }
     });
 };
+
+
+
+let recordedAudioBlob = null;
+
+async function start_audio(id_amie) {
+    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    let mediaRecorder = new MediaRecorder(stream);
+    let audioChunks = [];
+    
+    mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+    
+    mediaRecorder.onstop = () => {
+        recordedAudioBlob = new Blob(audioChunks, { type: "audio/wav" });
+    };
+    
+    mediaRecorder.start();
+
+    let timerElement = document.createElement('span');
+    timerElement.id = 'timer';
+    timerElement.style.backgroundColor = 'white';
+    timerElement.style.padding = '5px';
+    timerElement.style.borderRadius = '50px';
+    timerElement.textContent = '0:00';
+
+    let seconds = 0;
+    let timerInterval = setInterval(() => {
+        seconds++;
+        let minutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds % 60;
+        timerElement.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    }, 1000);
+
+    var footer = document.querySelector('.chat-footer');
+    footer.innerHTML = `
+        <button class="delete-btn btn" style="width: 20px; height: 20px; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7em;" onclick="deleteAudio(${id_amie})">✖</button>
+        <span style="background-color: #2B2757; max-height: 100%; width: 200px; padding: 10px; border-radius: 50px; display: flex; align-items: center; justify-content: space-between;">
+            <button id="stopBtn" style="background-color: white; height: 80%; padding: 5px; border-radius: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.1em;">
+                <i class="fa-solid fa-square" style="color: #2B2757;"></i>
+            </button>
+            <div class="visualizer" id="visualizer">
+                <div class="bar"></div>
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                  <div class="bar"></div>
+                </div>
+        </span>
+        <button id="uploadBtn" class="btn"><i class="fas fa-paper-plane" style="font-size: 1.2em;"></i></button>
+    `;
+    footer.querySelector('span').appendChild(timerElement);
+
+    document.getElementById("stopBtn").addEventListener("click", () => {
+        
+        mediaRecorder.stop();
+        clearInterval(timerInterval);
+        finalTime = timerElement.textContent; 
+        timerElement.textContent = finalTime;
+        const uploadBtn = document.getElementById("uploadBtn");
+        uploadBtn.onclick = function() {
+            sendAudio(id_amie, finalTime);
+        };
+        
+
+        bars = document.querySelectorAll('.bar');
+        bars.forEach(bar => {
+            bar.style.animationPlayState = 'paused';
+            bar.style.height = '10px';
+        });
+    });
+}
+
+function sendAudio(id_amie, finalTime) {
+    console.log("Sending audio to: " + id_amie);
+    console.log("Final time: " + finalTime);
+    var uploadBtn = document.getElementById("uploadBtn");
+    if (!recordedAudioBlob) {
+        alert("Aucun enregistrement audio disponible.");
+        return;
+    }
+
+
+
+        let audioBlob = recordedAudioBlob;
+
+
+        var formData = new FormData();
+        formData.append("id_destinataire", id_amie);
+        formData.append("finalTime", finalTime);
+        formData.append("audio", audioBlob, "audio_message.wav");
+
+        $.ajax({
+            url: 'index.php?action=sendAudio',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                show_chat(id_amie);
+            },
+            error: function (err,e,r) {
+                console.error("Error sending audio:", err);
+                console.error("Error details:", e, r);
+
+                alert("Erreur lors de l'envoi de l'audio.");
+            }
+        });
+}
+
 
 function sendMessage(id_amie) {
     // Dynamically fetch the input field to ensure it exists
@@ -480,6 +767,15 @@ function sendMessage(id_amie) {
     } else {
         alert("Le champ de message est vide.");
     }
+}
+
+function deleteAudio(id_amie){
+    var footer = document.querySelector('.chat-footer');
+    footer.innerHTML = `
+        <button id="sendMessage" class="btn" onclick="start_audio(${id_amie})"><i class="fas fa-microphone" style="font-size: 1.2em;"></i></button>
+        <input type="text" id="userMessage" class="form-control ms-1 me-1" placeholder="Écrivez un message..." style="width: 100%;">
+        <button id="sendMessage" class="btn" onclick="sendMessage(${id_amie})"><i class="fas fa-paper-plane" style="font-size: 1.2em;" ></i></button>
+    `;
 }
 
 </script>
