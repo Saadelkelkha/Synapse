@@ -512,7 +512,7 @@ foreach($posts as $post) {
                                 <!-- Compteur de likes -->
                                 
 
-                                <span><i class="uil uil-comment" style="font-size: x-large;"></i></span>
+                                <span data-name="span" onclick="affichecommentlist(event)"  style="cursor: pointer;"><i class="uil uil-comment" data-name="span" style="font-size: x-large;"></i></span>
                                 <span><i class="uil uil-share" style="font-size: x-large;"></i></span>
                             </div>
                             <div class="bookmark">
@@ -533,6 +533,7 @@ $stmt->execute(['id_post' => $post->id_post]);
 $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></span></b> peronnes</p>
                         </div>
                         <div class="comments text-muted">View all 130 comments</div>
+                        <div id="comments-list" class="comments-list text-white ps-2 pe-2 pb-1" style="display: none; border-radius: 5px;overflow-y: auto; border-radius: 5px; -ms-overflow-style: none; scrollbar-width: none;max-height:400px;background-color:#2B2757;" postId=<?=$post->id_post?> ></div>
                     </div>
 
             <?php
@@ -540,47 +541,7 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
             ?>
 
                 </div>
-                <nav class="navhome3">
-                      <form>
-                          <input class="form-control search-bar" type="search" placeholder="Search" aria-label="Search">
-                      </form>
-                      <div class="home_stories">
-                          <div class="home_make_story">
-                              <img src="img/Profile/Julia Clarke.png">
-                              <b>+</b>
-                              <p>Add</p>
-                          </div>
-                          <div class="home_story">
-                              <img src="img/Profile/Julia Clarke.png">
-                              <p>Julia Clarke</p>
-                          </div>
-                      </div>
-                      <div class="home_chats">
-                          <b>Recent Chats</b>
-                          <div>
-                              <div class="home_chat">
-                                  <img src="img/Profile/Julia Clarke.png">
-                                  <div>
-                                      <b>Julia Clarke</b>
-                                      <p>12 mutual friends</p>
-                                  </div>
-                              </div>
-                              <i class="uil uil-comment-alt-dots"></i>
-                          </div>
-                      </div>
-                      <div class="home_chats_bot">
-                          <b>Chat bot</b>
-                          <div>
-                              <div class="home_chat_bot">
-                                  <img src="img/Profile/Julia Clarke.png">
-                                  <div>
-                                      <b>Chat Bot</b>
-                                  </div>
-                              </div>
-                              <i class="uil uil-comment-alt-dots"></i>
-                          </div>
-                      </div>
-                </nav>
+                
             </div>
         </main>
         <div class="overlay-supprimer hidden-modifier" id="overlay-supprimer"></div>
@@ -595,6 +556,357 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
         </div>
     </div>
     <script>
+        function commentlike(event){
+            var id_comment = event.target.parentElement.parentElement.parentElement.getAttribute('id_comment');
+            
+            if(event.target.classList.contains('is-liked')){
+                $.ajax({
+                    url: 'index.php?action=removecommentlike_home',
+                    type: 'POST',
+                    data: {
+                        id_comment : id_comment
+                    },
+                    success: function(res) {
+                        event.target.classList.remove('is-liked');
+                        event.target.classList.remove('text-primary');
+                        event.target.nextElementSibling.textContent = parseInt(event.target.nextElementSibling.textContent) - 1;
+                    }
+                });
+            }else{
+                $.ajax({
+                    url: 'index.php?action=commentlike_home',
+                    type: 'POST',
+                    data: {
+                        id_comment : id_comment
+                    },
+                    success: function(res) {
+                        event.target.classList.add('is-liked');
+                        event.target.classList.add('text-primary');
+                        event.target.nextSibling.textContent = parseInt(event.target.nextSibling.textContent) + 1;
+                    }
+                });
+            }
+        }
+
+        function replylike(event){
+            var id_reply = event.target.parentElement.parentElement.parentElement.getAttribute('id_reply');
+            if(event.target.classList.contains('is-liked')){
+                $.ajax({
+                    url: 'index.php?action=removereplylike_home',
+                    type: 'POST',
+                    data: {
+                        id_reply : id_reply
+                    },
+                    success: function(res) {
+                        event.target.classList.remove('is-liked');
+                        event.target.classList.remove('text-primary');
+                        event.target.nextElementSibling.nextElementSibling.textContent = parseInt(event.target.nextElementSibling.nextElementSibling.textContent) - 1;
+                    }
+                });
+            }else{
+                $.ajax({
+                    url: 'index.php?action=replylike_home',
+                    type: 'POST',
+                    data: {
+                        id_reply : id_reply
+                    },
+                    success: function(res) {
+                        event.target.classList.add('is-liked');
+                        event.target.classList.add('text-primary');
+                        event.target.nextElementSibling.nextElementSibling.textContent = parseInt(event.target.nextElementSibling.nextElementSibling.textContent) + 1;
+                    }
+                });
+            }
+        }
+
+        function onoffreponses(event,id_comment){
+            var reponses = event.target.parentElement.parentElement.nextElementSibling;
+            if(reponses.style.display === 'block'){
+                reponses.style.display = 'none';
+            }else{
+                $.ajax({
+                    url: 'index.php?action=getresponses_home',
+                    type: 'POST',
+                    data:{
+                        id_comment : id_comment,
+                    },
+                    success: function(res) {
+                        document.querySelector('div[id_comment="'+id_comment+'"] .reply-div').innerHTML = res.response.map(resp=>{
+                        var likes = 0;
+                        var likebutton = '<i onclick="replylike(event)" class="bi bi-heart" style="cursor:pointer"></i>';
+                    
+                        res.replylikes.forEach(like => {
+                            if (like.id_reply_grp === resp.id_reply_grp) {
+                                if (like.id_user === res.id_member) {
+                                    likebutton = '<i onclick="replylike(event)" class="bi bi-heart is-liked text-primary" style="cursor:pointer"></i>';
+                                }
+                                likes++;
+                            }
+                        });
+                        
+                        
+                        return `
+                            <div id_reply="${resp.id_reply_grp}" class="reply w-100 gap-2 pt-1 pb-1" style="min-height: 40px;padding-left: 50px;">
+                                <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                    <div class="profile-pic">
+                                        <img src="${resp.photo_profil}" alt="">
+                                    </div>
+                                    <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                        <p class="m-0 p-0" style="font-size: small;">${resp.prenom} ${resp.nom} ${calculerdate(resp.reply_grp_at)}</p>
+                                        <p class="m-0 p-0" style="font-size: small;">${resp.content_reply_grp}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                    <p class="text-center">${likebutton}<br><span>${likes}</span></p>
+                                </div>
+                            </div>
+                        `}).join('<br>');
+                    }
+                });
+                reponses.style.display = 'block';
+            }
+        }
+
+        function removereply(event) {
+            event.target.parentElement.nextElementSibling.querySelector('input[name="reply_to"]').remove();
+            event.target.parentElement.remove();
+        }
+
+        function replygrp(event,id, name) {
+            const commentform = event.target.parentElement.parentElement.parentElement.parentElement.querySelector('div[class="comment-form"]');
+
+            if(commentform.querySelector('#reply_to') != null){
+                commentform.querySelector('#reply_to').remove();
+            }
+            
+            const hiddenInput = document.createElement('input');
+            hiddenInput.id = 'reply_to';
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'reply_to';
+            hiddenInput.value = id;
+            const commentInput = commentform.querySelector('input[name="groupe_comment_content"]');
+            commentInput.parentElement.appendChild(hiddenInput);
+            commentInput.focus();
+
+            if(commentform.querySelector('.reply_to') != null){
+                commentform.querySelector('.reply_to').remove();
+            }
+
+            const div = document.createElement('div');
+            div.classList.add('reply_to');
+            div.classList.add('w-100');
+            div.classList.add('d-flex');
+            div.classList.add('justify-content-between');
+            div.classList.add('align-items-center');
+            div.classList.add('p-1');
+            div.innerHTML = `
+                <p class="m-0">Répondre à ${name}</p>
+                <i class="bi bi-x" style="cursor:pointer" onclick="removereply(event)"></i>
+                `;
+            commentform.insertBefore(div, commentform.firstChild);
+
+        }
+
+        function submitcommentgroup(e,postId) {
+            var comment_content = e.target.previousElementSibling.value;
+            var commentList = e.target.parentElement.parentElement.parentElement;
+            if(e.target.nextElementSibling != null){
+                var reply_to = e.target.nextElementSibling.value;
+                $.ajax({
+                    url: 'index.php?action=submitreply',
+                    type: 'POST',
+                    data: {
+                        groupe_comment : comment_content,
+                        reply_to : reply_to
+                    },
+                    success: function(res) {
+                        e.target.previousElementSibling.value = "";
+                        document.querySelector('div[id_comment="'+reply_to+'"] .reply-div').innerHTML = `
+                            <div id_reply="${res.id_reply_grp}" class="reply w-100 gap-2 pt-1 pb-1" style="min-height: 40px;padding-left: 50px;">
+                                <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                    <div class="profile-pic">
+                                        <img src="${res.photo_profile}" alt="">
+                                    </div>
+                                    <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                        <p class="m-0 p-0" style="font-size: small;">${res.fullname} ${calculerdate(res.date_reply)}</p>
+                                        <p class="m-0 p-0" style="font-size: small;">${res.reply}</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                    <p class="text-center"><i class="bi bi-heart" style="cursor:pointer" onclick="replylike(event)"></i><br><span>0</span></p>
+                                </div>
+                            </div>
+                        `;
+                        document.querySelector('div[id_comment="'+reply_to+'"] .reply-div').style.display = 'block';
+                    }
+                });
+
+            }else{
+                $.ajax({
+                    url: 'index.php?action=submitcomment',
+                    type: 'POST',
+                    data: {
+                        groupe_comment : comment_content,
+                        id_groupe_post : postId
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        e.target.previousElementSibling.value = "";
+                        $.ajax({
+                            url: 'index.php?action=allcommentshome',
+                            type: 'POST',
+                            data: {
+                                id_groupe_post : postId,
+                            },
+                            success: function(res) {
+                                commentList.previousElementSibling.setAttribute('onclick', 'affichecommentlist(event)');
+                                commentList.previousElementSibling.setAttribute('style', 'cursor: pointer;');
+                                commentList.previousElementSibling.innerHTML = `Voir les ${res.comments.length} commentaires`;
+                                commentList.innerHTML = res.comments.map(comment =>{
+                                    var likes = 0;
+                                    var likebutton = '<i onclick="commentlike(event)" class="bi bi-heart" style="cursor:pointer"></i>';
+                                
+                                    res.likesofcomment.forEach(like => {
+                                        if (like.id_comment === comment.id_groupe_comment) {
+                                            if (like.id_user === res.id_user) {
+                                                likebutton = '<i onclick="commentlike(event)" class="bi bi-heart is-liked text-primary" style="cursor:pointer"></i>';
+                                            }
+                                            likes++;
+                                        }
+                                    });
+
+
+                                    return `
+                                    <div id_comment="${comment.id_groupe_comment}" class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                        <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                            <div class="profile-pic">
+                                                <img src="${comment.photo_profil}" alt="">
+                                            </div>
+                                            <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                                <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom} ${calculerdate(comment.date_groupe_comment)}</p>
+                                                <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                            <div class="d-flex w-100 gap-2">
+                                                <p onclick="replygrp(event,${comment.id_groupe_comment},'${comment.prenom} ${comment.nom}')" style="cursor:pointer">Répondre</p>
+                                                <p onclick="onoffreponses(event,${comment.id_groupe_comment})" style="cursor:pointer">Réponses</p>
+                                            </div>
+                                            <p class="text-center">${likebutton}<span>${likes}</span></p>
+                                        </div>
+                                        <div class="reply-div"></div>
+                                    </div>
+                                `}).join('<br>');
+
+                                commentList.innerHTML += `
+                                    <div class="comment-form"  style="margin-top: 10px; width: 100%; position: sticky; bottom: 0; background-color:rgb(0, 0, 0); border-radius: 5px 5px 0 0;">
+                                        <div style="display: flex; gap: 10px; position: sticky; bottom: 0;"> 
+                                            <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
+                                            <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        function calculerdate(datec){
+            var date1 = new Date(datec);
+            var date2 = new Date();
+            var diffTime = Math.abs(date2 - date1);
+            var diffSeconds = Math.floor(diffTime / 1000);
+            var diffMinutes = Math.floor(diffSeconds / 60);
+            var diffHours = Math.floor(diffMinutes / 60);
+            var diffDays = Math.floor(diffHours / 24);
+
+            if (diffDays > 0) {
+            return diffDays + " days ago";
+            } else if (diffHours > 0) {
+            return diffHours + " hours ago";
+            } else if (diffMinutes > 0) {
+            return diffMinutes + " minutes ago";
+            } else {
+            return diffSeconds + " seconds ago";
+            }
+        }
+
+        function affichecommentlist(event){
+            if(event.currentTarget.getAttribute("data-name") == "span"){
+                var commentList = event.currentTarget.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling;
+            }else{
+                var commentList = event.currentTarget.nextElementSibling;
+            }
+
+            const postId = commentList.getAttribute('postId');
+
+            $.ajax({
+                url: 'index.php?action=allcommentshome',
+                type: 'POST',
+                data: {
+                    id_groupe_post : postId,
+                },
+                success: function(res) {
+                    console.log(res);
+                    commentList.previousElementSibling.setAttribute('onclick', 'affichecommentlist(event)');
+                    commentList.previousElementSibling.setAttribute('style', 'cursor: pointer;');
+                    commentList.previousElementSibling.innerHTML = `Voir les ${res.comments.length} commentaires`;
+                    commentList.innerHTML = res.comments.map(comment =>{
+                        var likes = 0;
+                        var likebutton = '<i onclick="commentlike(event)" class="bi bi-heart" style="cursor:pointer"></i>';
+                    
+                        res.likesofcomment.forEach(like => {
+                            if (like.id_comment === comment.id_groupe_comment) {
+                                if (like.id_user === res.id_user) {
+                                    likebutton = '<i onclick="commentlike(event)" class="bi bi-heart is-liked text-primary" style="cursor:pointer"></i>';
+                                }
+                                likes++;
+                            }
+                        });
+                        
+                        
+                        return `
+                        <div id_comment="${comment.id_groupe_comment}" class="comment w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                            <div class="comment d-flex w-100 gap-2 pt-1 pb-1" style="min-height: 40px;">
+                                <div class="profile-pic">
+                                    <img src="${comment.photo_profil}" alt="">
+                                </div>
+                                <div class="comment-content" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; white-space: normal;">
+                                    <p class="m-0 p-0" style="font-size: small;">${comment.prenom} ${comment.nom} ${calculerdate(comment.date_groupe_comment)}</p>
+                                    <p class="m-0 p-0" style="font-size: small;">${comment.groupe_comment_content}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex w-100 gap-2 ps-5 pt-1 pb-1 justify-content-between" style="min-height: 40px;">
+                                <div class="d-flex w-100 gap-2">
+                                    <p onclick="replygrp(event,${comment.id_groupe_comment},'${comment.prenom} ${comment.nom}')" style="cursor:pointer">Répondre</p>
+                                    <p onclick="onoffreponses(event,${comment.id_groupe_comment})" style="cursor:pointer">Réponses</p>
+                                </div>
+                                <p class="text-center">${likebutton}<span>${likes}</span></p>
+                            </div>
+                            <div class="reply-div"></div>
+                        </div>
+                    `}).join('<br>');
+                            
+                    commentList.innerHTML += `
+                        <div class="comment-form"  style="margin-top: 10px; width: 100%; position: sticky; bottom: 0; background-color:rgb(0, 0, 0); border-radius: 5px 5px 0 0;">
+                            <div style="display: flex; gap: 10px; position: sticky; bottom: 0;"> 
+                                <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
+                                <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
+                            </div>
+                        </div>
+                    `;
+
+                    if (commentList.style.display === 'block') {
+                        commentList.style.display = 'none';
+                    } else {
+                        commentList.style.display = 'block';
+                    }
+                }
+            });
+
+        }
 
         document.getElementById("imageInput").addEventListener("change", function () {
             const file = this.files[0];

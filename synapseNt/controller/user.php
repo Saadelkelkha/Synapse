@@ -394,7 +394,8 @@
     }
 
     function afficherEnregistrerPostController(){
-        $posts = afficherEnregistrerPost();
+        $id = $_SESSION['id_user'];
+        $posts = afficherEnregistrerPost($id);
         require 'vue/enregistrer_post.php';
 
     }
@@ -417,5 +418,107 @@
         }
     }
 
+    function allcommentshome($id_post_groupe){
+        $comments = selectcomments($id_post_groupe);
+        $likesofcomment = getlikescomment_home($id_post_groupe);
 
+        $id = $_SESSION['id_user'];
+        
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'comments' => $comments,
+            'likesofcomment' => $likesofcomment,
+            'id_user' => $id
+        ]);
+    }
+
+    function getresponsehome($id_comment){
+        $response = selectresponsehome($id_comment);
+        $id = $_SESSION['id_user'];
+        $replylikes = getlikesreplycomment_home($id_comment);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success',
+            'response' => $response,
+            'id_user' => $id,
+            'id_member' => $id,
+            'replylikes' => $replylikes
+        ]);
+    }
+
+    function commentlike_home($id_comment){
+        $id = $_SESSION['id_user'];
+
+        submitcommentlike_home($id_comment,$id);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function replylike_home($id_reply){
+        $id = $_SESSION['id_user'];
+
+        submitreplylike_home($id_reply,$id);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function removereplylike_home($id_reply){
+        $id = $_SESSION['id_user'];
+
+        removeereplylike_home($id_reply,$id);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function removecommentlike_home($id_comment){
+        $id = $_SESSION['id_user'];
+
+        removeecommentlike_home($id_comment,$id);
+        
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
+
+    function submitreply($groupe_comment,$reply_to){
+        $id = $_SESSION['id_user'];
+        $user = selectuser($id);
+        $fullname = $user['prenom'] . " " . $user['nom'];
+
+        submit_reply($id,$groupe_comment,$reply_to);
+        $reply = selectreply($id);
+
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'status' => 'success',
+            'fullname' => $fullname,
+            'photo_profile' => $reply->photo_profil,
+            'date_reply' => $reply->reply_grp_at,
+            'reply' => $groupe_comment
+        ]);
+    }
+
+    function submitcomment($id_groupe_post,$groupe_comment){
+        $id = $_SESSION['id_user'];
+        submit_comment($id,$id_groupe_post,$groupe_comment);
+
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'status' => 'success'
+        ]);
+    }
 ?>

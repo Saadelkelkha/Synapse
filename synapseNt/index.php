@@ -402,6 +402,14 @@
                     allcomments($id_post_groupe);
                     break;
                 }
+            case 'allcommentshome':
+                if(isset($_POST['id_groupe_post'])){
+                    require_once 'controller/user.php';
+                    $id_post_groupe = $_POST['id_groupe_post'];
+
+                    allcommentshome($id_post_groupe);
+                    break;
+                }
             case 'submitcommentgroup':
                 if(isset($_POST['id_groupe_post']) && isset($_POST['groupe_comment'])){
                     require_once 'controller/group.php';
@@ -409,6 +417,16 @@
                     $groupe_comment = $_POST['groupe_comment'];
 
                     submitcommentgroupe($id_groupe_post,$groupe_comment);
+                    break;
+                }
+
+            case 'submitcomment':
+                if(isset($_POST['id_groupe_post']) && isset($_POST['groupe_comment'])){
+                    require_once 'controller/user.php';
+                    $id_groupe_post = $_POST['id_groupe_post'];
+                    $groupe_comment = $_POST['groupe_comment'];
+
+                    submitcomment($id_groupe_post,$groupe_comment);
                     break;
                 }
 
@@ -421,12 +439,29 @@
                     submitreplygroupe($groupe_comment,$reply_to);
                     break;
                 }
+            case 'submitreply':
+                if(isset($_POST['groupe_comment']) && isset($_POST['reply_to'])){
+                    require_once 'controller/user.php';
+                    $groupe_comment = $_POST['groupe_comment'];
+                    $reply_to = $_POST['reply_to'];
+
+                    submitreply($groupe_comment,$reply_to);
+                    break;
+                }
             case 'getresponses':
                 if(isset($_POST['id_comment'])){
                     require_once 'controller/group.php';
                     $id_comment = $_POST['id_comment'];
 
                     getresponsegroup($id_comment);
+                    break;
+                }
+            case 'getresponses_home':
+                if(isset($_POST['id_comment'])){
+                    require_once 'controller/user.php';
+                    $id_comment = $_POST['id_comment'];
+
+                    getresponsehome($id_comment);
                     break;
                 }
             case 'commentlike':
@@ -437,12 +472,28 @@
                     commentlike($id_comment);
                     break;
                 }
+            case 'commentlike_home':
+                if(isset($_POST['id_comment'])){
+                    require_once 'controller/user.php';
+                    $id_comment = $_POST['id_comment'];
+
+                    commentlike_home($id_comment);
+                    break;
+                }
             case 'removecommentlike':
                 if(isset($_POST['id_comment'])){
                     require_once 'controller/group.php';
                     $id_comment = $_POST['id_comment'];
 
                     removecommentlike($id_comment);
+                    break;
+                }
+            case 'removecommentlike_home':
+                if(isset($_POST['id_comment'])){
+                    require_once 'controller/user.php';
+                    $id_comment = $_POST['id_comment'];
+
+                    removecommentlike_home($id_comment);
                     break;
                 }
             case 'replylike':
@@ -453,12 +504,28 @@
                     replylike($id_reply);
                     break;
                 }
+            case 'replylike_home':
+                if(isset($_POST['id_reply'])){
+                    require_once 'controller/user.php';
+                    $id_reply = $_POST['id_reply'];
+
+                    replylike_home($id_reply);
+                    break;
+                }
             case 'removereplylike':
                 if(isset($_POST['id_reply'])){
                     require_once 'controller/group.php';
                     $id_reply = $_POST['id_reply'];
 
                     removereplylike($id_reply);
+                    break;
+                }
+            case 'removereplylike_home':
+                if(isset($_POST['id_reply'])){
+                    require_once 'controller/user.php';
+                    $id_reply = $_POST['id_reply'];
+
+                    removereplylike_home($id_reply);
                     break;
                 }
             case 'delete_group':

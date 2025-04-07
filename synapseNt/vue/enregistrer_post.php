@@ -26,24 +26,24 @@
                 
                   <!-- Feed --><?php
                   foreach($posts as $post) {
-    // Récupérer l'ID de l'utilisateur depuis la session
-    $id_user = $_SESSION['id_user'];  
-     
-    // Assurez-vous que l'ID de l'utilisateur est stocké dans la session
 
     ?>
     <div class="feed" width="100%">
         <div class="user">
             <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-                <img src="img/Profile/Julia Clarke.png" alt="">
+                <img src="<?= $post->photo_profil ?>" alt="">
                 <div class="name1">
-                    <h5 class=" mb-0" >Ahmed Said</h5>
+                    <h5 class=" mb-0" ><?= $post->nom ?> <?= $post->prenom ?></h5>
                     
 
                                     <input type="hidden" name="id_post" value="<?php echo $post->id_enposte; ?>">
                                     <small style="font-size:small; color: #777;"><?php echo $post->date_post; ?></small>
                                     <div class="caption mt-4">
-                                        <span class="hash-tag"><?php echo $post->text_content; ?></span></p>
+                                        <?php if (!empty($post->text_content)) { ?>
+                                            <span class="hash-tag"><?php echo $post->text_content; ?></span>
+                                        <?php }else{ ?>
+                                            <span class="hash-tag"><?php echo $post->text_content_groupe; ?></span>
+                                        <?php } ?>
                                     </div>
                                     <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                 </div>
@@ -55,20 +55,32 @@
                         </div>
                         <div class="bg-dark d-flex justify-content-center">
                         <?php
-                            // Récupérer l'extension du fichier
-                            $fileExtension = pathinfo($post->image_path, PATHINFO_EXTENSION);
+                        // Récupérer l'extension du fichier
+                        $fileExtension = pathinfo($post->image_path, PATHINFO_EXTENSION);
 
-                            // Vérifier si c'est une image ou une vidéo
-                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                            $videoExtensions = ['mp4', 'webm', 'ogg'];
+                        // Extensions supportées
+                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        $videoExtensions = ['mp4', 'webm', 'ogg'];
 
+                        // Vérifier et afficher le contenu multimédia
+                        if (!empty($post->image_path)) {
                             if (in_array(strtolower($fileExtension), $imageExtensions)) {
-                                // Si c'est une image
-                                echo '<img class="image-width" style="max-heigth:20vh;max-width:100%"  src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" />';
+                                // Afficher une image
+                                echo '<img class="image-width" style="max-height:20vh; max-width:100%;" src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" />';
                             } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
-                                // Si c'est une vidéo
-                                echo '<video src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" controls></video>';
+                                // Afficher une vidéo
+                                echo '<video src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" controls style="max-width:100%;"></video>';
                             }
+                        } elseif (!empty($post->image_path_groupe)) {
+                            $groupFileExtension = pathinfo($post->image_path_groupe, PATHINFO_EXTENSION);
+                            if (in_array(strtolower($groupFileExtension), $imageExtensions)) {
+                                // Afficher une image du groupe
+                                echo '<img class="image-width" style="max-height:20vh; max-width:100%;" src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" />';
+                            } elseif (in_array(strtolower($groupFileExtension), $videoExtensions)) {
+                                // Afficher une vidéo du groupe
+                                echo '<video src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" controls style="max-width:100%;"></video>';
+                            }
+                        }
                         ?>
                         </div>
                         <div class="action-button" style="display: flex; justify-content: space-between;">

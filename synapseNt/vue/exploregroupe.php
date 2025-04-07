@@ -737,6 +737,7 @@
             return diffSeconds + " seconds ago";
             }
         }
+        
         function submitcommentgroup(e,postId) {
             var comment_content = e.target.previousElementSibling.value;
             var commentList = e.target.parentElement.parentElement.parentElement;

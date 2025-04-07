@@ -1,4 +1,4 @@
-        <nav class="navhome1" style="padding:30px 3%;" style="100px">
+        <nav class="navhome1" style="padding:30px 3%;" >
             <div class="navhome1_left">
                 <img src="img/logop.png" height="50">
                 <?php  include 'vue/chatbot1.php';?>
