@@ -408,6 +408,14 @@
                 $enregistrerpostes = selectenregistrementgroupepostpartage($id,$id_post_groupe);
                 $countcomment = countcommentsgroupe($id_groupe);
 
+                if($group_info->id_admin == $id){
+                    $is_admin = true;
+                }else{
+                    $is_admin = false;
+                }
+
+                $imgmembres = selectmembresgroupparid($id_group);
+
                 require_once 'vue/affichepostgroupe.php';
             } else {
                 $_SESSION['id_groupe'] = $id_groupe;

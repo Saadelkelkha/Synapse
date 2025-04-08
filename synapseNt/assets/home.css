@@ -453,10 +453,13 @@ border-radius: 50%;
 
 .content_chat{
   display: flex;
+  background-color: #f6f7f8;
   width: 79%;
   position: relative;
   left: 20vw;
   top: 80px;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 #content10{
   width: 79%;
@@ -928,7 +931,7 @@ border-radius: 50%;
   }
 
   .content_chat{
-      width: 80%;
+      width: 100%;
       left: 0;
       top: 120px;
   }

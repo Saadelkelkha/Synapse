@@ -413,7 +413,7 @@
                                 <span data-name="span" onclick="affichecommentlist(event)"  style="cursor: pointer;"><i class="uil uil-comment" data-name="span" style="font-size: x-large;"></i></span>
                                 <span onclick="affichesharemenu(event)"><i class="uil uil-share" style="font-size: x-large;"></i></span>
                                 <div class="share-menu" style="display: none; position: absolute; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px; z-index: 1000;">
-                                    <button onclick="copyLink(<?php echo $post->id_groupe_post; ?>)">Copy Link</button>
+                                    <button class="btn rounded-circle" style="background-color:#F5F5F5;" onclick="copyLink(<?= $post->id_groupe_post; ?>)"><i class="fas fa-link"></i></button>
                                 </div>
                             </div>
                             <div class="bookmark">
@@ -865,7 +865,27 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert('Link copied to clipboard');
+            const popupMessage = document.createElement('div');
+            popupMessage.innerHTML = '<i class="fas fa-check-circle" style="color: white; background-color: green; border-radius: 50%; padding: 5px;"></i> Lien copié dans le presse-papiers';
+            popupMessage.style.position = 'fixed';
+            popupMessage.style.bottom = '20px';
+            popupMessage.style.left = '50%';
+            popupMessage.style.transform = 'translateX(-50%)';
+            popupMessage.style.backgroundColor = '#333';
+            popupMessage.style.color = '#fff';
+            popupMessage.style.padding = '10px 20px';
+            popupMessage.style.borderRadius = '5px';
+            popupMessage.style.zIndex = '1000';
+            document.body.appendChild(popupMessage);
+
+            popupMessage.style.transition = 'opacity 0.5s ease';
+            popupMessage.style.opacity = '1';
+            setTimeout(() => {
+                popupMessage.style.opacity = '0';
+                setTimeout(() => {
+                    popupMessage.remove();
+                }, 500); 
+            }, 2000);
         }
 
         function save_post_groupe(event){

@@ -69,7 +69,7 @@
 
     function afficherEnregistrerPost($id){
         $db = database_connection();
-        $sqlState = $db->prepare('SELECT * FROM enregistrer_posts left join post on post.id_post = enregistrer_posts.id_post left join groupe_post on groupe_post.id_groupe_post = enregistrer_posts.id_post_groupe left join group_membre on groupe_post.id_user = group_membre.id_groupe_member left join user on user.id_user = post.id_post or user.id_user = group_membre.id_user WHERE enregistrer_posts.id_user = ?');
+        $sqlState = $db->prepare('SELECT * FROM enregistrer_posts left join post on post.id_post = enregistrer_posts.id_post left join groupe_post on groupe_post.id_groupe_post = enregistrer_posts.id_post_groupe left join user on user.id_user = post.id_user or user.id_user = groupe_post.id_user WHERE enregistrer_posts.id_user = ?');
         $sqlState->execute([$id]);
         return $sqlState->fetchAll(PDO::FETCH_OBJ);
     }

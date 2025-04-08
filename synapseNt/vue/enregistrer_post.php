@@ -45,7 +45,6 @@
                                             <span class="hash-tag"><?php echo $post->text_content_groupe; ?></span>
                                         <?php } ?>
                                     </div>
-                                    <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                 </div>
                                 
 
@@ -66,7 +65,7 @@
                         if (!empty($post->image_path)) {
                             if (in_array(strtolower($fileExtension), $imageExtensions)) {
                                 // Afficher une image
-                                echo '<img class="image-width" style="max-height:20vh; max-width:100%;" src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" />';
+                                echo '<img class="image-width" style="max-height:50vh; max-width:100%;" src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" />';
                             } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
                                 // Afficher une vidéo
                                 echo '<video src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" controls style="max-width:100%;"></video>';
@@ -75,7 +74,7 @@
                             $groupFileExtension = pathinfo($post->image_path_groupe, PATHINFO_EXTENSION);
                             if (in_array(strtolower($groupFileExtension), $imageExtensions)) {
                                 // Afficher une image du groupe
-                                echo '<img class="image-width" style="max-height:20vh; max-width:100%;" src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" />';
+                                echo '<img class="image-width" style="max-height:30vh; max-width:100%;" src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" />';
                             } elseif (in_array(strtolower($groupFileExtension), $videoExtensions)) {
                                 // Afficher une vidéo du groupe
                                 echo '<video src="' . htmlspecialchars($post->image_path_groupe, ENT_QUOTES, 'UTF-8') . '" controls style="max-width:100%;"></video>';
@@ -83,31 +82,6 @@
                         }
                         ?>
                         </div>
-                        <div class="action-button" style="display: flex; justify-content: space-between;">
-                            <div class="interaction-button">
-                                <span><button style="background-color:white; color:black" class="like_button" data-post-id="<?php echo $post->id_post; ?>" data-user-id="<?php echo $id_user; ?>"><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button> <!-- Bouton Like --></span>
-
-                                <!-- Compteur de likes -->
-                                
-
-                                <span><i class="uil uil-comment" style="font-size: x-large;"></i></span>
-                                <span><i class="uil uil-share" style="font-size: x-large;"></i></span>
-                            </div>
-                            <div class="bookmark">
-                              <form action="index.php?action=enregistrerPost" method="post">
-                              <input type="hidden" name="id_post" value="<?= $post->id_post; ?>">
-                              <button name="enregistrer" class="btn-enregsitrer"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>
-
-                              </form>
-                            </div>
-                        </div>
-                        
-                        <div class="liked-by" style="display: flex; ">
-                            <span class="liked1"><img  src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked2"><img src="img/Profile/Julia Clarke.png" height="25px"width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked3"><img src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                        </div>
-                        <div class="comments text-muted">View all 130 comments</div>
                     </div>
 
             <?php

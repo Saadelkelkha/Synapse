@@ -8,10 +8,6 @@
                         <i class="navhome2_sidebar_logo uil uil-bell"></i>
                         <h3>Notifications</h3>
                     </a>
-                    <a class="menu-item">
-                        <i class="navhome2_sidebar_logo uil uil-envelope"></i>
-                        <h3>Messages</h3>
-                    </a>
                     <a href="index.php?action=groups" class="menu-item">
                         <i class="navhome2_sidebar_logo bi bi-people"></i>
                         <h3>Groupes</h3>

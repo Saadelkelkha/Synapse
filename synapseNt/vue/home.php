@@ -507,7 +507,7 @@ foreach($posts as $post) {
                         </div>
                         <div class="action-button" style="display: flex; justify-content: space-between;">
                             <div class="interaction-button">
-                                <span><button style="background-color:white; color:black" class="like_button" data-post-id="<?php echo $post->id_post; ?>" data-user-id="<?php echo $id_user; ?>"><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button> <!-- Bouton Like --></span>
+                                <span><button style="background-color:white; color:black" class="like_button p-0" data-post-id="<?php echo $post->id_post; ?>" data-user-id="<?php echo $id_user; ?>"><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button> <!-- Bouton Like --></span>
 
                                 <!-- Compteur de likes -->
                                 
