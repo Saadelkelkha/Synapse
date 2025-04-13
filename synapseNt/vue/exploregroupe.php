@@ -1286,3 +1286,7 @@
     </script>
 </body>
 </html>
+<!-- #group_discussion{
+            border-bottom: 2px solid #2B2757;
+            color:#2B2757;
+        } -->

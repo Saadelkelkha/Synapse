@@ -16,8 +16,6 @@
     height: fit-content;
     max-height: 90vh; /* S'assure qu'il ne dépasse pas l'écran */
 }
-
-
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -751,13 +749,32 @@
             padding: 5px 10px;
             font-weight: bold;
         }
-        #openPopup:hover{
-            cursor:pointer;
-        }
 
     </style>
 </head>
 <body>
+<?php
+$pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
+
+// Récupérer l'ID de l'utilisateur connecté
+$id_user = $_SESSION['id_user']; 
+
+// Préparer la requête SQL pour récupérer les amis
+$sql = "SELECT user.*
+        FROM friends
+        JOIN user ON user.id_user = 
+            CASE 
+                WHEN friends.user_id_1 = :id_user THEN friends.user_id_2 
+                ELSE friends.user_id_1 
+            END
+        WHERE :id_user IN (friends.user_id_1, friends.user_id_2)";
+
+$sqlState = $pdo->prepare($sql);
+$sqlState->execute(['id_user' => $id_user]);
+$amis = $sqlState->fetchAll(PDO::FETCH_OBJ);
+
+
+             ?>
     <div class=" mt-3">
         <!-- Navbar -->
         <?php require_once 'vue/layout/navhome1.php'; ?>
@@ -767,19 +784,20 @@
             
             <!-- Formulaire de création de post -->
             <div class="container mt-4">
+                <?php  foreach($amis as $ami){ ?>
         <!-- Profile Banner -->
-        <img src="<?php echo $user['banner']; ?>" alt="Banner" class="profile-banner">
+        <img src="<?php echo $ami->banner; ?>" alt="Banner" class="profile-banner">
         
         <!-- Profile Info -->
         <div class="profile-container">
-            <img src="<?php echo $user['photo_profil']; ?>" alt="Profile Picture" class="profile-img">
+            <img src="<?php echo $ami->photo_profil ; ?>" alt="Profile Picture" class="profile-img">
             <div class="profil-pic-button">
                 
               <div class="text-profil-after-pic">
-              <h3 align="start"><?php if(isset($fullname)){echo $fullname;} ?></h3>
+              <h3 align="start"><?php echo $ami->prenom . " " . $ami->nom; ?></h3>
              
             
-              <p align="start"><?php echo htmlspecialchars($user['bio']); ?></p>
+              <p align="start"><?php echo htmlspecialchars($ami->bio); ?></p>
             <?php  
                   // Récupérer le nombre d'amis
                   $id_user = $_SESSION['id_user'] ?? 1;
@@ -793,7 +811,7 @@
               </div>
                
             </div>
-          
+            <?php  } ?>
           
          <br><br>
         
@@ -801,6 +819,7 @@
 <div class="container mt-2">
 <nav class=" navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
+       
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link active" href="index.php?action=afficherProfil">Publications</a></li>
@@ -818,9 +837,6 @@
         <div class="col-md-4 fixed-profile">
             <div class="profile-card mb-3">
                 <h5><strong>Intro</strong></h5>
-                <button class="btn btn-light mb-2">Ajouter une bio</button>
-                <button class="btn btn-light mb-2"><a style="color:black; text-decoration:none;"  href="index.php?action=modifierProfile">Modifier Profil</a></button>
-                <button class="btn btn-light">Ajouter du contenu à la une</button>
             </div>
             <div class="profile-card">
                 <h5><strong>Photos</strong></h5>
@@ -830,67 +846,23 @@
 
         <!-- Colonne droite (Publications) -->
         <div class="col-md-8">
-            <!-- Champ de publication -->
-          
-               
-               
-                    <form class="post-box mb-" >
-                        <div class="profile-pic mb-3 d-flex">
-                            <img src="img/Profile/Julia Clarke.png" alt="" >
-                            <input  type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="openPopup">
-                        </div>
-                        
-                        
-                    </form>
                     <div class="overlay" id="overlay"></div>
-                    <div class="popup" id="popup">
-                        <div class="creer-poste">
-                            <div class="container_creer">
-                                <div class="wrapper">
-                                    <section class="post">
-                                        <header>Create Post</header>
-                                        <form method="post" enctype="multipart/form-data" action="index.php?action=post">
-                                            <textarea name="text_content" placeholder="What's on your mind, SynapseNt?" ></textarea>
-                                            <div id="uploadedImageContainer"></div>
-                                            <div class="options">
-                                                <p>Ajouter à votre poste</p>
-                                                <ul class="list">
-                                                    <li>
-                                                        <label for="imageInput">
-                                                            <img src="img/fb-icons/gallery.svg" alt="gallery">
-                                                        </label>
-                                                        <input type="file" id="imageInput" accept="image/*" name="image">
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <input type="submit" value="Post" name="post">
-                                        </form>
-                                    </section>
-                                </div>
-                            </div>
-                            
-                            
-                        </div>
-                        
-                    </div>
-                    
-           
-           
-
    <br><br>           
 
             <!-- Liste des publications -->
             <div id="postContainer">
                 <?php
+                $id = $_GET['id_user'];
+
+                // Requête avec une jointure entre la table `post` et la table `user`
                 $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
-                $id = $_SESSION['id_user'];
                 $sqlState = $pdo->prepare('SELECT * FROM post WHERE id_user = ?'); 
                 $sqlState->execute([$id]); 
                 $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
+            
                 
 foreach($posts as $post) {
-    // Récupérer l'ID de l'utilisateur depuis la session
-    $id_user = $_SESSION['id_user'];  
+
      
     // Assurez-vous que l'ID de l'utilisateur est stocké dans la session
 
@@ -902,47 +874,19 @@ foreach($posts as $post) {
         <div class="user">
             
             <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-            <img src="<?php echo $user['photo_profil']; ?>" alt="Profile Picture" class="profile-img">
+            <img src="<?php echo $ami->photo_profil ; ?>" alt="Profile Picture" class="profile-img">
                 <div class="name1">
-                    <h5 class=" mb-0" align="start"><?php if(isset($fullname)){echo $fullname;} ?></h5>
+                    <h5 class=" mb-0" ><?php echo $ami->prenom . " " . $ami->nom; ?></h5>
                     
 
                                     <input type="hidden" name="id_post" value="<?php echo $post->id_post; ?>">
                                     <input type="hidden" name="id_user" value="<?php echo $post->id_user; ?>">
-                                    <small align="start" style="font-size:small; color: #777;"><?php echo $post->date_post; ?></small>
+                                    <small style="font-size:small; color: #777;"><?php echo $post->date_post; ?></small>
                                     <div class="caption mt-4">
                                         <span class="hash-tag"><?php echo $post->text_content; ?></span></p>
                                     </div>
-                                    <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                 </div>
-                                <div class="dropdown-modifier">
-                                    <button class="dropdown-btn-modifier btn-modifier-supprimer1">...</button>
-                                    <div class="dropdown-content-modifier">
-                                        <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
-                                        <button class="open-popup-btn-supprimer" onclick="affichesupprimer(<?php echo $post->id_post; ?>)">Supprimer</button>
-                                    </div>
-                                </div>
-
-                                <div class="overlay-modifier hidden-modifier" id="overlay-modifier"></div>
-
-                                <div class="popup-modifier hidden-modifier" id="popup-modifier">
-                                    <header>Modifier le Post</header>
-                                    <form method="post" enctype="multipart/form-data" action="index.php?action=modifierPost">
-                                        <input type="hidden" name="post_id" id="post_id-modifier" value="">
-                                        <textarea name="text_content" placeholder="Modifier le contenu"></textarea>
-                                        <img height="100px" src="../img/Profile/Julia Clarke.png" alt="">
-                                        <div class="options-modifier">
-                                            <label for="imageInput-modifier">
-                                                <img src="" alt="gallery">
-                                            </label>
-                                            <input type="file" id="imageInput-modifier" accept="image/*" name="image" style="display:none;">
-                                        </div>
-                                        <div class="enregistrer-annuler-btn">
-                                        <button type="submit">Modifier</button>
-                                        <button type="button" class="close-popup-btn-modifier">Annuler</button>
-                                        </div>
-                                    </form>
-                                </div>
+                               
                             </div>
                         </div>
                         <div class="bg-dark d-flex justify-content-center">
@@ -1007,147 +951,9 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
 
 
              
-       
-        <div class="overlay-supprimer hidden-modifier" id="overlay-supprimer"></div>
-
-        <div class="popup-modifier hidden-modifier" id="popup-supprimer">
-            <header>Supprimer le Post</header>
-            <form method="post" action="index.php?action=supprimerPost">
-                <input type="hidden" name="id_post" value="">
-                <button name="supprimer" type="submit">Supprimer</button>
-                <button type="button" class="close-popup-btn-supprimer">Annuler</button>
-            </form>
-        </div>
+   
     </div>
-    <script>
-        
-
-document.getElementById("imageInput").addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const uploadedImageContainer = document.getElementById("uploadedImageContainer");
-            uploadedImageContainer.innerHTML = '<img src="${e.target.result}" alt="Uploaded Image"/>';
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Get elements
-const openPopupButton = document.getElementById('openPopup');
-const closePopupButton = document.getElementById('closePopup');
-const popup = document.getElementById('popup');
-const overlay = document.getElementById('overlay');
-// Open popup
-openPopupButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    popup.style.display = 'block';
-    overlay.style.display = 'block';
-});
-
-
-
-// Close popup by clicking outside the popup
-overlay.addEventListener('click', (e) => {
-    e.preventDefault();
-    popup.style.display = 'none';
-    overlay.style.display = 'none';
-});
-
-document.querySelectorAll('.dropdown-btn-modifier').forEach(button => {
-    button.addEventListener('click', (e) => {
-        e.preventDefault();
-        const dropdownContent = button.nextElementSibling;
-        dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-    });
-});
-
-// Open modify popup
-document.querySelectorAll('.open-popup-btn-modifier').forEach(button => {
-    button.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('popup-modifier').classList.remove('hidden-modifier');
-        document.getElementById('overlay-modifier').classList.remove('hidden-modifier');
-    });
-});
-
-// Open delete popup
-function affichesupprimer(id){
-    document.getElementById('popup-supprimer').classList.remove('hidden-modifier');
-    document.getElementById('overlay-supprimer').classList.remove('hidden-modifier');
-    const firstInput = document.querySelector('#popup-supprimer input');
-    firstInput.value = id;
-}
-
-// Close popup
-document.querySelectorAll('.close-popup-btn-modifier').forEach(button => {
-    button.addEventListener('click', () => {
-        document.getElementById('popup-modifier').classList.add('hidden-modifier');
-        document.getElementById('overlay-modifier').classList.add('hidden-modifier');
-    });
-});
-
-// Close delete popup
-document.querySelectorAll('.close-popup-btn-supprimer').forEach(button => {
-    button.addEventListener('click', () => {
-        document.getElementById('popup-supprimer').classList.add('hidden-modifier');
-        document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
-    });
-});
-
-// Close by clicking outside the popup
-document.getElementById('overlay-modifier').addEventListener('click', () => {
-    document.getElementById('popup-modifier').classList.add('hidden-modifier');
-    document.getElementById('overlay-modifier').classList.add('hidden-modifier');
-});
-
-document.getElementById('overlay-supprimer').addEventListener('click', () => {
-    document.getElementById('popup-supprimer').classList.add('hidden-modifier');
-    document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
-});   
-
-document.addEventListener("DOMContentLoaded", function () {
-var likeButtons = document.querySelectorAll('.like_button');
-
-likeButtons.forEach(function(likeButton) {
-likeButton.addEventListener("click", function () {
-    var postId = this.getAttribute('data-post-id');  // Récupérer l'ID du post
-    var userId = this.getAttribute('data-user-id');  // Récupérer l'ID de l'utilisateur
-    var countLike = document.getElementById("count_like_" + postId);  // Compteur de likes spécifique au post
-
-    // Création de l'objet XMLHttpRequest
-    var xhr = new XMLHttpRequest();
-
-    // Configuration de la requête POST
-    xhr.open("POST", "vue/like_post.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    // Gestion de la réponse
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-
-            if (response.success) {
-                // Mise à jour du compteur de likes
-               
-                countLike.textContent = response.like_count;
-               
-            } else {
-                alert("Erreur : " + response.message);
-            }
-        }
-    };
-
-    // Envoi des données (ID du post et de l'utilisateur)
-    xhr.send("post_id=" + postId + "&user_id=" + userId); // ID du post et de l'utilisateur
-});
-});
-});
-
-    
-
-
+   
 </script>
 
 </html>

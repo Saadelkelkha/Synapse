@@ -45,7 +45,6 @@
                                     <div class="caption mt-4">
                                         <span class="hash-tag"><?php echo $post->text_content; ?></span></p>
                                     </div>
-                                    <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                 </div>
                                 
 

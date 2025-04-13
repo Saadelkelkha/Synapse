@@ -24,9 +24,13 @@
                         <i class="navhome2_sidebar_logo uil uil-palette"></i>
                         <h3>Enregistrer</h3>
                     </a>
-                    <a class="menu-item">
+                    <a class="menu-item" href="index.php?action=modifierProfile">
                         <i class="navhome2_sidebar_logo uil uil-setting"></i>
                         <h3>Settings</h3>
+                    </a>
+                    <a class="menu-item" href="index.php?action=ajouterAmie">
+                        <i class="navhome2_sidebar_logo uil uil-setting"></i>
+                        <h3>Amies</h3>
                     </a>
                 </div>
                 <div class="Contact mt-4">

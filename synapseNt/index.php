@@ -553,19 +553,64 @@
                 require_once 'controller/user.php';
                 AfficherInfoUserSurProfilControler();
                 break;
+            case "modifierProfile":
+                require_once 'controller/user.php';
+                afficherModifierProfile();
+                break;
+            
+            // case "afficherA"
+                
+
             case 'ajouterStory':
                 require_once 'controller/storyController.php';
-                creerStory(); // Appel à la fonction modifierStoryController dans storyController
+                creerStory();
                 break;
+    
+            case 'supprimerStory':
+                require_once 'controller/storyController.php';
+                supprimerStory();
+                break;
+    
+            case 'afficherStories':  // Affichage des stories
+                require_once 'controller/storyController.php';
+                afficherStories();
+                break;
+            case 'ajouterAmie':  // Affichage des stories
+                    require_once 'controller/user.php';
+                    afficherAmiesController();
+                    break;           
             case 'afficherModifierPostAdmin':
                     require_once 'controller/profile.php';
                     afficherPostProfileController($_SESSION['id_user']);
                     break;
                     
-                    case 'afficherPhotos':
+            case 'afficherPhotos':
                         require_once 'controller/profile.php';
                         afficherPostProfileController($_SESSION['id_user']);
                         break;
+            case 'afficherPhotos':
+                require_once 'controller/user.php';
+                AfficherInfoUserSurProfilControlerPhotos();
+                break;
+            case "modifierProfile1":
+                            require_once 'controller/user.php';
+                            modifierProfilController();
+                            break;
+                case 'afficherAmies':
+                        require_once 'controller/user.php';
+                        AfficherInfoUserSurProfilControlerAmis();
+                        
+                        break;
+                case 'listeUtilisateur':
+                    require_once 'vue/liste-utilisateur.php';
+                        break;
+                
+            case 'utilisateurs':
+                    require_once 'controller/profile.php';
+                    obtenirTousLesUtlisateursControllerParId($_GET['id_user']);
+                    break;
+                    
+                       
         }
     }else{
         require_once 'controller/user.php';

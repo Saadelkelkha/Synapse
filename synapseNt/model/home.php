@@ -72,5 +72,10 @@
         $sqlState = $db->query('SELECT * FROM post inner join enregistrer_posts on post.id_post = enregistrer_posts.id_post where post.id_post = enregistrer_posts.id_post');
         return $sqlState->fetchAll(PDO::FETCH_OBJ);
     }
+    function afficherAmiesM(){
+        $db = database_connection();
+        $sqlState = $db->query('SELECT * FROM user inner join followers on user.id_user = followers.id_user where user.id_user = followers.id_user');
+        return $sqlState->fetchAll(PDO::FETCH_OBJ);
+    }
 
 ?>

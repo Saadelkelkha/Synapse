@@ -1,6 +1,8 @@
         <nav class="navhome1" style="padding:30px 3%;" style="100px">
             <div class="navhome1_left">
-                <img src="img/logop.png" height="50">
+                <a href="index.php?action=home">
+                  <img src="img/logop.png" height="50">
+                </a>
                 <?php  include 'vue/chatbot1.php';?>
             </div>
             <form action="index.php?action=search" method="POST" style="display:flex; gap:10px">
