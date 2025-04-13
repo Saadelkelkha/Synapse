@@ -7,7 +7,7 @@
                     <div class="edit-banner-btn">
                         <button class="btn btn-light d-flex align-items-center justify-content-center gap-2 dropdown-btn-modifier"><i class="bi bi-pencil-fill"></i>Edit</button>
                         <div class="dropdown-content-modifier" style="width:180px">
-                            <button class="" onclick="changeBanner()">Changer la bannière</button>   
+                            <button class="" onclick="changeBanner()">Changer la bannière</button>
                         </div>
                     </div>
                     <?php
@@ -15,6 +15,7 @@
                                     
                     ?>
                 </div>
+
                 <div class="groupe-info w-100 p-2 ps-3 pe-3 bg-white">
                     <h1 class="w-100"><b><?= $group_info->name_group ?></b></h1>
                     <p><?= $group_info->description_group ?></p>
@@ -30,8 +31,8 @@
                                                     if ($countmembershow >= 10) {
                                                         break;
                                                     }
-                                                }                
-                                                ?>                
+                                                }
+                                                ?>
                         </div>
                         <div>
                             <button class="btn btn-primary" onclick="addamiepopup(event)">Inviter</button>
@@ -147,14 +148,34 @@
                                     },
                                 });
                             } else {
-                                alert('Veuillez sélectionner une image.');
+                                const popupMessage = document.createElement('div');
+                                popupMessage.innerHTML = '<i class="fas fa-exclamation-circle" style="color: white; background-color: orange; border-radius: 50%; padding: 5px;"></i> Veuillez sélectionner une image.';
+                                popupMessage.style.position = 'fixed';
+                                popupMessage.style.bottom = '20px';
+                                popupMessage.style.left = '50%';
+                                popupMessage.style.transform = 'translateX(-50%)';
+                                popupMessage.style.backgroundColor = '#333';
+                                popupMessage.style.color = '#fff';
+                                popupMessage.style.padding = '10px 20px';
+                                popupMessage.style.borderRadius = '5px';
+                                popupMessage.style.zIndex = '1000';
+                                document.body.appendChild(popupMessage);
+
+                                popupMessage.style.transition = 'opacity 0.5s ease';
+                                popupMessage.style.opacity = '1';
+                                setTimeout(() => {
+                                    popupMessage.style.opacity = '0';
+                                    setTimeout(() => {
+                                        popupMessage.remove();
+                                    }, 500);
+                                }, 2000);
                             }
                         };
 
                         document.getElementById('cancelChangeBanner').onclick = function () {
                             document.body.removeChild(overlay);
                         };
-                    }              
+                    }
                     function deleteGroup() {
                         var overlay = document.createElement('div');
                         overlay.id = 'deleteGroupOverlay';

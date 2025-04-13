@@ -236,6 +236,9 @@
         $id = $_SESSION['id_user'];
         $user = selectuser($id);
         $fullname = $user['prenom'] . " " . $user['nom'];
+
+        $countcomment = countcomments();
+
         require_once 'vue/home.php';
     }
 

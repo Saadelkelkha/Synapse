@@ -833,7 +833,7 @@
 
                                 commentList.innerHTML += `
                                     <div class="comment-form"  style="margin-top: 10px; width: 100%; position: sticky; bottom: 0; background-color:rgb(0, 0, 0); border-radius: 5px 5px 0 0;">
-                                        <div style="display: flex; gap: 10px; position: sticky; bottom: 0;"> 
+                                        <div style="display: flex; gap: 10px; position: sticky; bottom: 0;">
                                             <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
                                             <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
                                         </div>
@@ -906,7 +906,7 @@
                             
                     commentList.innerHTML += `
                         <div class="comment-form"  style="margin-top: 10px; width: 100%; position: sticky; bottom: 0; background-color:rgb(0, 0, 0); border-radius: 5px 5px 0 0;">
-                            <div style="display: flex; gap: 10px; position: sticky; bottom: 0;"> 
+                            <div style="display: flex; gap: 10px; position: sticky; bottom: 0;">
                                 <input type="text" name="groupe_comment_content" class="form-control" placeholder="Commenter...">
                                 <button type="button" class="btn btn-primary" onclick="submitcommentgroup(event, ${postId})">Commenter</button>
                             </div>
@@ -953,7 +953,7 @@
                 popupMessage.style.opacity = '0';
                 setTimeout(() => {
                     popupMessage.remove();
-                }, 500); 
+                }, 500);
             }, 2000);
         }
 

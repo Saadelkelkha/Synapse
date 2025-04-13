@@ -370,7 +370,17 @@
                     <p class="w-100"><?= $countmembres ?> membres</p>
                     <div class="d-flex justify-content-between w-100">
                         <div class="d-flex align-items-center">
-                            <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" width="50px" height="50px">
+                             <?php
+                                                $countmembershow = 0;
+                                                foreach ($imgmembres as $index => $img) {
+                                                    $positionStyle = 'position: relative; margin-left: ' . ($index * -40) . 'px;';
+                                                    echo '<img class="navhome1_profile" src="' . htmlspecialchars($img->photo_profil, ENT_QUOTES, 'UTF-8') . '" width="50px" height="50px" alt="Member profile picture" style="' . $positionStyle . '">';
+                                                    $countmembershow++;
+                                                    if ($countmembershow >= 10) {
+                                                        break;
+                                                    }
+                                                }
+                                                ?>
                         </div>
                         <div>
                             <button class="btn btn-primary" style="border-color: #2B2757;" id="join_groupe" onclick="affichepopup(event)">Rejoindre</button>

@@ -447,6 +447,7 @@
             $countmembres = $countmemberGroup->count + 1;
 
             $invitations = selectinvitationgroup();
+            $imgmembres = selectmembresgroupparid($id_groupe);
 
             require_once 'vue/partagepostlogin.php';
         }

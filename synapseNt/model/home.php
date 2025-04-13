@@ -74,4 +74,12 @@
         return $sqlState->fetchAll(PDO::FETCH_OBJ);
     }
 
+    function countcomments(){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT post.id_post, COUNT(comment_post.id_post_groupe) AS comment_count FROM post LEFT JOIN comment_post ON comment_post.id_post_groupe = post.id_post GROUP BY post.id_post');
+        $sqlstate->execute([]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
 ?>

@@ -1191,7 +1191,7 @@
         document.getElementById('overlay-supprimer').addEventListener('click', () => {
             document.getElementById('popup-supprimer').classList.add('hidden-modifier');
             document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
-        });   
+        });
         
         
     </script>

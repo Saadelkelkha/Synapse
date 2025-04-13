@@ -532,7 +532,18 @@ foreach($posts as $post) {
 $stmt->execute(['id_post' => $post->id_post]);
 $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></span></b> peronnes</p>
                         </div>
-                        <div class="comments text-muted">View all 130 comments</div>
+                        <?php 
+                        foreach($countcomment as $count){
+                            if($count->id_post == $post->id_post){
+                                if($count->comment_count == 0){
+                                    echo '<div class="comments text-muted">Aucun commentaire</div>';
+                                }else{
+                                    echo '<div onclick="affichecommentlist(event)" class="comments text-muted" style="cursor: pointer;">Voir les ' . $count->comment_count . ' commentaires</div>';
+                                }
+                                break;
+                            }
+                        }
+                        ?>
                         <div id="comments-list" class="comments-list text-white ps-2 pe-2 pb-1" style="display: none; border-radius: 5px;overflow-y: auto; border-radius: 5px; -ms-overflow-style: none; scrollbar-width: none;max-height:400px;background-color:#2B2757;" postId=<?=$post->id_post?> ></div>
                     </div>
 
