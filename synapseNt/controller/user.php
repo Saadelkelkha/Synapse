@@ -2,6 +2,7 @@
     require_once 'model/users.php';
     require_once 'model/home.php';
     require_once 'model/admin.php';
+    require_once 'model/profile.php';
 
     function login_signup(){
         require_once 'vue/login.php';
@@ -286,7 +287,7 @@
         //$_SERVER['DOCUMENT_ROOT'] houwa repertoire racine
         $tmpName = $_FILES['image']['tmp_name'];
         $image = $_FILES['image']['name'];
-        $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse2/Synapse/synapseNt/vue/uploads/' . $image;
+        $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/vue/uploads/' . $image;
 
         //kat7t f database
         $imageUrl = 'vue/uploads/' . $image;
@@ -394,6 +395,19 @@
         $user = selectuser($id);
         $fullname = $user['prenom'] . " " . $user['nom'];
         require_once "vue/profil.php";
+    }
+    function AfficherInfoUserSurProfilControlerAmis() {
+        $id = $_SESSION['id_user'];
+        $user = selectuser($id);
+        $fullname = $user['prenom'] . " " . $user['nom'];
+        require_once "vue/profile-ami.php";
+    }
+
+    function afficherModifierProfile() {
+        $id = $_SESSION['id_user'];
+        $user = selectuser($id);
+        $fullname = $user['prenom'] . " " . $user['nom'];
+        require_once "vue/seetingsProfile.php";
     }
 
     function afficherEnregistrerPostController(){
@@ -524,4 +538,49 @@
             'status' => 'success'
         ]);
     }
+function modifierProfilController() {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['modifierProfil'])) {
+        $id_user = $_SESSION['id_user'];
+        $user = getUserById($id_user);
+
+        $prenom = $_POST['prenom'];
+        $nom = $_POST['nom'];
+        $email = $_POST['email'];
+        $bio = $_POST['bio'];
+        $date_naissance = $_POST['date_naissance'];
+
+        // Gestion de l'upload des images
+        $photo_profil = $user['photo_profil']; // Garder l'ancienne photo si non modifiée
+        $banner = $user['banner']; // Garder l'ancien banner si non modifié
+
+        if (!empty($_FILES['photo_profil']['name'])) {
+            $photo_profil = "vue/profil_photos/" . basename($_FILES['photo_profil']['name']);
+            move_uploaded_file($_FILES['photo_profil']['tmp_name'], $photo_profil);
+        }
+
+        if (!empty($_FILES['banner']['name'])) {
+            $banner = "vue/profil_photos/" . basename($_FILES['banner']['name']);
+            move_uploaded_file($_FILES['banner']['tmp_name'], $banner);
+        }
+
+        // Mettre à jour les informations dans la base de données
+        $success = ModifierProfile($id_user, $prenom, $nom, $email, $bio, $date_naissance, $photo_profil, $banner);
+
+        if ($success) {
+            $_SESSION['success_message'] = "Profil mis à jour avec succès !";
+        } else {
+            $_SESSION['error_message'] = "Une erreur est survenue lors de la mise à jour.";
+        }
+
+        header("Location: index.php");
+        exit();
+    }
+}
+
+function afficherAmiesController(){
+    $amies = afficherAmiesM();
+    require 'vue/amies.php';
+}
+
+
 ?>

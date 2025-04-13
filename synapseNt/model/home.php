@@ -73,6 +73,11 @@
         $sqlState->execute([$id]);
         return $sqlState->fetchAll(PDO::FETCH_OBJ);
     }
+    function afficherAmiesM(){
+        $db = database_connection();
+        $sqlState = $db->query('SELECT * FROM user inner join followers on user.id_user = followers.id_user where user.id_user = followers.id_user');
+        return $sqlState->fetchAll(PDO::FETCH_OBJ);
+    }
 
     function countcomments(){
         $db = database_connection();

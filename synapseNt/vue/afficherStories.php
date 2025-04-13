@@ -2,8 +2,11 @@
 $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
 
 // Récupérer les stories depuis la base de données
-$sqlState = $pdo->query('SELECT * FROM story ORDER BY date_story DESC');
-$stories = $sqlState->fetchAll(PDO::FETCH_OBJ);
+$sql = "SELECT s.*, u.prenom, u.nom, u.photo_profil 
+        FROM story s
+        JOIN user u ON s.id_user = u.id_user
+        ORDER BY s.date_story DESC";
+$stories = $pdo->query($sql)->fetchAll(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -95,35 +98,66 @@ $stories = $sqlState->fetchAll(PDO::FETCH_OBJ);
         .home_stories{
             z-index: 798;
         }
+        .btn-story1{
+            background-color: transparent;
+            color:grey;
+        }
+        .btn-story1:hover{
+            background-color: transparent;
+            color:#2B2757;
+            font-size:large;
+
+        }
     </style>
 </head>
 <body>
 
+<?php   $now = time();
+$groupedStories = [];
+
+foreach ($stories as $story) {
+    $userId = $story->id_user;
+    if (!isset($groupedStories[$userId])) {
+        $groupedStories[$userId] = [
+            'prenom' => $story->prenom,
+            'nom' => $story->nom,
+            'photo_profil' => $story->photo_profil,
+            'stories' => []
+        ];
+    }
+    $groupedStories[$userId]['stories'][] = $story;
+}
+
+
+// Vérifie si des stories sont disponibles
+if (!isset($stories) || empty($stories)) {
+    echo "Aucune story disponible.";
+} else {
+?>
     <div class="stories_body">
         <div class="stories-container" id="stories">
-        <div class="home_stories">
-                          <div class="home_make_story">
-                              <img  src="img/Profile/Julia Clarke.png">
-                              <b>+</b>
-                             
-                              
-                          </div>
-                        
-                         
-                      </div>
-       
-            
-            <?php foreach($stories as $story) { ?>
-                <div class="story" onclick="viewStory('<?php echo $story->image_path; ?>')">
-                    
-                   
-                   
-                      <img src="<?php echo $story->image_path; ?>" alt="Story">
-                      
-                    
-                    
+            <div class="home_stories">
+                <div class="home_make_story">
+                    <img src="<?php echo $user['photo_profil']; ?>">
+                    <b><button class="btn-story1" id="openStoryPopup">+</button></b>
                 </div>
-            <?php } ?>
+            </div>
+
+            <?php foreach ($stories as $story): 
+            
+                $storyTime = strtotime($story->date_story);
+             
+                $timeDiff = $now - $storyTime;
+              
+                if ($timeDiff < 60) {
+                  $remainingTime = 60 - $timeDiff;
+                  
+                
+                ?>
+                <div class="story" onclick="viewStory('<?php echo $story->image_path; ?>')">
+                    <img src="<?php echo $story->image_path; ?>" alt="Story">
+                </div>
+            <?php }  endforeach; ?>
         </div>
     </div>
 
@@ -142,6 +176,8 @@ $stories = $sqlState->fetchAll(PDO::FETCH_OBJ);
             document.getElementById('storyOverlay').style.display = 'none';
         }
     </script>
+<?php } ?>
+
 
 </body>
 </html>

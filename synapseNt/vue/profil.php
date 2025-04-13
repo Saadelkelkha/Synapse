@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./assets/home.css">
     <style>
+        .fixed-profile {
+    position: sticky;
+    top: 100px; /* Ajuste selon la hauteur de ton header */
+    height: fit-content;
+    max-height: 90vh; /* S'assure qu'il ne dépasse pas l'écran */
+}
+
+
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -743,6 +751,9 @@
             padding: 5px 10px;
             font-weight: bold;
         }
+        #openPopup:hover{
+            cursor:pointer;
+        }
 
     </style>
 </head>
@@ -768,12 +779,21 @@
               <h3 align="start"><?php if(isset($fullname)){echo $fullname;} ?></h3>
              
             
-              <p align="start">Lead Product Designer at Apple</p>
-              <p align="start">Followers</p>
+              <p align="start"><?php echo htmlspecialchars($user['bio']); ?></p>
+            <?php  
+                  // Récupérer le nombre d'amis
+                  $id_user = $_SESSION['id_user'] ?? 1;
+                    $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "", [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+
+                    $stmt = $pdo->prepare("SELECT COUNT(*)   AS friend_count FROM friends WHERE user_id_1 = ? OR user_id_2 = ?");
+                    $stmt->execute([$id_user, $id_user]);
+                    $friendCount = $stmt->fetch(PDO::FETCH_ASSOC)['friend_count'];
+            ?>
+              <p align="start"><?=  $friendCount ?> ami(s)</p>
               </div>
-              <button class="btn btn-primary btn-edit">Modifier Profil</button>
                
             </div>
+          
           
          <br><br>
         
@@ -781,12 +801,11 @@
 <div class="container mt-2">
 <nav class=" navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="#">Réseau Social</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link active" href="index.php?action=afficherProfil">Publications</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Ami(e)s</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a></li>
                 <li class="nav-item"><a class="nav-link" href="index.php?action=afficherPhotos">Photos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Vidéos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Plus</a></li>
@@ -796,11 +815,11 @@
 </nav> <br>
     <div class="row">
         <!-- Colonne gauche (Profil, Bio) -->
-        <div class="col-md-4">
+        <div class="col-md-4 fixed-profile">
             <div class="profile-card mb-3">
                 <h5><strong>Intro</strong></h5>
                 <button class="btn btn-light mb-2">Ajouter une bio</button>
-                <button class="btn btn-light mb-2">Modifier les infos</button>
+                <button class="btn btn-light mb-2"><a style="color:black; text-decoration:none;"  href="index.php?action=modifierProfile">Modifier Profil</a></button>
                 <button class="btn btn-light">Ajouter du contenu à la une</button>
             </div>
             <div class="profile-card">
@@ -818,14 +837,9 @@
                     <form class="post-box mb-" >
                         <div class="profile-pic mb-3 d-flex">
                             <img src="img/Profile/Julia Clarke.png" alt="" >
-                            <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="create-post">
+                            <input  type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="openPopup">
                         </div>
-                        <div class="photo-i" style="display: flex; justify-content: space-between; margin-left: 2%;">
-                            <a href="" style="color: #b8bec4;text-decoration: none; display:flex;gap: 8px;align-items: center;"><i class="bi bi-clock-history"></i></i>Stories</a>
-                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-image"></i>Photos</a>
-                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-face-smile"></i>Feelings</a>
-                            <button type="submit" class="btn btn-primary m-0" style="border-color: #2B2757; margin-right: 2%; width: 20%;" id="openPopup">Post</button>
-                        </div>
+                        
                         
                     </form>
                     <div class="overlay" id="overlay"></div>
@@ -890,21 +904,21 @@ foreach($posts as $post) {
             <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
             <img src="<?php echo $user['photo_profil']; ?>" alt="Profile Picture" class="profile-img">
                 <div class="name1">
-                    <h5 class=" mb-0" >Ahmed Said</h5>
+                    <h5 class=" mb-0" align="start"><?php if(isset($fullname)){echo $fullname;} ?></h5>
                     
 
                                     <input type="hidden" name="id_post" value="<?php echo $post->id_post; ?>">
-                                    <input type="text" name="id_user" value="<?php echo $post->id_user; ?>">
-                                    <small style="font-size:small; color: #777;"><?php echo $post->date_post; ?></small>
+                                    <input type="hidden" name="id_user" value="<?php echo $post->id_user; ?>">
+                                    <small align="start" style="font-size:small; color: #777;"><?php echo $post->date_post; ?></small>
                                     <div class="caption mt-4">
                                         <span class="hash-tag"><?php echo $post->text_content; ?></span></p>
                                     </div>
                                     <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                 </div>
                                 <div class="dropdown-modifier">
-                                    <button class="dropdown-btn-modifier">...</button>
+                                    <button class="dropdown-btn-modifier btn-modifier-supprimer1">...</button>
                                     <div class="dropdown-content-modifier">
-                                        <button class="open-popup-btn-modifier">Modifier</button>
+                                        <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                         <button class="open-popup-btn-supprimer" onclick="affichesupprimer(<?php echo $post->id_post; ?>)">Supprimer</button>
                                     </div>
                                 </div>
@@ -976,7 +990,7 @@ foreach($posts as $post) {
 $stmt->execute(['id_post' => $post->id_post]);
 $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></span></b> peronnes</p>
                         </div>
-                        <div class="comments text-muted">View all 130 comments</div>
+                        <div class="comments text-muted" align="start">View all 130 comments</div>
                     </div>
 
             <?php
@@ -1130,6 +1144,8 @@ likeButton.addEventListener("click", function () {
 });
 });
 });
+
+    
 
 
 </script>

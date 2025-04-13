@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./assets/home.css">
     <style>
+        .fixed-profile {
+    position: sticky;
+    top: 100px; /* Ajuste selon la hauteur de ton header */
+    height: fit-content;
+    max-height: 90vh; /* S'assure qu'il ne dépasse pas l'écran */
+}
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -748,6 +754,73 @@
             display:flex;
             flex-direction:row;
         }
+        .post-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espacement entre les images */
+}
+.post-gallery img,
+.post-gallery video {
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.photo-gallery {
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: auto;
+}
+
+.gallery-tabs {
+    display: flex;
+    gap: 20px;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.gallery-tabs span {
+    cursor: pointer;
+    padding-bottom: 5px;
+}
+
+.gallery-tabs .active {
+    border-bottom: 2px solid #1877f2;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.gallery-img, .gallery-video {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.edit-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+
+
 
     </style>
 </head>
@@ -757,6 +830,14 @@
         <?php require_once 'vue/layout/navhome1.php'; ?>
 
         <main class="mt-1 d-flex">
+            <?php 
+            $id = $_SESSION['id_user'];
+            $db = new PDO("mysql:host=localhost;dbname=synapse","root","");
+            $sqlstate = $db->prepare("SELECT * FROM user WHERE id_user = ?");
+            $sqlstate->execute([$id]);
+            $user = $sqlstate->fetch(PDO::FETCH_ASSOC);
+            
+            ?>
             <!-- Sidebar -->
             
             <!-- Formulaire de création de post -->
@@ -771,12 +852,24 @@
                 
               <div class="text-profil-after-pic">
               <h3 align="start"><?php if(isset($fullname)){echo $fullname;} ?></h3>
-             
-            
-              <p align="start">Lead Product Designer at Apple</p>
-              <p align="start">Followers</p>
+              <p align="start"><?php
+               if (!empty($user['bio'])){ 
+                echo  $user['bio'];
+            }
+                 else{ 
+                    echo null ; 
+                    }?></p>
+            <?php  
+                  // Récupérer le nombre d'amis
+                  $id_user = $_SESSION['id_user'] ?? 1;
+                    $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "", [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+
+                    $stmt = $pdo->prepare("SELECT COUNT(*)   AS friend_count FROM friends WHERE user_id_1 = ? OR user_id_2 = ?");
+                    $stmt->execute([$id_user, $id_user]);
+                    $friendCount = $stmt->fetch(PDO::FETCH_ASSOC)['friend_count'];
+            ?>
+              <p align="start"><?=  $friendCount ?> ami(s)</p>
               </div>
-              <button class="btn btn-primary btn-edit">Modifier Profil</button>
                
             </div>
           
@@ -791,7 +884,7 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link active" href="index.php?action=afficherProfil">Publications</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Ami(e)s</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a></li>
                 <li class="nav-item"><a class="nav-link" href="index.php?action=afficherPhotos">Photos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Vidéos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Plus</a></li>
@@ -799,101 +892,41 @@
         </div>
     </div>
 </nav> <br>
-    <div class="row">
-        <!-- Colonne gauche (Profil, Bio) -->
-      
-        <!-- Colonne droite (Publications) -->
-        <div class="col-md-12 d-flex flex-direction-row">
-            <!-- Champ de publication -->  
+<?php
+$pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
+$id = $_SESSION['id_user'];
+$sqlState = $pdo->query('SELECT id_post, id_user, image_path FROM post'); 
+$posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
+?>
 
-   <br><br>           
-
-            <!-- Liste des publications -->
-            <div id="postContainer">
-                <?php
-                $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
-                $id = $_SESSION['id_user'];
-                $sqlState = $pdo->query('SELECT image_path FROM post'); 
-                
-                $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
-                
-foreach($posts as $post) {
-    // Récupérer l'ID de l'utilisateur depuis la session
-    $id_user = $_SESSION['id_user'];  
-     
-    // Assurez-vous que l'ID de l'utilisateur est stocké dans la session
-
-    ?>
-    <div class="profile-card" width="100%">
-
-
-
-        <div class="user">
-            
-            <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-                <div class="name1">
-                    
-
-                                    <input type="hidden" name="id_post" value="<?php echo $post->id_post; ?>">
-                                    <input type="hidden" name="id_user" value="<?php echo $post->id_user; ?>">
-                                   
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-dark d-flex justify-content-center">
-                        <?php
-                            // Récupérer l'extension du fichier
-                            $fileExtension = pathinfo($post->image_path, PATHINFO_EXTENSION);
-
-                            // Vérifier si c'est une image ou une vidéo
-                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                            $videoExtensions = ['mp4', 'webm', 'ogg'];
-
-                            if (in_array(strtolower($fileExtension), $imageExtensions)) {
-                                // Si c'est une image
-                                echo "<div class='image-phpstyle'>";
-                                echo '<img class="image-width" style="max-heigth:20vh;max-width:100%"  src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" />';
-                                echo '</div>';
-                            } elseif (in_array(strtolower($fileExtension), $videoExtensions)) {
-                                // Si c'est une vidéo
-                                echo '<video src="' . htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') . '" controls></video>';
-                            }
-                        ?>
-                        </div>
-                        <div class="action-button" style="display: flex; justify-content: space-between;">
-                           
-                           
-                        </div>
-                        
-                        
-                    </div>
-
-            <?php
-            }
-            ?>
-                </div>
+<div class="photo-gallery">
+    <h2 style="color:black;" align="start">Photos</h2>
+    
+    <div class="gallery-grid">
+        <?php foreach ($posts as $post) {
+             if (!empty($post->image_path) && trim($post->image_path) !== "vue/uploads/") {
+            $fileExtension = pathinfo($post->image_path, PATHINFO_EXTENSION);
+            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            $videoExtensions = ['mp4', 'webm', 'ogg'];
+        ?>
+            <div class="gallery-item">
+                <?php if (in_array(strtolower($fileExtension), $imageExtensions)) { ?>
+                    <img src="<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>" class="gallery-img">
+                <?php } elseif (in_array(strtolower($fileExtension), $videoExtensions)) { ?>
+                    <video class="gallery-video" controls>
+                        <source src="<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>" type="video/<?= $fileExtension ?>">
+                        Votre navigateur ne supporte pas les vidéos HTML5.
+                    </video>
+                <?php } ?>
+               
             </div>
-        </div>
+        <?php } } ?>
     </div>
 </div>
-                    <!-- Popup -->
-                  
-                    <!-- Feed -->
-
 
              
        
-        <div class="overlay-supprimer hidden-modifier" id="overlay-supprimer"></div>
-
-        <div class="popup-modifier hidden-modifier" id="popup-supprimer">
-            <header>Supprimer le Post</header>
-            <form method="post" action="index.php?action=supprimerPost">
-                <input type="hidden" name="id_post" value="">
-                <button name="supprimer" type="submit">Supprimer</button>
-                <button type="button" class="close-popup-btn-supprimer">Annuler</button>
-            </form>
-        </div>
-    </div>
+       
     <script>
         
 
@@ -1022,5 +1055,7 @@ likeButton.addEventListener("click", function () {
 
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </html>

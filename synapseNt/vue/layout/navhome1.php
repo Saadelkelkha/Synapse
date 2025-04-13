@@ -1,6 +1,8 @@
         <nav class="navhome1" style="padding:30px 3%;" >
             <div class="navhome1_left">
-                <img src="img/logop.png" height="50">
+                <a href="index.php?action=home">
+                  <img src="img/logop.png" height="50">
+                </a>
                 <?php  include 'vue/chatbot1.php';?>
                 <?php  include 'vue/message.php';?>
             </div>

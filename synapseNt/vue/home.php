@@ -361,6 +361,18 @@ $id_post = $_GET['id_post'] ?? null;
         .enregistrer-annuler-btn{
             display:flex;
         }
+        .btn-modifier-supprimer1{
+            color:black;
+            background-color: transparent;
+            
+        }
+        .btn-modifier-supprimer1:hover{
+            color:white;
+           border-radius:50%;
+           background-color: lightgrey;
+           
+            
+        }
 
         /* .like_button:hover{
             background-color: red;
@@ -384,7 +396,7 @@ $id_post = $_GET['id_post'] ?? null;
             <div class="content_chat">
                 <div class="content flex-grow-1">
                 <?php require_once 'afficherStories.php'; ?>
-                <button id="openStoryPopup">Ajouter une Story</button>
+                
              
 
              <?php include 'storyPopup.php'; ?>
@@ -393,7 +405,7 @@ $id_post = $_GET['id_post'] ?? null;
                     <!-- Formulaire de création de post -->
                     <form class="create-post mb-3 mt-4" >
                         <div class="profile-pic mb-3 d-flex">
-                            <img src="img/Profile/Julia Clarke.png" alt="" >
+                            <img src="<?php echo $user['photo_profil']; ?>">
                             <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="create-post">
                         </div>
                         <div class="photo-i" style="display: flex; justify-content: space-between; margin-left: 2%;">
@@ -445,9 +457,9 @@ foreach($posts as $post) {
     <div class="feed" width="100%">
         <div class="user">
             <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-                <img src="img/Profile/Julia Clarke.png" alt="">
+            <img src="<?php echo $user['photo_profil']; ?>">
                 <div class="name1">
-                    <h5 class=" mb-0" >Ahmed Said</h5>
+                    <h5 class=" mb-0" ><?php echo $fullname; ?></h5>
                     
 
                                     <input type="hidden" name="id_post" value="<?php echo $post->id_post; ?>">
@@ -455,12 +467,12 @@ foreach($posts as $post) {
                                     <div class="caption mt-4">
                                         <span class="hash-tag"><?php echo $post->text_content; ?></span></p>
                                     </div>
-                                    <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
+                                    
                                 </div>
                                 <div class="dropdown-modifier">
-                                    <button class="dropdown-btn-modifier">...</button>
+                                    <button class="dropdown-btn-modifier btn-modifier-supprimer1">...</button>
                                     <div class="dropdown-content-modifier">
-                                        <button class="open-popup-btn-modifier">Modifier</button>
+                                        <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                         <button class="open-popup-btn-supprimer" onclick="affichesupprimer(<?php echo $post->id_post; ?>)">Supprimer</button>
                                     </div>
                                 </div>
