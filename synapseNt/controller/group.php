@@ -44,6 +44,8 @@
         $group_info = selectGroup($id_group);
         $group_info = $group_info[0];
 
+        $likesamie = likesamiegrp($id,$id_group);
+
         if($group_info->id_admin == $id){
             $is_admin = true;
         }else{
@@ -251,7 +253,7 @@
         $id_groupe = $infos->id_groupe;
         $oldimage = $infos->image_path_groupe;
 
-        if ($_FILES['image']['name']) {            
+        if ($_POST['imagehere'] === "true" && $_FILES['image']['name']) {            
             // Traitement de l'image
             // Define the directory where the images are stored
             $imageDirectory = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/groupes/' . $id_groupe . '/';
@@ -297,6 +299,8 @@
             
             // Déplacer l'image dans le répertoire "uploads"
             move_uploaded_file($tmpName, $imagePath);
+            $_FILES = [];
+
         } else {
             if($_POST['imagehere'] === "true"){
                 $imageUrl = $oldimage;
@@ -388,6 +392,7 @@
             $fullname = $user['prenom'] . " " . $user['nom'];
 
             $id_groupe = selectid_groupe($id_post_groupe)->id_groupe;
+            $likesamie = likesamiegrp($id,$id_groupe);
 
             if (!isingroup($id,$id_groupe)) {
                 $_SESSION['id_groupe'] = $id_groupe;
@@ -403,7 +408,7 @@
                 $countmembres = $countmemberGroup->count + 1;
 
                 $post = selectpostgroupe($id_post_groupe);
-                $group_posts_likes = selectgroupepostslikes($id_post_groupe);
+                $group_posts_likes = selectgroupepostslikes($id);
                 $countlikes = countlikesgroupe();
                 $enregistrerpostes = selectenregistrementgroupepostpartage($id,$id_post_groupe);
                 $countcomment = countcommentsgroupe($id_groupe);
@@ -440,6 +445,8 @@
             $id_groupe = $_SESSION['id_groupe'];
             $group_info = selectGroup($id_groupe);
             $group_info = $group_info[0];
+
+            $likesamie = likesamiegrp($id,$id_group);
 
             $countmemberGroup = countmemberGroup($id_groupe);
             $countmemberGroup = $countmemberGroup[0];

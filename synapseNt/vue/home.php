@@ -2,7 +2,7 @@
 
 $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
 
-$sqlState = $pdo->query('SELECT * FROM  post');
+$sqlState = $pdo->query('SELECT * FROM  post join user on user.id_user = post.id_user');
 $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
@@ -393,7 +393,7 @@ $id_post = $_GET['id_post'] ?? null;
 
             
             <!-- Formulaire de création de post -->
-            <div class="content_chat">
+            <div class="content_chat pb-5">
                 <div class="content flex-grow-1">
                 <?php require_once 'afficherStories.php'; ?>
                 
@@ -431,7 +431,7 @@ $id_post = $_GET['id_post'] ?? null;
                                                 <ul class="list">
                                                     <li>
                                                         <label for="imageInput">
-                                                            <img src="img/fb-icons/gallery.svg" alt="gallery">
+                                                            <i class="bi bi-images"></i>
                                                         </label>
                                                         <input type="file" id="imageInput" accept="image/*" name="image">
                                                     </li>
@@ -457,49 +457,31 @@ foreach($posts as $post) {
     <div class="feed" width="100%">
         <div class="user">
             <div class="profile-pic" width="100%" style="display: flex; gap: 10px;">
-            <img src="<?php echo $user['photo_profil']; ?>">
+            <img src="<?php echo $post->photo_profil; ?>">
                 <div class="name1">
-                    <h5 class=" mb-0" ><?php echo $fullname; ?></h5>
+                    <h5 class=" mb-0" ><?php echo $post->prenom; ?> <?php echo $post->nom; ?></h5>
                     
 
                                     <input type="hidden" name="id_post" value="<?php echo $post->id_post; ?>">
                                     <small style="font-size:small; color: #777;"><?php echo $post->date_post; ?></small>
                                     <div class="caption mt-4">
-                                        <span class="hash-tag"><?php echo $post->text_content; ?></span></p>
+                                        <span class="hash-tag hash-tag-<?= $post->id_post ?>"><?php echo $post->text_content; ?></span></p>
                                     </div>
                                     
                                 </div>
-                                <div class="dropdown-modifier">
+                                <div class="dropdown-modifier"><?php 
+                                    if($id == $post->id_user){?>
                                     <button class="dropdown-btn-modifier btn-modifier-supprimer1">...</button>
+                                    <?php } ?>
                                     <div class="dropdown-content-modifier">
-                                        <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
+                                        <!-- <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a> -->
+                                        <button class="open-popup-btn-modifier" onclick="affichemodifier(<?php echo $post->id_post; ?>)">Modifier</button>
                                         <button class="open-popup-btn-supprimer" onclick="affichesupprimer(<?php echo $post->id_post; ?>)">Supprimer</button>
                                     </div>
                                 </div>
-
-                                <div class="overlay-modifier hidden-modifier" id="overlay-modifier"></div>
-
-                                <div class="popup-modifier hidden-modifier" id="popup-modifier">
-                                    <header>Modifier le Post</header>
-                                    <form method="post" enctype="multipart/form-data" action="index.php?action=modifierPost">
-                                        <input type="hidden" name="post_id" id="post_id-modifier" value="">
-                                        <textarea name="text_content" placeholder="Modifier le contenu"></textarea>
-                                        <img height="100px" src="../img/Profile/Julia Clarke.png" alt="">
-                                        <div class="options-modifier">
-                                            <label for="imageInput-modifier">
-                                                <img src="" alt="gallery">
-                                            </label>
-                                            <input type="file" id="imageInput-modifier" accept="image/*" name="image" style="display:none;">
-                                        </div>
-                                        <div class="enregistrer-annuler-btn">
-                                        <button type="submit">Modifier</button>
-                                        <button type="button" class="close-popup-btn-modifier">Annuler</button>
-                                        </div>
-                                    </form>
-                                </div>
                             </div>
                         </div>
-                        <div class="bg-dark d-flex justify-content-center">
+                        <div class="imageorvideopost imageorvideopost-<?= $post->id_post ?> bg-dark d-flex justify-content-center">
                         <?php
                             // Récupérer l'extension du fichier
                             $fileExtension = pathinfo($post->image_path, PATHINFO_EXTENSION);
@@ -525,7 +507,10 @@ foreach($posts as $post) {
                                 
 
                                 <span data-name="span" onclick="affichecommentlist(event)"  style="cursor: pointer;"><i class="uil uil-comment" data-name="span" style="font-size: x-large;"></i></span>
-                                <span><i class="uil uil-share" style="font-size: x-large;"></i></span>
+                                <span onclick="affichesharemenu(event)"  style="cursor: pointer;"><i class="uil uil-share" style="font-size: x-large;"></i></span>
+                                <div class="share-menu" style="display: none; position: absolute; background: white; border: 1px solid #ccc; border-radius: 5px; padding: 10px; z-index: 1000;">
+                                    <button class="btn rounded-circle" style="background-color:#F5F5F5;" onclick="copyLink(<?= $post->id_post; ?>)"><i class="fas fa-link"></i></button>
+                                </div>
                             </div>
                             <div class="bookmark">
                               <form action="index.php?action=enregistrerPost" method="post">
@@ -537,10 +522,31 @@ foreach($posts as $post) {
                         </div>
                         
                         <div class="liked-by" style="display: flex; ">
-                            <span class="liked1"><img  src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked2"><img src="img/Profile/Julia Clarke.png" height="25px"width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked3"><img src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <p class="liked4">Liker par <b><span id="count_like_<?php echo $post->id_post; ?>"><?php $stmt = $pdo->prepare("SELECT COUNT(*) AS like_count FROM likes WHERE id_post = :id_post");
+                            
+                            <?php 
+                            $likesa = [];
+                            foreach ($likesamie as $like) {
+                                if ($like->id_post == $post->id_post) {
+                                    $likesa[] = $like;
+                                }
+                            }
+                            $likesacount = 0;
+                            if(count($likesa) > 0){ 
+                                $likesacount = -2;
+                                ?>
+                                <span class="liked1"><img  src="<?php if(isset($likesa[0])) { echo $likesa[0]->photo_profil; } ?>" height="25px" width="25px" style="border-radius: 50%;" alt="User Profile Picture"></span>
+                                <?php if(count($likesa) > 1){ 
+                                    $likesacount = 1;
+                                    ?>
+                                    <span class="liked2"><img src="<?php if(isset($likesa[1])) { echo $likesa[1]->photo_profil; } ?>" height="25px"width="25px" style="border-radius: 50%;"></span>
+                                <?php } ?>
+                                <?php if(count($likesa) > 2){ 
+                                    $likesacount = 2;
+                                    ?>
+                                    <span class="liked3"><img src="<?php if(isset($likesa[2])) { echo $likesa[2]->photo_profil; } ?>" height="25px" width="25px" style="border-radius: 50%;"></span>
+                                <?php } ?>
+                            <?php } ?>
+                            <p class="liked4" style="left: <?=-5*$likesacount?>px;">Liker par <b><span id="count_like_<?php echo $post->id_post; ?>"><?php $stmt = $pdo->prepare("SELECT COUNT(*) AS like_count FROM likes WHERE id_post = :id_post");
 $stmt->execute(['id_post' => $post->id_post]);
 $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></span></b> peronnes</p>
                         </div>
@@ -578,7 +584,67 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
             </form>
         </div>
     </div>
+    <div class="overlay-modifier hidden-modifier" id="overlay-modifier"></div>
+
+    <div class="popup-modifier hidden-modifier" id="popup-modifier">
+        <header>Modifier le Post</header>
+        <form id="modifierPostForm" enctype="multipart/form-data">
+            <input type="hidden" name="imagehere" id="imagehere_modifier" value="">
+            <input type="hidden" name="post_groupe_id" id="group_post_id_modifier" value="">
+            <textarea name="text_content" placeholder="Modifier le contenu" id="group_post_content_modifier"></textarea>
+            <div class="w-100 bg-dark" id="modifierPostFormdivimage">
+                <p type="button" class="btn" style="position: absolute; top: 210px; left: 330px;z-index:999" onclick="removepostimage()"><i style="font-size: 20px;color:grey;" class="bi bi-x-lg"></i></p>
+                <img id="group_post_image_modifier" style="max-width: 100%; height: 200px;" src="" alt="">
+            </div>
+            <div class="options-modifier w-100 d-flex justify-content-center">
+                <label for="imageInput-modifier" align="center">
+                    <i class="bi bi-card-image" style="background-color: #dfdfdf; border-radius: 50%; padding: 5px;"></i>
+                    <p>Changer l'image</p>
+                </label>
+                <input type="file" id="imageInput-modifier" accept="image/*" name="image" style="display:none;">
+            </div>
+            <div class="enregistrer-annuler-btn">
+            <button type="submit">Modifier</button>
+            <button type="button" class="close-popup-btn-modifier">Annuler</button>
+            </div>
+        </form>
+    </div>
     <script>
+        function affichesharemenu(event){
+            const shareMenu = event.currentTarget.nextElementSibling;
+            shareMenu.style.display = shareMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function copyLink(id){
+            const el = document.createElement('textarea');
+            el.value = window.location.href + '&id=' + id;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            const popupMessage = document.createElement('div');
+            popupMessage.innerHTML = '<i class="fas fa-check-circle" style="color: white; background-color: green; border-radius: 50%; padding: 5px;"></i> Lien copié dans le presse-papiers';
+            popupMessage.style.position = 'fixed';
+            popupMessage.style.bottom = '20px';
+            popupMessage.style.left = '50%';
+            popupMessage.style.transform = 'translateX(-50%)';
+            popupMessage.style.backgroundColor = '#333';
+            popupMessage.style.color = '#fff';
+            popupMessage.style.padding = '10px 20px';
+            popupMessage.style.borderRadius = '5px';
+            popupMessage.style.zIndex = '1000';
+            document.body.appendChild(popupMessage);
+
+            popupMessage.style.transition = 'opacity 0.5s ease';
+            popupMessage.style.opacity = '1';
+            setTimeout(() => {
+                popupMessage.style.opacity = '0';
+                setTimeout(() => {
+                    popupMessage.remove();
+                }, 500);
+            }, 2000);
+        }
+
         function commentlike(event){
             var id_comment = event.target.parentElement.parentElement.parentElement.getAttribute('id_comment');
             
@@ -937,7 +1003,17 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const uploadedImageContainer = document.getElementById("uploadedImageContainer");
-                    uploadedImageContainer.innerHTML = '<img src="${e.target.result}" alt="Uploaded Image"/>';
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    
+                    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                        // If it's an image
+                        uploadedImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                    } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                        // If it's a video
+                        uploadedImageContainer.innerHTML = `<video controls style="width: 100%; height: auto;"><source src="${e.target.result}" type="video/${fileExtension}">Your browser does not support the video tag.</video>`;
+                    } else {
+                        uploadedImageContainer.innerHTML = `<p>Unsupported file type</p>`;
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -981,6 +1057,126 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
             });
         });
 
+        document.getElementById("imageInput-modifier").addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageElement = document.getElementById("group_post_image_modifier");
+                    imageElement.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                if (document.getElementById('modifierPostFormdivimage').style.display === "none") {
+                    document.getElementById('modifierPostFormdivimage').style.display = "block";
+                }
+                document.getElementById('imagehere_modifier').value = "true";
+            }
+        });
+
+        $(document).ready(function() {
+            $('#modifierPostForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: 'index.php?action=modifierpost',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        document.getElementById('imageInput-modifier').value = '';
+                        // Clear the content of .hash-tag-{res.id_post_groupe}
+                        document.querySelector('.hash-tag-' + res.id_post_groupe).innerHTML = ''; // Use innerHTML to clear content
+                        document.querySelector('.hash-tag-' + res.id_post_groupe).append(res.text_content);
+
+                        // Clear the content of .imageorvideopost
+                        document.querySelector('.imageorvideopost-' + res.id_post_groupe).innerHTML = ''; // Use innerHTML to clear content
+                    
+                        if(res.image_url !== ""){
+                            let fileUrl = res.image_url; // Assuming res.image_url contains the image or video URL
+                            let fileExtension = fileUrl.split('.').pop().toLowerCase(); // Get the file extension
+
+                            let element; // This will be the element we append
+
+                            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                                // If it's an image, create an <img> element
+                                element = document.createElement('img');
+                                element.classList.add('image-width');
+                                element.style.maxWidth = '100%';
+                                element.src = fileUrl;
+                            } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                                // If it's a video, create a <video> element
+                                element = document.createElement('video');
+                                element.controls = true;
+                                element.src = fileUrl;
+                            }
+
+                            // Append the created element to the target container
+                            document.querySelector('.imageorvideopost-' + res.id_post_groupe).append(element);
+                        }
+
+                        // Hide the popup and overlay
+                        document.getElementById('popup-modifier').classList.add('hidden-modifier');
+                        document.getElementById('overlay-modifier').classList.add('hidden-modifier');
+
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error occurred: " + error);
+                        alert("An error occurred: " + xhr.responseText);
+                    }
+                });
+            });
+        });
+
+        function removepostimage(){
+            document.getElementById('group_post_image_modifier').src = '';
+            document.getElementById('modifierPostFormdivimage').style.display = "none";
+            document.getElementById('imagehere_modifier').value = "false";
+            document.getElementById('imageInput-modifier').value = '';
+        }
+
+        function affichemodifier(id){
+                document.getElementById('popup-modifier').classList.remove('hidden-modifier');
+                document.getElementById('overlay-modifier').classList.remove('hidden-modifier');
+
+                $.ajax({
+                    url: 'index.php?action=selectpostinfo',
+                    type: 'POST',
+                    data: {
+                        id_post: id,
+                    },
+                    success: function(res){
+                        document.getElementById('group_post_id_modifier').value = res.id_post;
+                        document.getElementById('group_post_content_modifier').value = res.text_content;
+                        const fileExtension = res.image_path.split('.').pop().toLowerCase();
+                        const imageContainer = document.getElementById('group_post_image_modifier');
+                        
+                        if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                            const videoElement = document.createElement('video');
+                            videoElement.controls = true;
+                            videoElement.src = res.image_path;
+                            videoElement.style.maxWidth = '100%';
+                            videoElement.style.height = '200px';
+                            imageContainer.replaceWith(videoElement);
+                            videoElement.id = 'group_post_image_modifier';
+                        } else {
+                            imageContainer.src = res.image_path;
+                        }
+                        if (document.getElementById('modifierPostFormdivimage').style.display === "none") {
+                            document.getElementById('modifierPostFormdivimage').style.display = "block";
+                        }
+
+                        if(res.image_path == ""){
+                            document.getElementById('modifierPostFormdivimage').style.display = "none";
+                            document.getElementById('imagehere_modifier').value = "false";
+                        }else{
+                            document.getElementById('imagehere_modifier').value = "true";
+                        }
+                    }
+                });
+        }
+
         // Open delete popup
         function affichesupprimer(id){
             document.getElementById('popup-supprimer').classList.remove('hidden-modifier');
@@ -994,6 +1190,10 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
             button.addEventListener('click', () => {
                 document.getElementById('popup-modifier').classList.add('hidden-modifier');
                 document.getElementById('overlay-modifier').classList.add('hidden-modifier');
+                document.getElementById('group_post_id_modifier').value = '';
+                document.getElementById('group_post_content_modifier').value = '';
+                document.getElementById('group_post_image_modifier').src = '';
+                document.getElementById('imageInput-modifier').value = '';
             });
         });
 

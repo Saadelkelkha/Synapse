@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/home.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/htmx.org"></script>
     <style>
       #Users i{
         color: #102770;
@@ -38,10 +40,10 @@
                             <option value="nom">Nom</option>
                             <option value="email">Email</option>
                         </select>
-                        <button type="submit" name="submit_search" class="btn btn-primary"><i class="bi bi-search"></i></button>
+                        <button type="submit" name="submit_search" class="btn" style="background-color: #2B2757;color:white;"><i class="bi bi-search"></i></button>
                     </form>
                     <form class="gusersall" action="" method="post">
-                        <button type="submit" name="submit_all" class="btn btn-primary">Tous les utilisateurs</button>
+                        <button type="submit" name="submit_all" class="btn" style="background-color: #2B2757;color:white;">Tous les utilisateurs</button>
                     </form>
                 </div>
                 <div class="table-responsive">
@@ -62,8 +64,8 @@
                                 echo "<td>".$user['nom']."</td>";
                                 echo "<td>".$user['email']."</td>";
                                 echo "<td>".$user['date_naissance']."</td>";
-                                echo "<td class='action'><a href='index.php?action=update_user&id=".$user['id_user']."'><i class='uil uil-pen'></i></a>";
-                                echo "<a href='index.php?action=delete_user&id=".$user['id_user']."'><i class='uil uil-trash-alt'></i></a></td>";
+                                echo "<td class='action d-flex'><form class='p-0' method='post' action='index.php?action=update_user'><input name='id' type='hidden' value='" . $user['id_user'] . "'><button class='btn border-0 p-0' type='submit'><i class='uil uil-pen'></i></button></form>";
+                                echo "<form class='p-0' method='post' action='index.php?action=delete_user'><input type='hidden' name='id' value='" . $user['id_user'] . "'><button class='btn border-0 p-0' type='submit'><i class='uil uil-trash-alt'></i></button></form></td>";
                                 echo "</tr>";
                             }
                         ?>
@@ -72,5 +74,7 @@
             </div>
         </main>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -48,54 +48,59 @@
                     </form>
                 </div>
                 <div class="overlay" id="overlay" onclick="toggleAddGroupForm()"></div>
-                <div class="group-card">
+                <div class="group-card d-flex flex-column align-items-center" style="border-radius: 10px; background-color: #f8f9fa;">
                     
                     <?php if (!empty($vosgroupes)) {
                         echo '<h3>Vos groupes</h3>';
+                        echo '<div class="group-wrapper w-100" style="display: flex; flex-wrap: wrap; gap: 20px;justify-content: center;">';
                         foreach ($vosgroupes as $group) { ?>
-                            <div class="person-card" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
-                                <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
-                                <div>
+                            <div class="person-card" style="flex: 1 1 calc(25% - 20px); min-width: 250px;width: 250px;max-width: 250px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;justify-content: space-between;">
+                                <img class="navhome1_profile" src="<?= $group->group_banner ?>" style="border-radius: 5%; width: 100%; object-fit: cover;">
+                                <div align="center" style="width: 100%;">
                                     <h6 style="font-weight: 600; margin: 0;"><?php echo $group->name_group; ?></h6>
                                     <small style="font-size: small; color: #777;"><?php echo $group->description_group; ?></small>
                                 </div>
-                                <form method="POST" action="index.php?action=exploregroup">
+                                <form method="POST" action="index.php?action=exploregroup" style="width: 100%;">
                                     <input type="hidden" value="<?php echo $group->id_group; ?>" name="id_group">
                                     <button class="btn btn-primary open-btn" style="border-color: #2B2757;">Open</button>
                                 </form>
                             </div>
-                    <?php  }
-                        }
-                    ?>
+                    <?php }
+                        echo '</div>';
+                    } ?>
+
 
                     
                     <?php if (!empty($joingroupes)) {
                         echo '<h3>Groupes aux quels vous avez rejoint</h3>';
+                        echo '<div class="group-wrapper w-100" style="display: flex; flex-wrap: wrap; gap: 20px;justify-content: center;">';
                         foreach ($joingroupes as $group) { ?>
-                            <div class="person-card" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
-                                <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
-                                <div>
+                            <div class="person-card" style="flex: 1 1 calc(25% - 20px); min-width: 250px;width: 250px;max-width: 250px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;justify-content: space-between;">
+                                <img class="navhome1_profile" src="<?= $group->group_banner ?>" style="border-radius: 5%; width: 100%; object-fit: cover;">
+                                <div align="center" style="width: 100%;">
                                     <h6 style="font-weight: 600; margin: 0;"><?php echo $group->name_group; ?></h6>
                                     <small style="font-size: small; color: #777;"><?php echo $group->description_group; ?></small>
                                 </div>
-                                <form method="POST" action="index.php?action=exploregroup">
+                                <form method="POST" action="index.php?action=exploregroup" style="width: 100%;">
                                     <input type="hidden" value="<?php echo $group->id_group; ?>" name="id_group">
                                     <button class="btn btn-primary open-btn" style="border-color: #2B2757;">Open</button>
                                 </form>
                             </div>
                     <?php  }
+                        echo '</div>';
                         }
                     ?>
 
                     
                     <?php if (!empty($suggestiongroupes)) {
                         echo '<h3>Suggestions</h3>';
+                        echo '<div class="group-wrapper w-100" style="display: flex; flex-wrap: wrap; gap: 20px;justify-content: center;">';
                         foreach ($suggestiongroupes as $group) { 
                             $issendinvet = false;
                             ?>
-                            <div class="person-card" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
-                                <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
-                                <div>
+                            <div class="person-card" style="flex: 1 1 calc(25% - 20px); min-width: 250px;width: 250px;max-width: 250px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;justify-content: space-between;">
+                                <img class="navhome1_profile" src="<?= $group->group_banner ?>" style="border-radius: 5%; width: 100%; object-fit: cover;">
+                                <div align="center" style="width: 100%;">
                                     <h6 style="font-weight: 600; margin: 0;"><?php echo $group->name_group; ?></h6>
                                     <small style="font-size: small; color: #777;"><?php echo $group->description_group; ?></small>
                                 </div>
@@ -108,13 +113,14 @@
                                     }
                                     if($issendinvet == true){
                                         ?>
-                                        <button class="btn btn-primary rejoindre-btn" style="border-color: #2B2757;" id="join_groupe" onclick="join_groupe(<?php echo $group->id_group; ?>,event)">Cancel request</button>
+                                        <button class="btn btn-primary rejoindre-btn w-100" style="border-color: #2B2757;" id="join_groupe" onclick="join_groupe(<?php echo $group->id_group; ?>,event)">Cancel request</button>
                                     <?php }elseif($issendinvet == false){
                                 ?>      
-                                        <button class="btn btn-primary rejoindre-btn" style="border-color: #2B2757;" id="join_groupe" onclick="join_groupe(<?php echo $group->id_group; ?>,event)">Rejoindre</button>
+                                        <button class="btn btn-primary rejoindre-btn w-100" style="border-color: #2B2757;" id="join_groupe" onclick="join_groupe(<?php echo $group->id_group; ?>,event)">Rejoindre</button>
                                     <?php } ?>
                             </div>
                     <?php  }
+                        echo '</div>';
                         }
                     ?>
                 </div>

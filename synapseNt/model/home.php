@@ -59,12 +59,6 @@
         $db = database_connection();
         $sqlState = $db->prepare('DELETE FROM post WHERE id_post = ?');
         return $sqlState->execute([$id_post]);
-    } 
-     /* mn hna tghyir*/
-    function modifierPost($text_content , $imagePath, $id_post){
-        $db = database_connection();
-        $sqlstate = $db->prepare("UPDATE post SET text_content = ? , image_path = ? WHERE id_post = ?");
-        return $sqlstate->execute([$text_content , $imagePath,  $id_post]);
     }
 
     function afficherEnregistrerPost($id){
@@ -85,6 +79,29 @@
         $sqlstate = $db->prepare('SELECT post.id_post, COUNT(comment_post.id_post_groupe) AS comment_count FROM post LEFT JOIN comment_post ON comment_post.id_post_groupe = post.id_post GROUP BY post.id_post');
         $sqlstate->execute([]);
         return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function likesamie($id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM likes JOIN friends ON likes.id_user = friends.user_id_2 OR likes.id_user = friends.user_id_1 JOIN user ON user.id_user = friends.user_id_2 OR user.id_user = friends.user_id_1 WHERE (friends.user_id_2 = ? OR friends.user_id_1 = ?)  AND likes.id_user != ? AND user.id_user != ?');
+        $sqlstate->execute([$id,$id,$id,$id]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function selectpostinfoo($id_post){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM post WHERE id_post = ?');
+        $sqlstate->execute([$id_post]);
+        return $sqlstate->fetch(PDO::FETCH_OBJ);
+    }
+
+    function modifierPost($text_content, $imageUrl, $id_post_groupe){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('UPDATE post SET text_content = ?, image_path = ? WHERE id_post = ?');
+        $sqlstate->execute([$text_content, $imageUrl, $id_post_groupe]);
     }
 
 ?>

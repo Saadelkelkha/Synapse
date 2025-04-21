@@ -57,7 +57,7 @@
                               <div class="error-message" id="email2error"></div>
                             </div>  
                           
-                            <input type="submit" value="submit" class="btn mt-4">
+                            <input type="submit" value="submit" class="btn mt-4" style="background-color: #102770;color:white">
                           </form>
                     </div>
                 </div>

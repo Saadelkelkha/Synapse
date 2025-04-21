@@ -212,7 +212,6 @@ gap: 10px;
 }
 .liked4{
   position: relative;
-  left: -15px;
 }
 
 .Contact > div{
@@ -754,17 +753,8 @@ border-radius: 50%;
 }
 
 .group .group-card{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-  justify-content: flex-start;
   width: 100%;
   margin-top: 20px;
-}
-
-.group .group-card div{
-  width: 100%;
 }
 
 #addGroupForm {

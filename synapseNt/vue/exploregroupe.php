@@ -359,7 +359,7 @@
 
         <main class="mt-1 d-flex">
             <?php require_once 'vue/layout/navhome2.php'; ?>
-            <div class="explore_groupe">
+            <div class="explore_groupe pb-5">
                 <?php require_once 'vue/layout/groupenav.php'; ?>
                 <div class="content flex-grow-1">
                     <!-- Formulaire de création de post -->
@@ -416,8 +416,8 @@
                     <div class="feed feed-<?= $post->id_groupe_post ?>" width="100%">
                         <div class="user">
                             <div class="profile-pic" width="100%" style="display: flex; gap: 10px;justify-content:space-between">
-                                <div class="d-flex">
-                                    <img src="<?= $post->photo_profil; ?>" alt="">
+                                <div class="d-flex gap-2">
+                                    <img src="<?= $post->photo_profil; ?>" alt="" width="50px" height="50px" style="border-radius: 50%;">
                                     <div class="name1">
                                         <h5 class=" mb-0" ><?= $post->prenom; ?><?= " " .$post->nom; ?></h5>
                                         <small style="font-size:small; color: #777;"><?php echo $post->date_post_groupe; ?></small>
@@ -437,7 +437,7 @@
                                 <?php } ?>
                             </div>
                         </div>
-                        <div class="imageorvideopost bg-dark d-flex justify-content-center">
+                        <div class="imageorvideopost imageorvideopost-<?= $post->id_groupe_post ?> bg-dark d-flex justify-content-center">
                         <?php
                             // Récupérer l'extension du fichier
                             $fileExtension = pathinfo($post->image_path_groupe, PATHINFO_EXTENSION);
@@ -494,10 +494,31 @@
                         </div>
                         
                         <div class="liked-by" style="display: flex; ">
-                            <span class="liked1"><img  src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked2"><img src="img/Profile/Julia Clarke.png" height="25px"width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked3"><img src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <p class="liked4">Liker par <b><?php
+                        <?php 
+                            $likesa = [];
+                            foreach ($likesamie as $like) {
+                                if ($like->id_post == $post->id_groupe_post) {
+                                    $likesa[] = $like;
+                                }
+                            }
+                            $likesacount = 0;
+                            if(count($likesa) > 0){ 
+                                $likesacount = -2;
+                                ?>
+                                <span class="liked1"><img  src="<?php if(isset($likesa[0])) { echo $likesa[0]->photo_profil; } ?>" height="25px" width="25px" style="border-radius: 50%;" alt="User Profile Picture"></span>
+                                <?php if(count($likesa) > 1){ 
+                                    $likesacount = 1;
+                                    ?>
+                                    <span class="liked2"><img src="<?php if(isset($likesa[1])) { echo $likesa[1]->photo_profil; } ?>" height="25px"width="25px" style="border-radius: 50%;"></span>
+                                <?php } ?>
+                                <?php if(count($likesa) > 2){ 
+                                    $likesacount = 2;
+                                    ?>
+                                    <span class="liked3"><img src="<?php if(isset($likesa[2])) { echo $likesa[2]->photo_profil; } ?>" height="25px" width="25px" style="border-radius: 50%;"></span>
+                                <?php } ?>
+                            <?php } ?>
+
+                            <p class="liked4" style="left: <?=-5*$likesacount?>px;">Liker par <b><?php
                                 $postisliked = false;
                                 foreach($countlikes as $countlike){
                                     if($countlike->id_post == $post->id_groupe_post){
@@ -567,6 +588,8 @@
             </div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script>
         function commentlike(event){
             var id_comment = event.target.parentElement.parentElement.parentElement.getAttribute('id_comment');
@@ -1045,6 +1068,7 @@
             document.getElementById('group_post_image_modifier').src = '';
             document.getElementById('modifierPostFormdivimage').style.display = "none";
             document.getElementById('imagehere_modifier').value = "false";
+            document.getElementById('imageInput-modifier').value = '';
         }
 
         document.getElementById("imageInput-modifier").addEventListener("change", function () {
@@ -1075,12 +1099,13 @@
                     contentType: false,
                     processData: false,
                     success: function(res) {
+                        document.getElementById('imageInput-modifier').value = '';
                         // Clear the content of .hash-tag-{res.id_post_groupe}
                         document.querySelector('.hash-tag-' + res.id_post_groupe).innerHTML = ''; // Use innerHTML to clear content
                         document.querySelector('.hash-tag-' + res.id_post_groupe).append(res.text_content);
 
                         // Clear the content of .imageorvideopost
-                        document.querySelector('.imageorvideopost').innerHTML = ''; // Use innerHTML to clear content
+                        document.querySelector('.imageorvideopost-' + res.id_post_groupe).innerHTML = ''; // Use innerHTML to clear content
                     
                         if(res.image_url !== ""){
                             let fileUrl = res.image_url; // Assuming res.image_url contains the image or video URL
@@ -1102,7 +1127,7 @@
                             }
 
                             // Append the created element to the target container
-                            document.querySelector('.imageorvideopost').append(element);
+                            document.querySelector('.imageorvideopost-' + res.id_post_groupe).append(element);
                         }
 
                         // Hide the popup and overlay
@@ -1113,7 +1138,7 @@
                     error: function(xhr, status, error) {
                         console.error("Error occurred: " + error);
                         alert("An error occurred: " + xhr.responseText);
-    }
+                    }
                 });
             });
         });
@@ -1140,22 +1165,22 @@
         document.getElementById("imageInput").addEventListener("change", function () {
             const file = this.files[0];
             if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const uploadedImageContainer = document.getElementById("uploadedImageContainer");
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-                
-                if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
-                // If it's an image
-                uploadedImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
-                } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
-                // If it's a video
-                uploadedImageContainer.innerHTML = `<video controls style="width: 100%; height: auto;"><source src="${e.target.result}" type="video/${fileExtension}">Your browser does not support the video tag.</video>`;
-                } else {
-                uploadedImageContainer.innerHTML = `<p>Unsupported file type</p>`;
-                }
-            };
-            reader.readAsDataURL(file);
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const uploadedImageContainer = document.getElementById("uploadedImageContainer");
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    
+                    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                        // If it's an image
+                        uploadedImageContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                    } else if (['mp4', 'webm', 'ogg'].includes(fileExtension)) {
+                        // If it's a video
+                        uploadedImageContainer.innerHTML = `<video controls style="width: 100%; height: auto;"><source src="${e.target.result}" type="video/${fileExtension}">Your browser does not support the video tag.</video>`;
+                    } else {
+                        uploadedImageContainer.innerHTML = `<p>Unsupported file type</p>`;
+                    }
+                };
+                reader.readAsDataURL(file);
             }
         });
 
@@ -1263,6 +1288,7 @@
                 document.getElementById('group_post_id_modifier').value = '';
                 document.getElementById('group_post_content_modifier').value = '';
                 document.getElementById('group_post_image_modifier').src = '';
+                document.getElementById('imageInput-modifier').value = '';
             });
         });
 

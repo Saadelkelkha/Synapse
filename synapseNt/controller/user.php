@@ -121,6 +121,8 @@
                     $_SESSION['conn'] = true;
                     if(isset($_POST['id_groupe_post_partager'])){
                         header("Location: index.php?action=exploregroup&id=" . $_POST['id_groupe_post_partager']);
+                    }elseif(isset($_POST['id_post_partager'])){
+                        header("Location: index.php?action=home&id=" . $_POST['id_post_partager']);
                     }else{                
                         header("Location: index.php?action=home");
                     }
@@ -240,7 +242,25 @@
 
         $countcomment = countcomments();
 
+        $likesamie = likesamie($id);
+
         require_once 'vue/home.php';
+    }
+
+    function affichepostpartage($id_post){
+        if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){
+            $id = $_SESSION['id_user'];
+            $user = selectuser($id);
+            $fullname = $user['prenom'] . " " . $user['nom'];
+
+            $countcomment = countcomments();
+
+            $likesamie = likesamie($id);
+
+            require_once 'vue/affichepost.php';
+        }else{
+            require_once 'vue/partagepostloginhome.php';
+        }
     }
 
     function search($keywords){
@@ -298,8 +318,7 @@
 
         insertPost($text_content, $imageUrl, $currentDate, $id_user);
         //tzad
-        // header("Location: index.php");
-        echo $tmpName, $imagePath;
+        header("Location: index.php");
     }
 
     function afficherPosts() {
@@ -385,6 +404,8 @@
     
             // Appel à la fonction pour modifier le post avec le texte et l'image
             modifierPost($text_content, $imageUrl, $id_post);
+
+            header("Location: index.php");
         }
     }
 
@@ -412,6 +433,9 @@
 
     function afficherEnregistrerPostController(){
         $id = $_SESSION['id_user'];
+        $user = selectuser($id);
+        $fullname = $user['prenom'] . " " . $user['nom'];
+
         $posts = afficherEnregistrerPost($id);
         require 'vue/enregistrer_post.php';
 
@@ -582,5 +606,98 @@ function afficherAmiesController(){
     require 'vue/amies.php';
 }
 
+function logout(){
+    session_destroy();
+    header("Location: index.php");
+    exit;
+}
+
+function selectpostinfo($id_post){
+    $infos = selectpostinfoo($id_post);
+
+    header('Content-Type: application/json');
+    echo json_encode($infos);
+}
+
+function modifierpostt($id_post_groupe,$text_content){
+
+    $infos = selectpostinfoo($id_post_groupe);
+    $id_groupe = $infos->id_user;
+    $oldimage = $infos->image_path;
+
+    if ($_FILES['image']['name']) {            
+        // Traitement de l'image
+        // Define the directory where the images are stored
+        $imageDirectory = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/posts/' . $id_groupe . '/';
+        $Dir = $imageDirectory = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/posts/' . $id_groupe;
+        
+        if (!is_dir($Dir)) {
+            mkdir($Dir, 0777, true);
+        }
+                
+        // Get all image files in the directory (you can adjust the extensions as needed)
+        $imageFiles = glob($imageDirectory . '*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE);
+                
+        // Initialize the highest number to 0
+        $highestNumber = 0;
+                
+        // Loop through the files to find the highest numbered image
+        foreach ($imageFiles as $imageFile) {
+            // Extract the number from the filename (assuming filenames are like 1.jpg, 2.jpg, 3.jpg, etc.)
+            if (preg_match('/(\d+)\.(jpg|jpeg|png|gif|webp)$/i', basename($imageFile), $matches)) {
+                $imageNumber = (int)$matches[1];
+                if ($imageNumber > $highestNumber) {
+                    $highestNumber = $imageNumber;
+                }
+            }
+        }
+        
+        // Increment the highest number by 1 to create the next image name
+        $newImageNumber = $highestNumber + 1;
+
+        // Delete the old image
+        if($oldimage !== ""){
+            if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage)) {
+                unlink($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage);
+            }
+        }
+
+
+        //$_SERVER['DOCUMENT_ROOT'] houwa repertoire racine
+        
+        $tmpName = $_FILES['image']['tmp_name'];
+        $imageExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+        $image = $newImageNumber . '.' . $imageExtension;
+        $imagePath = $_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/img/posts/' . $id_groupe . '/'. $image;
+        
+        //kat7t f database
+        $imageUrl = 'img/posts/' . $id_groupe . '/'. $image;
+        
+        
+        // Déplacer l'image dans le répertoire "uploads"
+        move_uploaded_file($tmpName, $imagePath);
+    } else {
+        if($_POST['imagehere'] === "true"){
+            $imageUrl = $oldimage;
+        }else{
+            if($oldimage !== ""){
+                if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage)) {
+                    unlink($_SERVER['DOCUMENT_ROOT'] . '/Synapse/synapseNt/' . $oldimage);
+                }
+            }
+            $imageUrl = "";
+        }
+    }
+
+    modifierPost($text_content, $imageUrl, $id_post_groupe);
+
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'success',
+        'text_content' => $text_content,
+        'image_url' => $imageUrl,
+        'id_post_groupe' => $id_post_groupe
+    ]);
+}
 
 ?>

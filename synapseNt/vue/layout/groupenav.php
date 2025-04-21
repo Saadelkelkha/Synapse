@@ -25,7 +25,11 @@
                              <?php
                                                 $countmembershow = 0;
                                                 foreach ($imgmembres as $index => $img) {
-                                                    $positionStyle = 'position: relative; margin-left: ' . ($index * -40) . 'px;';
+                                                    if ($countmembershow == 0) {
+                                                        $positionStyle = 'position: relative; margin-left: ' . ($index * -40) . 'px;';
+                                                    }else{
+                                                        $positionStyle = 'position: relative; margin-left: ' . -40 . 'px;';
+                                                    }
                                                     echo '<img class="navhome1_profile" src="' . htmlspecialchars($img->photo_profil, ENT_QUOTES, 'UTF-8') . '" width="50px" height="50px" alt="Member profile picture" style="' . $positionStyle . '">';
                                                     $countmembershow++;
                                                     if ($countmembershow >= 10) {

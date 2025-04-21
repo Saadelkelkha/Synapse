@@ -401,13 +401,13 @@
                                     $isliked = false;
                                     foreach($group_posts_likes as $liker) {
                                         if($post->id_groupe_post == $liker->id_post){  
-                                                echo '<button name="like_grp" class="btn-like_grp border-0 is-liked" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up text-primary" style="font-size: x-large;"></i></button>';
+                                                echo '<button name="like_grp" class="btn-like_grp border-0 is-liked bg-white" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up text-primary" style="font-size: x-large;"></i></button>';
                                                 $isliked = true;
                                                 break;
                                         }
                                     }
                                     if(!$isliked){
-                                        echo '<button name="like_grp" class="btn-like_grp border-0" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button>';
+                                        echo '<button name="like_grp" class="btn-like_grp border-0 bg-white" onclick="like_post_groupe(event)" data-post-id="' .$post->id_groupe_post .'" ><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button>';
                                     }
                                 ?>
                                 <span data-name="span" onclick="affichecommentlist(event)"  style="cursor: pointer;"><i class="uil uil-comment" data-name="span" style="font-size: x-large;"></i></span>
@@ -429,10 +429,30 @@
                         </div>
                         
                         <div class="liked-by" style="display: flex; ">
-                            <span class="liked1"><img  src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked2"><img src="img/Profile/Julia Clarke.png" height="25px"width="25px" style="border-radius: 50%;"></span>
-                            <span class="liked3"><img src="img/Profile/Julia Clarke.png" height="25px" width="25px" style="border-radius: 50%;"></span>
-                            <p class="liked4">Liker par <b><?php
+                        <?php 
+                            $likesa = [];
+                            foreach ($likesamie as $like) {
+                                if ($like->id_post == $post->id_groupe_post) {
+                                    $likesa[] = $like;
+                                }
+                            }
+                            $likesacount = 0;
+                            if(count($likesa) > 0){ 
+                                $likesacount = -2;
+                                ?>
+                                <span class="liked1"><img  src="<?php if(isset($likesa[0])) { echo $likesa[0]->photo_profil; } ?>" height="25px" width="25px" style="border-radius: 50%;" alt="User Profile Picture"></span>
+                                <?php if(count($likesa) > 1){ 
+                                    $likesacount = 1;
+                                    ?>
+                                    <span class="liked2"><img src="<?php if(isset($likesa[1])) { echo $likesa[1]->photo_profil; } ?>" height="25px"width="25px" style="border-radius: 50%;"></span>
+                                <?php } ?>
+                                <?php if(count($likesa) > 2){ 
+                                    $likesacount = 2;
+                                    ?>
+                                    <span class="liked3"><img src="<?php if(isset($likesa[2])) { echo $likesa[2]->photo_profil; } ?>" height="25px" width="25px" style="border-radius: 50%;"></span>
+                                <?php } ?>
+                            <?php } ?>
+                            <p class="liked4" style="left: <?=-5*$likesacount?>px;">Liker par <b><?php
                                 $postisliked = false;
                                 foreach($countlikes as $countlike){
                                     if($countlike->id_post == $post->id_groupe_post){
@@ -860,7 +880,7 @@
 
         function copyLink(id){
             const el = document.createElement('textarea');
-            el.value = window.location.href + '&id=' + id;
+            el.value = window.location.href;
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');

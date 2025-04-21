@@ -450,4 +450,12 @@
         $sqlstate->execute([$id_group]);
         return $sqlstate->fetchAll(PDO::FETCH_OBJ);
     }
+
+    function likesamiegrp($id,$id_grp){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM groupe_post_like JOIN friends ON groupe_post_like.id_liker = friends.user_id_2 OR groupe_post_like.id_liker = friends.user_id_1 JOIN user ON user.id_user = friends.user_id_2 OR user.id_user = friends.user_id_1 WHERE (friends.user_id_2 = ? OR friends.user_id_1 = ?)  AND groupe_post_like.id_liker != ? AND user.id_user != ?');
+        $sqlstate->execute([$id,$id,$id,$id]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
 ?>

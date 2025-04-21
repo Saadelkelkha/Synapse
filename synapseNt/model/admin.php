@@ -77,4 +77,66 @@
         $sqlstate->execute([$prenom,$nom,$date,$email,$id]);
     }
 
+    function searchgroups($search,$search_by){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare("SELECT * FROM groupe WHERE $search_by LIKE ?");
+        $sqlstate->execute(["%$search%"]);
+        $users = $sqlstate->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($users) {
+            return $users;
+        } else {
+            return [];
+        }
+    }
+
+    function selectgroups(){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare("SELECT * FROM groupe");
+        $sqlstate->execute();
+        $users = $sqlstate->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($users) {
+            return $users;
+        } else {
+            return [];
+        }
+    }
+
+    function deletegroupee($id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare("DELETE FROM groupe WHERE id_group = ?");
+        $sqlstate->execute([$id]);
+    }
+
+    function selectgroupe($id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare("SELECT * FROM groupe where id_group = ?");
+        $sqlstate->execute([$id]);
+        $users = $sqlstate->fetch(PDO::FETCH_ASSOC);
+
+        if ($users) {
+            return $users;
+        } else {
+            return [];
+        }
+    }
+
+    function Updategroupe($name_group,$description_group,$id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare("UPDATE groupe SET name_group = ?, description_group = ? WHERE id_group = ?");
+        $sqlstate->execute([$name_group,$description_group,$id]);
+    }
+
+    function remove_banner_groupe($id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare("UPDATE groupe SET group_banner = 'img/groupes/groupe.jpg'	WHERE id_group = ?");
+        $sqlstate->execute([$id]);
+    }
 ?>

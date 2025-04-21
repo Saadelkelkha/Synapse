@@ -108,10 +108,11 @@
     </div>
     <div class="chatbot-footer d-flex">
         <input type="text" id="userMessage" class="form-control me-2" placeholder="Écrivez un message..." onkeypress="handleKeyPress(event)">
-        <button id="sendMessage" class="btn btn-primary" onclick="sendMessage()">Envoyer</button>
+        <button id="sendMessage" class="btn btn-primary" onclick="sendMessagebot()">Envoyer</button>
     </div>
 </div>
 
+<script type="module" src="assets/genai.js"></script>
 <script>
 document.getElementById('toggleChatbot').addEventListener('click', function() {
     var chatbot = document.getElementById('chatbot');
@@ -124,36 +125,39 @@ document.getElementById('toggleChatbot').addEventListener('click', function() {
     chatbot.style.display = (chatbot.style.display === 'none' || chatbot.style.display === '') ? 'flex' : 'none';
 });
 
-function sendMessage() {
+function sendMessagebot() {
     var userMessage = document.getElementById('userMessage').value;
     if (userMessage.trim() !== '') {
-        addMessage('user', userMessage);
-        document.getElementById('userMessage').value = '';
+        // addMessage('user', userMessage);
+        // document.getElementById('userMessage').value = '';
 
-        // Envoi du message au serveur via AJAX
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'vue/chatbot.php', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                try {
-                    var response = JSON.parse(xhr.responseText);
-                    addMessage('bot', response.response);
-                } catch (e) {
-                    addMessage('bot', "Erreur de réponse du serveur.");
-                }
-            } else {
-                addMessage('bot', "Erreur de communication avec le serveur.");
-            }
-        };
-        xhr.onerror = function() {
-            addMessage('bot', "Problème de connexion !");
-        };
-        xhr.send('userMessage=' + encodeURIComponent(userMessage));
+        // // Envoi du message au serveur via AJAX
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('POST', 'vue/chatbot.php', true);
+        // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        // xhr.onload = function() {
+        //     if (xhr.status === 200) {
+        //         try {
+        //             var response = JSON.parse(xhr.responseText);
+        //             addMessage('bot', response.response);
+        //         } catch (e) {
+        //             addMessage('bot', "Erreur de réponse du serveur.");
+        //         }
+        //     } else {
+        //         addMessage('bot', "Erreur de communication avec le serveur.");
+        //     }
+        // };
+        // xhr.onerror = function() {
+        //     addMessage('bot', "Problème de connexion !");
+        // };
+        // xhr.send('userMessage=' + encodeURIComponent(userMessage));
+
+        var response = generateContent(userMessage);
+        addMessagebot('bot', response);
     }
 }
 
-function addMessage(sender, message) {
+function addMessagebot(sender, message) {
     var messageContainer = document.createElement('div');
     messageContainer.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
     messageContainer.innerText = message;
@@ -161,7 +165,7 @@ function addMessage(sender, message) {
     document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
 }
 
-function handleKeyPress(event) {
+function handleKeyPressbot(event) {
     if (event.key === 'Enter') {
         sendMessage();
     }

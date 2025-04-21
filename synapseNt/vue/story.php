@@ -117,8 +117,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["story_image"])) {
   <h3>Stories</h3>
   <div class="story-container" id="stories">
     <?php
-    $result = $conn->query("SELECT * FROM stories ORDER BY created_at DESC");
-    $now = time();
+    $storiesByUser = [];
+    $result = $conn->query("SELECT * FROM stories ORDER BY created_at ASC");
+    
+    while ($row = $result->fetch_assoc()) {
+        $timeDiff = time() - strtotime($row['created_at']);
+        if ($timeDiff >= 86400) {
+            $conn->query("DELETE FROM stories WHERE id = " . $row['id']);
+            continue;
+        }
+    
+        $storiesByUser[$row['user_id']][] = $row;
+    }
 
     while ($row = $result->fetch_assoc()) {
       $storyTime = strtotime($row['created_at']);
@@ -126,8 +136,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["story_image"])) {
       $image = $row['image'];
       $timeDiff = $now - $storyTime;
 
-      if ($timeDiff < 60) {
-        $remainingTime = 60 - $timeDiff;
+      if ($timeDiff < 86400) {
+        $remainingTime =  86400 - $timeDiff;
         echo "<div class='story' data-id='$storyId' data-remaining='$remainingTime' onclick=\"showStory('$image')\">";
         echo "<img src='uploads/$image' alt='Story'>";
         echo "</div>";
@@ -136,6 +146,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["story_image"])) {
         $conn->query("DELETE FROM stories WHERE id = $storyId");
       }
     }
+
+    foreach ($storiesByUser as $userId => $stories) {
+      $firstStory = $stories[0];
+      echo "<div class='story' onclick='startStorySequence(" . json_encode($stories) . ")'>";
+      echo "<img src='uploads/{$firstStory['image']}' alt='Story'>";
+      echo "</div>";
+    }
+   
     ?>
   </div>
 
@@ -171,6 +189,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["story_image"])) {
         }
       });
     });
-  </script>
+
+  function startStorySequence(stories) {
+    let index = 0;
+
+    function showNextStory() {
+      if (index >= stories.length) {
+        closeStoryPopup();
+        return;
+      }
+
+      const story = stories[index];
+      document.getElementById("storyImage").src = "uploads/" + story.image;
+      document.getElementById("storyPopup").classList.remove("hidden");
+
+      index++;
+      setTimeout(showNextStory, 60000); // Affiche suivante après 60 sec
+    }
+
+    showNextStory();
+  }
+
+  function closeStoryPopup() {
+    document.getElementById("storyPopup").classList.add("hidden");
+  }
+</script>
+
 </body>
 </html>

@@ -4,6 +4,11 @@
         $action = $_GET['action'];
         
         switch ($action) {
+            case 'deconnexion':
+                require_once 'controller/user.php';
+                logout();
+                break;
+                
             case 'add':
                 if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){
                     header('Location: index.php?action=home');
@@ -66,10 +71,24 @@
                     if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == true){
                         header('Location: index.php?action=admin');
                     }else{
-                        home();
+                        if(isset($_GET['id'])){
+                            require_once 'controller/user.php';
+                            $id_post = $_GET['id'];
+                            affichepostpartage($id_post);
+                            break;
+                        }else{
+                            home();
+                        }
                     }
                 }else{
-                    header('Location: index.php');
+                    if(isset($_GET['id'])){
+                        require_once 'controller/user.php';
+                        $id_post = $_GET['id'];
+                        affichepostpartage($id_post);
+                        break;
+                    }else{
+                        header('Location: index.php');
+                    }
                 }
                 break;
             case 'validationlogin':
@@ -160,8 +179,8 @@
                 break;
             case 'delete_user':
                 require_once 'controller/admin.php';
-                if(isset($_GET['id'])){
-                    $id = $_GET['id'];
+                if(isset($_POST['id'])){
+                    $id = $_POST['id'];
                     delete_user($id);
                 }else{
                     header('Location: index.php');
@@ -169,8 +188,8 @@
                 break;
             case 'update_user':
                 require_once 'controller/admin.php';
-                if(isset($_GET['id'])){
-                    $id = $_GET['id'];
+                if(isset($_POST['id'])){
+                    $id = $_POST['id'];
                     update_user($id);
                 }else{
                     header('Location: index.php');
@@ -188,6 +207,55 @@
                     valide_update_user($prenom,$nom,$date,$email,$id);
                 }else{
                     header('Location: index.php');
+                }
+                break;
+            case 'gestiongroups':
+                require_once 'controller/admin.php';
+                if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){
+                    if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == true){
+                        gestiongroups();
+                    }else{
+                        header('Location: index.php');
+                    }
+                }else{
+                    header('Location: index.php');
+                }
+                break;
+            case 'delete_groupe':
+                require_once 'controller/admin.php';
+                if(isset($_POST['id'])){
+                    $id = $_POST['id'];
+                    delete_groupe($id);
+                }else{
+                    header('Location: index.php');
+                }
+                break;
+            case 'update_groupe':
+                require_once 'controller/admin.php';
+                if(isset($_POST['id'])){
+                    $id = $_POST['id'];
+                    update_groupe($id);
+                }else{
+                    header('Location: index.php');
+                }
+                break;
+            case 'valide_update_groupe':
+                require_once 'controller/admin.php';
+                if(isset($_POST['logprenom'], $_POST['lognom'], $_POST['id'])){
+                    $name_group = $_POST['logprenom'];
+                    $description_group = $_POST['lognom'];
+                    $id = $_POST['id'];
+
+                    valide_update_groupe($name_group,$description_group,$id);
+                }else{
+                    header('Location: index.php');
+                }
+                break;
+            case 'delete_banner_grp':
+                require_once 'controller/admin.php';
+                if(isset($_POST['id'])){
+                    $id = $_POST['id'];
+                    remove_banner_grp($id);
                 }
                 break;
             case 'groups':
@@ -343,6 +411,14 @@
                     $id_post = $_POST['id_post'];
                     
                     selectpostgroupinfo($id_post);
+                    break;
+                }
+            case 'selectpostinfo':
+                if(isset($_POST['id_post'])){
+                    require_once 'controller/user.php';
+                    $id_post = $_POST['id_post'];
+                    
+                    selectpostinfo($id_post);
                     break;
                 }
             case 'modifierpostgroup':
@@ -642,17 +718,21 @@
                         supprimerPost();
                         break;
                     }
-            case "modifierPost":
-              
+            case "modifierpost":
+                if(isset($_POST['post_groupe_id'])){
                     require_once 'controller/user.php';
-                    modifierPostControler();
+                    $id_post_groupe = $_POST['post_groupe_id'];
+                    $text_content = $_POST['text_content'];
+
+                    modifierpostt($id_post_groupe,$text_content);
                     break;
+                }
                 
-                    case "modifierPostAdmin":
-              
-                        require_once 'controller/user.php';
-                        modifierPostControler();
-                        break;
+            case "modifierPostAdmin":
+        
+                require_once 'controller/user.php';
+                modifierPostControler();
+                break;
             case "afficherProfil":
                 require_once 'controller/user.php';
                 AfficherInfoUserSurProfilControler();
@@ -697,24 +777,23 @@
                 AfficherInfoUserSurProfilControlerPhotos();
                 break;
             case "modifierProfile1":
-                            require_once 'controller/user.php';
-                            modifierProfilController();
-                            break;
-                case 'afficherAmies':
                         require_once 'controller/user.php';
-                        AfficherInfoUserSurProfilControlerAmis();
-                        
+                        modifierProfilController();
                         break;
-                case 'listeUtilisateur':
-                    require_once 'vue/liste-utilisateur.php';
-                        break;
+            case 'afficherAmies':
+                    require_once 'controller/user.php';
+                    AfficherInfoUserSurProfilControlerAmis();
+                    
+                    break;
+            case 'listeUtilisateur':
+                require_once 'vue/liste-utilisateur.php';
+                    break;
                 
             case 'utilisateurs':
                     require_once 'controller/profile.php';
                     obtenirTousLesUtlisateursControllerParId($_GET['id_user']);
                     break;
-                    
-                       
+            
         }
     }else{
         require_once 'controller/user.php';

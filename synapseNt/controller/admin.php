@@ -237,4 +237,52 @@
         $posts = afficherEnregistrerPost();
         require 'vue/enregistrer_post.php';
     }
+
+    function gestiongroups(){
+        $id = $_SESSION['id_admin'];
+        $admin = selectadmin($id);
+        $fullname = $admin['prenom'] . " " . $admin['nom'];
+
+        if(isset($_POST['submit_search'])){
+            $search = $_POST['search'];
+            $search_by = $_POST['search_by'];
+            $groups = searchgroups($search,$search_by);
+        }elseif(isset($_POST['submit_all'])){
+            $groups = selectgroups();
+        }else{
+            $groups = selectgroups();
+        }
+
+
+        require_once 'vue/gestiongroups.php';
+    }
+
+    function delete_groupe($id){
+        deletegroupee($id);
+        header("Location: index.php?action=gestiongroups");
+        exit;
+    }
+
+    function update_groupe($id_groupe){
+        $id = $_SESSION['id_admin'];
+        $admin = selectadmin($id);
+        $fullname = $admin['prenom'] . " " . $admin['nom'];
+
+        $user = selectgroupe($id_groupe);
+        $name_group = $user['name_group'];
+        $description_group = $user['description_group'];
+        require_once 'vue/updategroupe.php';
+    }
+
+    function valide_update_groupe($prenom,$nom,$id){
+        Updategroupe($prenom,$nom,$id);
+        header("Location: index.php?action=gestiongroups");
+        exit;
+    }
+
+    function remove_banner_grp($id){
+        remove_banner_groupe($id);
+        header("Location: index.php?action=gestiongroups");
+        exit;
+    }
 ?>

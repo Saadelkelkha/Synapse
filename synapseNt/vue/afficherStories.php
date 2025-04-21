@@ -112,27 +112,27 @@ $stories = $pdo->query($sql)->fetchAll(PDO::FETCH_OBJ);
 </head>
 <body>
 
-<?php   $now = time();
+<?php   $now = time();?>
+
+
+<script>
+    const allStories = {};
+</script>
+
+<?php
 $groupedStories = [];
 
 foreach ($stories as $story) {
-    $userId = $story->id_user;
-    if (!isset($groupedStories[$userId])) {
-        $groupedStories[$userId] = [
-            'prenom' => $story->prenom,
-            'nom' => $story->nom,
-            'photo_profil' => $story->photo_profil,
-            'stories' => []
-        ];
+    $timestamp = strtotime($story->date_story);
+    $remaining = 86400 - (time() - $timestamp);
+
+    if ($remaining > 0) {
+        $groupedStories[$story->id_user][] = $story;
+    } else {
+        // Supprimer les anciennes stories
+        $pdo->query("DELETE FROM story WHERE id_story = $story->id_story");
     }
-    $groupedStories[$userId]['stories'][] = $story;
 }
-
-
-// Vérifie si des stories sont disponibles
-if (!isset($stories) || empty($stories)) {
-    echo "Aucune story disponible.";
-} else {
 ?>
     <div class="stories_body">
         <div class="stories-container" id="stories">
@@ -143,22 +143,17 @@ if (!isset($stories) || empty($stories)) {
                 </div>
             </div>
 
-            <?php foreach ($stories as $story): 
-            
-                $storyTime = strtotime($story->date_story);
-             
-                $timeDiff = $now - $storyTime;
-              
-                if ($timeDiff < 60) {
-                  $remainingTime = 60 - $timeDiff;
-                  
-                
-                ?>
-                <div class="story" onclick="viewStory('<?php echo $story->image_path; ?>')">
-                    <img src="<?php echo $story->image_path; ?>" alt="Story">
-                </div>
-            <?php }  endforeach; ?>
-        </div>
+            <div class="stories_body">
+    <div class="stories-container" id="stories">
+        <?php foreach ($groupedStories as $userId => $userStories):
+            $firstStory = $userStories[count($userStories) - 1];
+        ?>
+            <div class="story" onclick='playUserStories(<?php echo json_encode($userStories); ?>)'>
+                <img src="<?= $firstStory->image_path ?>" alt="Story">
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>        </div>
     </div>
 
     <div class="story-overlay" id="storyOverlay">
@@ -176,7 +171,31 @@ if (!isset($stories) || empty($stories)) {
             document.getElementById('storyOverlay').style.display = 'none';
         }
     </script>
-<?php } ?>
+<script>
+    function playUserStories(stories) {
+        let index = stories.length - 1;
+
+        function showPrevious() {
+            if (index < 0) {
+                closeStoryOverlay();
+                return;
+            }
+
+            const story = stories[index];
+            document.getElementById('storyImage').src = story.image_path;
+            document.getElementById('storyOverlay').style.display = 'flex';
+
+            index--;
+            setTimeout(showPrevious, 60000); // 60 secondes
+        }
+
+        showPrevious();
+    }
+
+    function closeStoryOverlay() {
+        document.getElementById('storyOverlay').style.display = 'none';
+    }
+</script>
 
 
 </body>
