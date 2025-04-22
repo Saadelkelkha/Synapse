@@ -818,6 +818,41 @@
     border-radius: 50%;
     cursor: pointer;
 }
+/* Lightbox style */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.lightbox img,
+.lightbox video {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+}
+
 
 
 
@@ -877,19 +912,19 @@
         
                   
 <div class="container mt-2">
-<nav class=" navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+<nav class="navbar navbar-light bg-white shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="#">Réseau Social</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" href="index.php?action=afficherProfil">Publications</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?action=afficherPhotos">Photos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Vidéos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Plus</a></li>
-            </ul>
-        </div>
+        <ul class="navbar-nav flex-row gap-3">
+            <li class="nav-item">
+                <a class="nav-link active" href="index.php?action=afficherProfil">Publications</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?action=afficherPhotos">Multimédia</a>
+            </li>
+        </ul>
     </div>
 </nav> <br>
 <?php
@@ -911,11 +946,12 @@ $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
         ?>
             <div class="gallery-item">
                 <?php if (in_array(strtolower($fileExtension), $imageExtensions)) { ?>
-                    <img src="<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>" class="gallery-img">
+                    <img src="<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>" class="gallery-img" onclick="openLightbox('<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>', 'image')">
+
                 <?php } elseif (in_array(strtolower($fileExtension), $videoExtensions)) { ?>
-                    <video class="gallery-video" controls>
-                        <source src="<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>" type="video/<?= $fileExtension ?>">
-                        Votre navigateur ne supporte pas les vidéos HTML5.
+                    <video class="gallery-video" controls onclick="openLightbox('<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>', 'video')">
+                        <source src="<?= htmlspecialchars($post->image_path, ENT_QUOTES, 'UTF-8') ?>" type="video/<?= htmlspecialchars($fileExtension, ENT_QUOTES, 'UTF-8') ?>">
+                        Your browser does not support the video tag.
                     </video>
                 <?php } ?>
                
@@ -923,6 +959,11 @@ $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
         <?php } } ?>
     </div>
 </div>
+<div class="lightbox" id="lightbox">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <div id="lightboxContent" class="lightbox-content"></div>
+</div>
+
 
              
        
@@ -1052,6 +1093,30 @@ likeButton.addEventListener("click", function () {
 });
 });
 });
+function openLightbox(path, type) {
+    const lightbox = document.getElementById('lightbox');
+    const content = document.getElementById('lightboxContent');
+    
+    if (type === 'image') {
+        content.innerHTML = `<img src="${path}" alt="Image">`;
+    } else if (type === 'video') {
+        content.innerHTML = `
+            <video controls autoplay>
+                <source src="${path}" type="video/mp4">
+                Votre navigateur ne supporte pas la vidéo.
+            </video>
+        `;
+    }
+
+    lightbox.style.display = 'flex';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('lightboxContent').innerHTML = '';
+}
+
+
 
 
 </script>

@@ -453,6 +453,14 @@
         $posts = obtenirTousLesPosts();
         require_once 'vue/gpost.php';
     }
+    function afficherStoriesAdmin() {
+        $id = $_SESSION['id_admin'];
+        $admin = selectadmin($id);
+        $fullname = $admin['prenom'] . " " . $admin['nom'];;
+
+        $posts = obtenirTousLesPosts();
+        require_once 'vue/gstories.php';
+    }
 
     function afficherModifierPostAdmin($id_post) {
         $post = obtenirPostParId($id_post);

@@ -29,46 +29,131 @@
             <?php require_once 'vue/layout/navhome2admin.php'; ?>
             <div class="gusers">
                 <h1>Gestion des Posts</h1>
-                <div>
-                    <form action="" method="post">
-                        <input type="text" name="search" placeholder="Rechercher un utilisateur" class="form-control search-bar">
-                        <select name="search_by" id="search_by" class="form-select">
-                            <option value="id_user">Id</option>
-                            <option value="prenom">Text du post</option>
-                            <option value="nom">Date de publication</option>
-                           
-                        </select>
-                        <button type="submit" name="submit_search" class="btn btn-primary"><i class="bi bi-search"></i></button>
+                <?php
+  $conn = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
+  $posts = [];
+
+  if (isset($_POST['submit_search'])) {
+    $searchValue = trim($_POST['search']);
+    $searchBy = $_POST['search_by'];
+
+    $allowedFields = ['id_post', 'text_content', 'date_post', 'nom', 'prenom'];
+    if (in_array($searchBy, $allowedFields)) {
+      if ($searchBy === 'id_post') {
+        $stmt = $conn->prepare("SELECT p.*, u.nom, u.prenom FROM post p JOIN user u ON p.id_user = u.id_user WHERE p.id_post = ? ORDER BY date_post DESC");
+        $stmt->execute([$searchValue]);
+      } else {
+        $queryField = in_array($searchBy, ['nom', 'prenom']) ? "u.$searchBy" : "p.$searchBy";
+        $stmt = $conn->prepare("SELECT p.*, u.nom, u.prenom FROM post p JOIN user u ON p.id_user = u.id_user WHERE $queryField LIKE ? ORDER BY date_post DESC");
+        $stmt->execute(["%$searchValue%"]);
+      }
+      $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+  } else {
+    $stmt = $conn->query("SELECT p.*, u.nom, u.prenom FROM post p JOIN user u ON p.id_user = u.id_user ORDER BY date_post DESC");
+    $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+?>
+
+<form action="" method="post">
+<input type="text" name="search" placeholder="Rechercher un post" class="form-control search-bar" value="<?= isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '' ?>">
+<select name="search_by" class="form-select">
+      <option value="text_content" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'text_content') ? 'selected' : '' ?>>Texte du post</option>
+      <option value="date_post" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'date_post') ? 'selected' : '' ?>>Date de publication</option>
+      <option value="prenom" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'prenom') ? 'selected' : '' ?>>Prénom</option>
+      <option value="nom" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'nom') ? 'selected' : '' ?>>Nom</option>
+    </select>
+    <button type="submit" name="submit_search" class="btn btn-primary"><i class="bi bi-search"></i></button>
                     </form>
                     <form class="gusersall" action="" method="post">
-                        <button type="submit" name="submit_all" class="btn btn-primary">Tous les Posts</button>
+                    <button type="submit" name="submit_all" class="btn btn-secondary">Tous les Posts</button>
                     </form>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-light table-striped table-md mt-2">
-                        <tr>
-                            <th>Id</th>
-                            <th>Text du post</th>
-                            <th>Photo</th>
-                            <th>Date de publication</th>
-                            <th>Actions</th>
-                        </tr>
-                       
-                        <?php
-                            foreach ($posts as $post) {
-                                echo "<tr>";
-                                echo "<td>".$post->id_post."</td>";
-                                echo "<td>".$post->text_content."</td>";
-                                echo "<td><img src='".$post->image_path."' alt='Image du post' style='max-width: 100px; max-height: 100px;'></td>";
-                                echo "<td>".$post->date_post."</td>";
-                                 echo "<td class='action'><a href='index.php?action=afficherModifierPostAdmin&id_post=".$post->id_post."'><i class='uil uil-pen'></i></a>";
-                                // echo "<td class='action'><a href="index.php?action=afficherModifierPostAdmin&id_post=$post->id_post."'><i class='uil uil-pen'></i></a>";
+                    
 
-                                echo "<td class='action'><a href=''><i class='uil uil-pen'></i></a>";
-                                echo "<a href='index.php?action='><i class='uil uil-trash-alt'></i></a></td>";
-                                echo "</tr>";
-                            }
-                        ?>
+                    <form action="" method="post">
+                    <input type="text" name="search" placeholder="Rechercher une story" class="form-control"
+                   value="<?= isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '' ?>">
+            <select name="search_by" class="form-select">
+              <option value="date_story" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'date_story') ? 'selected' : '' ?>>Date de publication</option>
+              <option value="id_user" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'id_user') ? 'selected' : '' ?>>ID Utilisateur</option>
+              <option value="prenom" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'prenom') ? 'selected' : '' ?>>Prénom</option>
+              <option value="nom" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'nom') ? 'selected' : '' ?>>Nom</option>
+            </select>
+            <button type="submit" name="submit_search" class="btn btn-primary"><i class="bi bi-search"></i></button>
+                    </form>
+                    <form class="gusersall" action="" method="post">
+                    <button type="submit" name="submit_all" class="btn btn-secondary">Toutes les Stories</button>
+</form>
+      </form>
+
+<!-- Tableau d'affichage -->
+<div class="table-responsive">
+  <table class="table table-light table-striped table-md">
+    <thead>
+      <tr>
+        <th>Nom & Prénom</th>
+        <th>Texte du post</th>
+        <th>Photo</th>
+        <th>Date de publication</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php
+                          $conn = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
+                          
+                          // Supprimer un post si une requête est envoyée
+                          if (isset($_POST['delete']) && !empty($_POST['id_post'])) {
+                            $id = $_POST['id_post'];
+                             // Supprimer les enregistrements liés
+                            $stmtEnr = $conn->prepare("DELETE FROM enregistrer_posts WHERE id_post = ?");
+                            $stmtEnr->execute([$id]);
+                        
+                            // Supprimer les likes liés à ce post
+                            $stmtLikes = $conn->prepare("DELETE FROM likes WHERE id_post = ?");
+                            $stmtLikes->execute([$id]);
+                        
+                            // Ensuite supprimer le post
+                            $stmt = $conn->prepare("DELETE FROM post WHERE id_post = ?");
+                            $stmt->execute([$id]);
+                        }
+                        
+                          
+                          // Récupérer tous les posts
+                          $stmt = $conn->query("
+    SELECT p.*, u.nom, u.prenom 
+    FROM post p 
+    JOIN user u ON p.id_user = u.id_user 
+    ORDER BY p.date_post DESC
+");
+$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                          
+                           foreach ($posts as $post): ?>
+      <tr>
+      <td><?= htmlspecialchars($post['nom']) . ' ' . htmlspecialchars($post['prenom']) ?></td>
+        <td><?= htmlspecialchars($post['text_content']) ?></td>
+        <td>
+          <?php if (!empty($post['image_path'])): ?>
+            <img src="<?= htmlspecialchars($post['image_path']) ?>" style="width: 100px;" alt="Image du post">
+          <?php else: ?>
+            Aucune image
+          <?php endif; ?>
+        </td>
+        <td><?= htmlspecialchars($post['date_post']) ?></td>
+        
+        <td>
+            <form method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer ce post ?');" style="display:inline;">
+                <input type="hidden" name="id_post" value="<?= $post['id_post'] ?>">
+                <button type="submit" name="delete" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash"></i> Supprimer
+                </button>
+            </form>
+        </td>
+    </tr>
+<?php endforeach; ?>
+
+                          
                     </table>
                 </div>
             </div>

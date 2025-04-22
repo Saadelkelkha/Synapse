@@ -186,7 +186,7 @@ foreach ($stories as $story) {
             document.getElementById('storyOverlay').style.display = 'flex';
 
             index--;
-            setTimeout(showPrevious, 60000); // 60 secondes
+            setTimeout(showPrevious, 15000); // 60 secondes
         }
 
         showPrevious();
