@@ -35,6 +35,11 @@
         $sqlState = $db->query('SELECT * FROM post');
         return $sqlState->fetchAll(PDO::FETCH_OBJ);
     }
+    function obtenirTousLesStories(){
+        $db = database_connection();
+        $sqlState = $db->query('SELECT * FROM story');
+        return $sqlState->fetchAll(PDO::FETCH_OBJ);
+    }
     
     function obtenirPostParId($id_post) {
         $db = database_connection();

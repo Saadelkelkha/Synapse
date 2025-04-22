@@ -799,20 +799,22 @@
         
                   
 <div class="container mt-2">
-<nav class=" navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+<nav class="navbar navbar-light bg-white shadow-sm">
     <div class="container">
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" href="index.php?action=afficherProfil">Publications</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">À propos</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?action=afficherPhotos">Photos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Vidéos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Plus</a></li>
-            </ul>
-        </div>
+        <ul class="navbar-nav flex-row gap-3">
+            <li class="nav-item">
+                <a class="nav-link active" href="index.php?action=afficherProfil">Publications</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?action=afficherPhotos">Multimédia</a>
+            </li>
+        </ul>
     </div>
-</nav> <br>
+</nav>
+<br>
     <div class="row">
         <!-- Colonne gauche (Profil, Bio) -->
         <div class="col-md-4 fixed-profile">

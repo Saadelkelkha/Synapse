@@ -621,6 +621,19 @@
                 }
                 break;
             
+                case "gestionstories":
+                    require_once 'controller/user.php';
+                    if(isset($_SESSION['conn']) && $_SESSION['conn'] == true){
+                        if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == true){
+                            afficherStoriesAdmin();
+                        }else{
+                            header('Location: index.php');
+                        }
+                    }else{
+                        header('Location: index.php');
+                    }
+                    break;
+            
             case "enregistrerposts":
               require_once 'controller/user.php';
               afficherEnregistrerPostController();

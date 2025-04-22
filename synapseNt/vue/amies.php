@@ -81,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_friend_id'])) {
         ]);
         $_SESSION['invitationEnvoyee'] = true;
       
-        exit();
     }
 }
 
@@ -121,5 +120,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_friend_id'])) {
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    
+        // location.reload();
+</script>
+
 </body>
 </html>
