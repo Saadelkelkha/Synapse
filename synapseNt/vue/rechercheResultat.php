@@ -27,19 +27,47 @@
                       <div class="feed" style="width: 80%;">
                         <div class="user">
                             <!-- Section Groupes -->
-                            <div class="profile-pic" style="width: 100%; display: flex; gap: 10px;">
+                            <div class="" style="width: 100%; display: flex; gap: 10px;">
                                 <div class="name1" style="padding: 0 2%; width: 100%;">
                                     <h4 class="mb-4" style="font-weight: bold;">Groupes</h4>
                                     <div class="group-rejoindre" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
                                     <?php if ($afficher && !empty($groupes)) {
-                                            foreach ($groupes as $group) { ?>
-                                            <div class="person-card" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
-                                                <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
-                                                <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: flex-start;">
+                                            foreach ($groupes as $group) { 
+                                                $issendinvet = false;
+                                                ?>
+                                            <div class="person-card" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;height:60px">
+                                                <img src="<?php echo $group['group_banner']; ?>" style="max-height: 50px;width: 30%;border-redius:0%">
+                                                <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: flex-start;max-height: 50px;max-width: 30%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
                                                     <h6 style="font-weight: 600; margin: 0;"><?php echo $group['name_group']; ?></h6>
                                                     <small style="font-size: small; color: #777;"><?php echo $group['description_group']; ?></small>
                                                 </div>
-                                                <button class="btn btn-primary rejoindre-btn" style="border-color: #2B2757;">Rejoindre</button>
+                                                <?php
+                                                    foreach ($invitations as $invitation){
+                                                        if($invitation->id_groupe == $group['id_group'] && $invitation->id_user == $id){
+                                                            $issendinvet = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if($issendinvet == true){
+                                                        ?>
+                                                        <button class="btn btn-primary rejoindre-btn" style="border-color: #2B2757;margin-left: auto;width:30%" id="join_groupe" onclick="join_groupe(<?php echo $group['id_group']; ?>,event)">Cancel request</button>
+                                                    <?php }elseif($issendinvet == false){
+                                                        $isingroup = false;
+                                                        foreach($joingroupes as $joingroupe){
+                                                            if($joingroupe->id_group == $group['id_group']){
+                                                                $isingroup = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                        if($isingroup == true){
+                                                ?>      
+                                                            <form class="" method="POST" action="index.php?action=exploregroup" style="margin-left: auto;width:30%">
+                                                                <input type="hidden" value="<?php echo $group['id_group']; ?>" name="id_group">
+                                                                <button class="btn btn-primary open-btn" style="border-color: #2B2757;">Open</button>
+                                                            </form>
+                                                    <?php }else{ ?>
+                                                        <button class="btn btn-primary rejoindre-bt" style="border-color: #2B2757;margin-left: auto;width:30%" id="join_groupe" onclick="join_groupe(<?php echo $group['id_group']; ?>,event)">Rejoindre</button>
+                                                    <?php }} ?>
                                             </div>
                                         <?php  }
                                         } else{
@@ -76,5 +104,45 @@
             <br><br>
         </main> 
     </div>
+    <script>
+        $(document).ready(function () {
+            window.join_groupe = function (id_groupe,event) {
+                if (id_groupe) {
+                    if (event.target.innerText === 'Rejoindre') {
+                        $.ajax({
+                            url: 'index.php?action=join_group',
+                            method: 'POST',
+                            data: {
+                                id_groupe: id_groupe,
+                            },
+                            success: function () {
+                                event.target.innerText = 'Cancel request';
+                            },
+                            error: function () {
+                                event.target.innerText = 'Rejoindre';
+                            },
+                        });
+                    }else{
+                        if (event.target.innerText === 'Cancel request') {
+                            $.ajax({
+                                url: 'index.php?action=cancel_join_group',
+                                method: 'POST',
+                                data: {
+                                    id_groupe: id_groupe,
+                                },
+                                success: function () {
+                                    event.target.innerText = 'Rejoindre';
+                                },
+                                error: function () {
+                                    event.target.innerText = 'Cancel request';
+                                },
+                            }); 
+                        }
+                    }
+                    
+                }
+            }
+        });
+    </script>
 </body>
 </html>

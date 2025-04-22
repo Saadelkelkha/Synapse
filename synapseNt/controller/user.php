@@ -3,6 +3,7 @@
     require_once 'model/home.php';
     require_once 'model/admin.php';
     require_once 'model/profile.php';
+    require_once 'model/group.php';
 
     function login_signup(){
         require_once 'vue/login.php';
@@ -290,6 +291,9 @@
         $id = $_SESSION['id_user'];
         $user = selectuser($id);
         $fullname = $user['prenom'] . " " . $user['nom'];
+
+        $invitations = selectinvitationgroup();
+        $joingroupes = rechercherjoinGroup($id);
 
         require_once 'vue/rechercheResultat.php';
     }

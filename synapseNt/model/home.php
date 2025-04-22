@@ -15,7 +15,7 @@
     function rechercherNomGroup($keywords){
         $db = database_connection();
 
-        $sqlstate = $db->prepare('SELECT name_group,description_group FROM groupe WHERE name_group LIKE :keywords');
+        $sqlstate = $db->prepare('SELECT * FROM groupe WHERE name_group LIKE :keywords');
         $sqlstate->execute([':keywords' => '%' . $keywords . '%']);
         $groupes = $sqlstate->fetchAll(PDO::FETCH_OBJ);
 

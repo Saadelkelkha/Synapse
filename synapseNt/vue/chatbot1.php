@@ -112,64 +112,74 @@
     </div>
 </div>
 
-<script type="module" src="assets/genai.js"></script>
-<script>
-document.getElementById('toggleChatbot').addEventListener('click', function() {
-    var chatbot = document.getElementById('chatbot');
-    var chat = document.getElementById('chat');
+<script type="module">
+    import { GoogleGenAI } from 'https://esm.run/@google/genai';
 
-    if(chat.style.display === 'flex'){
-        chat.style.display = 'none';
+    const ai = new GoogleGenAI({ apiKey: 'AIzaSyD67jAYQWSCbrp2s7bA-ZirZYqsru_UzqA' });
+
+    async function generateContent(msg) {
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.0-flash',
+                contents: msg,
+            });
+            return response.text;
+        } catch (error) {
+            console.error('Error generating content:', error);
+            return 'An error occurred while generating content. Please try again later.';
+        }
     }
 
-    chatbot.style.display = (chatbot.style.display === 'none' || chatbot.style.display === '') ? 'flex' : 'none';
-});
+    document.getElementById('toggleChatbot').addEventListener('click', function () {
+        var chatbot = document.getElementById('chatbot');
+        var chat = document.getElementById('chat');
 
-function sendMessagebot() {
-    var userMessage = document.getElementById('userMessage').value;
-    if (userMessage.trim() !== '') {
-        // addMessage('user', userMessage);
-        // document.getElementById('userMessage').value = '';
+        if (chat.style.display === 'flex') {
+            chat.style.display = 'none';
+        }
 
-        // // Envoi du message au serveur via AJAX
-        // var xhr = new XMLHttpRequest();
-        // xhr.open('POST', 'vue/chatbot.php', true);
-        // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        // xhr.onload = function() {
-        //     if (xhr.status === 200) {
-        //         try {
-        //             var response = JSON.parse(xhr.responseText);
-        //             addMessage('bot', response.response);
-        //         } catch (e) {
-        //             addMessage('bot', "Erreur de réponse du serveur.");
-        //         }
-        //     } else {
-        //         addMessage('bot', "Erreur de communication avec le serveur.");
-        //     }
-        // };
-        // xhr.onerror = function() {
-        //     addMessage('bot', "Problème de connexion !");
-        // };
-        // xhr.send('userMessage=' + encodeURIComponent(userMessage));
+        chatbot.style.display = (chatbot.style.display === 'none' || chatbot.style.display === '') ? 'flex' : 'none';
+    });
 
-        var response = generateContent(userMessage);
-        addMessagebot('bot', response);
+    async function sendMessagebot() {
+        var userMessage = document.getElementById('userMessage').value;
+        if (userMessage.trim() !== '') {
+            addMessagebot('user', userMessage);
+            document.getElementById('userMessage').value = '';
+
+            await reponseMsgBotawait(userMessage);
+        }
     }
-}
 
-function addMessagebot(sender, message) {
-    var messageContainer = document.createElement('div');
-    messageContainer.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-    messageContainer.innerText = message;
-    document.getElementById('chatMessages').appendChild(messageContainer);
-    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-}
+    async function reponseMsgBotawait(userMessage) {
+        var botMessageContainer = document.createElement('div');
+        botMessageContainer.classList.add('bot-message');
+        botMessageContainer.innerText = 'Writing...';
+        document.getElementById('chatMessages').appendChild(botMessageContainer);
+        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
 
-function handleKeyPressbot(event) {
-    if (event.key === 'Enter') {
-        sendMessage();
+        const response = await generateContent(userMessage);
+        botMessageContainer.innerText = response;
     }
-}
+
+    function addMessagebot(sender, message) {
+        var messageContainer = document.createElement('div');
+        messageContainer.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+        messageContainer.innerText = message;
+        document.getElementById('chatMessages').appendChild(messageContainer);
+        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+    }
+
+    function handleKeyPressbot(event) {
+        if (event.key === 'Enter') {
+            sendMessagebot();
+        }
+    }
+
+    // Make functions globally available for inline HTML events
+    window.sendMessagebot = sendMessagebot;
+    window.handleKeyPressbot = handleKeyPressbot;
+
 </script>
 
 </body>

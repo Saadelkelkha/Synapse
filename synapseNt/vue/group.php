@@ -58,7 +58,7 @@
                                 <img class="navhome1_profile" src="<?= $group->group_banner ?>" style="border-radius: 5%; width: 100%; object-fit: cover;">
                                 <div align="center" style="width: 100%;">
                                     <h6 style="font-weight: 600; margin: 0;"><?php echo $group->name_group; ?></h6>
-                                    <small style="font-size: small; color: #777;"><?php echo $group->description_group; ?></small>
+                                    <small style="display:block;font-size: small; color: #777;width: 220px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis"><?php echo $group->description_group; ?></small>
                                 </div>
                                 <form method="POST" action="index.php?action=exploregroup" style="width: 100%;">
                                     <input type="hidden" value="<?php echo $group->id_group; ?>" name="id_group">
@@ -79,7 +79,7 @@
                                 <img class="navhome1_profile" src="<?= $group->group_banner ?>" style="border-radius: 5%; width: 100%; object-fit: cover;">
                                 <div align="center" style="width: 100%;">
                                     <h6 style="font-weight: 600; margin: 0;"><?php echo $group->name_group; ?></h6>
-                                    <small style="font-size: small; color: #777;"><?php echo $group->description_group; ?></small>
+                                    <small style="display:block;font-size: small; color: #777;width: 220px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis"><?php echo $group->description_group; ?></small>
                                 </div>
                                 <form method="POST" action="index.php?action=exploregroup" style="width: 100%;">
                                     <input type="hidden" value="<?php echo $group->id_group; ?>" name="id_group">
@@ -102,7 +102,7 @@
                                 <img class="navhome1_profile" src="<?= $group->group_banner ?>" style="border-radius: 5%; width: 100%; object-fit: cover;">
                                 <div align="center" style="width: 100%;">
                                     <h6 style="font-weight: 600; margin: 0;"><?php echo $group->name_group; ?></h6>
-                                    <small style="font-size: small; color: #777;"><?php echo $group->description_group; ?></small>
+                                    <small style="display:block;font-size: small; color: #777;width: 220px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis"><?php echo $group->description_group; ?></small>
                                 </div>
                                 <?php
                                     foreach ($invitations as $invitation){

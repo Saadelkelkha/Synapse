@@ -1,5 +1,5 @@
 // genai.js
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from 'https://esm.run/@google/genai';
 
 const ai = new GoogleGenAI({ apiKey: 'AIzaSyD67jAYQWSCbrp2s7bA-ZirZYqsru_UzqA' });
 
