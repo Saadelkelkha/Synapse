@@ -59,6 +59,12 @@
         return $enregsitrer; 
    
     }
+    function enregistrerPostModelSupprimer($id_user, $id_post){
+        $db = database_connection(); 
+        $sqlState = $db->prepare('DELETE FROM enregistrer_posts WHERE id_user = ? AND id_post = ?');
+        $enregsitrer = $sqlState->execute([$id_user, $id_post]);    
+        return $enregsitrer; 
+    }
     
     function supprimerPosteModel($id_post){
         $db = database_connection();

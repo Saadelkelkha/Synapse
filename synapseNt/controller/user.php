@@ -337,6 +337,26 @@
             $saved_at = date("Y-m-d H:i:s");
     
             enregistrerPostModel($id_user, $id_post, $saved_at);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'success'
+            ]);
+            
+        }
+    }
+    
+    function enregistrerPostsSupprimer() {
+        if (isset($_POST['id_post']) && isset($_SESSION['id_user'])) {
+            $id_post = $_POST['id_post'];
+            $id_user = $_SESSION['id_user'];
+
+            
+    
+            enregistrerPostModelSupprimer($id_user, $id_post);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'success'
+            ]);
             
         }
     }
@@ -444,6 +464,7 @@
         require 'vue/enregistrer_post.php';
 
     }
+    
 
     function afficherPostsadmin() {
         $id = $_SESSION['id_admin'];
@@ -485,6 +506,7 @@
             'id_user' => $id
         ]);
     }
+    
 
     function getresponsehome($id_comment){
         $response = selectresponsehome($id_comment);

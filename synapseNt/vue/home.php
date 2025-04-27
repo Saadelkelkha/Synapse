@@ -6,7 +6,9 @@ $sqlState = $pdo->query('SELECT * FROM  post join user on user.id_user = post.id
 $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
-
+$enregistrerpostes = $pdo->prepare('SELECT * FROM enregistrer_posts LEFT JOIN post ON enregistrer_posts.id_post = post.id_post WHERE enregistrer_posts.id_user = ?');
+$enregistrerpostes->execute([$id]);
+$enregistrerpostes = $enregistrerpostes->fetchAll(PDO::FETCH_OBJ);
 
 
 
@@ -18,7 +20,7 @@ $id_post = $_GET['id_post'] ?? null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar and Sidebar</title>
+    <title>SynapseNt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.6/css/line.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
@@ -513,12 +515,22 @@ foreach($posts as $post) {
                                     <button class="btn rounded-circle" style="background-color:#F5F5F5;" onclick="copyLink(<?= $post->id_post; ?>)"><i class="fas fa-link"></i></button>
                                 </div>
                             </div>
+                           
                             <div class="bookmark">
-                              <form action="index.php?action=enregistrerPost" method="post">
-                              <input type="hidden" name="id_post" value="<?= $post->id_post; ?>">
-                              <button name="enregistrer" class="btn-enregsitrer"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>
-
-                              </form>
+                                <?php
+                                    $isbookmarked = false;
+                                    foreach($enregistrerpostes as $bookmarker) {
+                                        if($post->id_post == $bookmarker->id_post){
+                                                echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0 is-saved" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark text-primary" style="font-size: x-large;"></i></button>';
+                                                $isbookmarked = true;
+                                                break;
+                                        }
+                                    }
+                                    if(!$isbookmarked){
+                                        echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>';
+                                    }
+                                ?>
+                          
                             </div>
                         </div>
                         
@@ -1254,6 +1266,65 @@ $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count']; echo $likeCount; ?></
         });
     });
 });
+
+
+function save_post_groupe(event){
+            var postId = event.currentTarget.getAttribute('data-post-id');
+
+                if (event.currentTarget.classList.contains('is-saved')) {
+                    // If the post is already saved, unsave it
+                    $.ajax({
+                        url: 'index.php?action=enregistrerPost3',
+                        type: 'POST',
+                        data: {
+                            id_post : postId,
+                            id_user : <?php echo $id ; ?>,
+                        },
+                        success: function(res) {
+                            
+                          
+                            document.querySelectorAll('.btn-enregsitrer').forEach(SaveButton => {
+                                if (SaveButton.getAttribute('data-post-id') == res.id_post_groupe) {
+                                    SaveButton.querySelector('i').classList.remove('text-primary');
+                                    SaveButton.classList.remove('is-saved');
+                                }
+
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + error);
+                            console.log(xhr);
+                            console.log(status);
+                            console.log(error);
+                            alert("An error occurred: " + xhr.responseText);
+                        }
+                        
+                    });
+                }else{
+
+                    $.ajax({
+                        url: 'index.php?action=enregistrerPost2',
+                        type: 'POST',
+                        data: {
+                            id_post : postId,
+                            id_user : <?php echo $id ; ?>,
+                        },
+                        success: function(res) {
+                           
+                            document.querySelectorAll('.btn-enregsitrer').forEach(SaveButton => {
+                                if (SaveButton.getAttribute('data-post-id') == res.id_post_groupe) {
+                                    SaveButton.querySelector('i').classList.add('text-primary');
+                                    SaveButton.classList.add('is-saved');
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + error);
+                            alert("An error occurred: " + xhr.responseText);
+                        }
+                    });
+                }
+        }
 
 
     </script>

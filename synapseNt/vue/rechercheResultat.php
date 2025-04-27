@@ -145,7 +145,9 @@ if (isset($_SESSION['invitationEnvoyee']) && $_SESSION['invitationEnvoyee']) {
                         </div>
                         <form method="post">
                             <input type="hidden" name="add_friend_id" value="<?= $user->id_user ?>">
-                            <button type="submit" class="btn btn-primary rejoindre-btn" style="border-color: #2B2757;">Ajouter</button>
+                            <button class="btn btn-primary add-friend" data-id="<?= $user->id_user ?>">Ajouter</button>
+
+
                         </form>
                     </div>
                 <?php }
@@ -199,6 +201,41 @@ if (isset($_SESSION['invitationEnvoyee']) && $_SESSION['invitationEnvoyee']) {
                 }
             }
         });
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.add-friend').forEach(button => {
+        button.addEventListener('click', function() {
+            const friendId = this.getAttribute('data-id');
+            const btn = this;
+
+            fetch('add_friend2.php', {  // 🔥 Assure-toi que c'est bien le bon fichier PHP
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'add_friend_id=' + friendId
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.trim() === 'success') {
+                    // 🔥 Change le texte et désactive le bouton après l'envoi
+                    btn.textContent = '✅ Invitation envoyée';
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-success');
+                    btn.disabled = true;
+                } else {
+                    // 🔥 Ajoute un petit message d'erreur propre si besoin
+                    btn.insertAdjacentHTML('afterend', '<div class="text-danger mt-2">❌ Erreur, réessayez !</div>');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+        });
+    });
+});
+
     </script>
+   
 </body>
 </html>
