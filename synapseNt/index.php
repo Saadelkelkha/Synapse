@@ -816,7 +816,7 @@
                 
             case 'utilisateurs':
                     require_once 'controller/profile.php';
-                    obtenirTousLesUtlisateursControllerParId($_GET['id_user']);
+                    obtenirTousLesUtlisateursControllerParId($_POST['id_user']);
                     break;
             
         }
