@@ -32,6 +32,12 @@
             flex-grow: 1;
             overflow-y: auto;
             padding: 10px;
+            scrollbar-width: none; /* For Firefox */
+            -ms-overflow-style: none
+        }
+
+        .chatbot-body::-webkit-scrollbar {
+            display: none; /* For Chrome, Safari, and Opera */
         }
 
         .chatbot-footer {
@@ -125,7 +131,7 @@
             });
             return response.text;
         } catch (error) {
-            console.error('Error generating content:', error);
+            
             return 'An error occurred while generating content. Please try again later.';
         }
     }
@@ -142,10 +148,12 @@
     });
 
     async function sendMessagebot() {
+        var chat_div = document.getElementById('chatMessages');
         var userMessage = document.getElementById('userMessage').value;
         if (userMessage.trim() !== '') {
             addMessagebot('user', userMessage);
             document.getElementById('userMessage').value = '';
+            chat_div.scrollTop = chat_div.scrollHeight;
 
             await reponseMsgBotawait(userMessage);
         }
@@ -157,6 +165,7 @@
         botMessageContainer.innerText = 'Writing...';
         document.getElementById('chatMessages').appendChild(botMessageContainer);
         document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        botMessageContainer.scrollIntoView({ behavior: 'smooth' });
 
         const response = await generateContent(userMessage);
         botMessageContainer.innerText = response;

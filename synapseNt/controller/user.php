@@ -419,6 +419,10 @@
         $id = $_SESSION['id_user'];
         $user = selectuser($id);
         $fullname = $user['prenom'] . " " . $user['nom'];
+
+        $countcomment = countcomments();
+        $likesamie = likesamie($id);
+
         require_once "vue/profil.php";
     }
     function AfficherInfoUserSurProfilControlerAmis() {

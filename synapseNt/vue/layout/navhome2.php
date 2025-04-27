@@ -29,14 +29,4 @@
                         <h3>Amies</h3>
                     </a>
                 </div>
-                <div class="Contact mt-4">
-                    <b>My Contacts</b>
-                    <div>
-                        <img src="img/Profile/Julia Clarke.png">
-                        <div>
-                            <b>Julia Clarke</b>
-                            <p>12 mutual friends</p>
-                        </div>
-                    </div>
-                </div>
             </nav>

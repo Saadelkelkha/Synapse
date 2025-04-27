@@ -13,8 +13,8 @@
     function rechercherjoinGroup($id){
         $db = database_connection();
 
-        $sqlstate = $db->prepare('SELECT groupe.* FROM groupe JOIN group_membre ON groupe.id_group = group_membre.id_groupe WHERE group_membre.id_user = ?');
-        $sqlstate->execute([$id]);
+        $sqlstate = $db->prepare('SELECT groupe.* FROM groupe JOIN group_membre ON groupe.id_group = group_membre.id_groupe WHERE group_membre.id_user = ? AND groupe.id_admin != ?');
+        $sqlstate->execute([$id, $id]);
         $groupes = $sqlstate->fetchAll(PDO::FETCH_OBJ);
 
         return $groupes;
@@ -43,8 +43,8 @@
     function rechercherjoinGroupParkeywords($id, $keywords){
         $db = database_connection();
 
-        $sqlstate = $db->prepare('SELECT groupe.* FROM groupe JOIN group_membre ON groupe.id_group = group_membre.id_groupe WHERE group_membre.id_user = ? AND groupe.name_group LIKE ?');
-        $sqlstate->execute([$id, '%' . $keywords . '%']);
+        $sqlstate = $db->prepare('SELECT groupe.* FROM groupe JOIN group_membre ON groupe.id_group = group_membre.id_groupe WHERE group_membre.id_user = ?  AND groupe.id_admin != ? AND groupe.name_group LIKE ?');
+        $sqlstate->execute([$id,$id, '%' . $keywords . '%']);
         $groupes = $sqlstate->fetchAll(PDO::FETCH_OBJ);
 
         return $groupes;

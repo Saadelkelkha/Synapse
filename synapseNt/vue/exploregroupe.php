@@ -366,13 +366,7 @@
                     <form class="create-post mb-3 mt-4" >
                         <div class="profile-pic mb-3 d-flex">
                             <img src="<?= $user['photo_profil'] ?>" alt="" >
-                            <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="create-post">
-                        </div>
-                        <div class="photo-i" style="display: flex; justify-content: space-between; margin-left: 2%;">
-                            <a href="" style="color: #b8bec4;text-decoration: none; display:flex;gap: 8px;align-items: center;"><i class="bi bi-clock-history"></i></i>Stories</a>
-                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-image"></i>Photos</a>
-                            <a href="" style="color: #b8bec4;text-decoration: none;display:flex;gap: 8px;align-items: center;"><i class="fa-regular fa-face-smile"></i>Feelings</a>
-                            <button type="submit" class="btn btn-primary m-0" style="border-color: #2B2757; margin-right: 2%; width: 20%;" id="openPopup">Post</button>
+                            <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2"  id="openPopup" readonly>
                         </div>
                     </form>
                     <!-- Popup -->
