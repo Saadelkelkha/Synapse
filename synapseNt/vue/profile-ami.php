@@ -335,6 +335,7 @@
 
 <?php
 
+
 $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "", [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
 // ID de l'utilisateur connecté
@@ -345,6 +346,12 @@ function isFriend($pdo, $id_user, $receiver_id) {
     $stmt = $pdo->prepare("SELECT * FROM friends WHERE (user_id_1 = ? AND user_id_2 = ?) OR (user_id_1 = ? AND user_id_2 = ?)");
     $stmt->execute([$id_user, $receiver_id, $receiver_id, $id_user]);
     return $stmt->rowCount() > 0;
+}
+
+// Fonction pour envoyer une notification
+function sendNotification($pdo, $receiver_id, $sender_id, $message) {
+    $stmt = $pdo->prepare("INSERT INTO notification (id_user, id_envoyeur, message, est_lu, date_notification) VALUES (?, ?, ?, 0, NOW())");
+    $stmt->execute([$receiver_id, $sender_id, $message]);
 }
 
 // Envoi d'une invitation
@@ -369,6 +376,9 @@ if (isset($_POST['send_request'])) {
     // Envoyer la demande d'ami
     $stmt = $pdo->prepare("INSERT INTO friend_requests (sender_id, receiver_id) VALUES (?, ?)");
     $stmt->execute([$id_user, $receiver_id]);
+
+    // Envoyer une notification au destinataire
+    sendNotification($pdo, $receiver_id, $id_user, "Vous avez reçu une nouvelle demande d'ami.");
 
     $user = $pdo->prepare("SELECT prenom, nom FROM user WHERE id_user = ?");
     $user->execute([$id_user]);
@@ -400,6 +410,10 @@ if (isset($_POST['accept_request'])) {
             $stmt = $pdo->prepare("DELETE FROM friend_requests WHERE id = ?");
             $stmt->execute([$request_id]);
 
+            // Envoyer une notification aux deux utilisateurs
+            sendNotification($pdo, $sender_id, $id_user, "Votre demande d'ami a été acceptée !");
+            sendNotification($pdo, $id_user, $sender_id, "Vous êtes maintenant amis avec un nouvel utilisateur.");
+
             echo json_encode(["status" => "success"]);
         } else {
             echo json_encode(["status" => "error", "message" => "Demande introuvable"]);
@@ -409,6 +423,7 @@ if (isset($_POST['accept_request'])) {
     }
     exit;
 }
+
 // Supprimer une invitation
 if (isset($_POST['delete_request'])) {
     $request_id = $_POST['request_id'];
@@ -426,7 +441,6 @@ $requests = $pdo->query("SELECT friend_requests.id, user.prenom, user.nom
                          FROM friend_requests 
                          JOIN user ON user.id_user = friend_requests.sender_id 
                          WHERE receiver_id = $id_user")->fetchAll(PDO::FETCH_ASSOC);
-
 
 ?>
 

@@ -56,6 +56,7 @@
                 <div class="d-flex justify-content-center flex-wrap-2">
                     <!-- Feed -->
                     <?php
+
 $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
 $id_user = $_SESSION['id_user'];
 
@@ -72,33 +73,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_friend_id'])) {
     ]);
 
     if ($checkStmt->rowCount() === 0) {
-        // Insertion dans la table invitations
+        // Insertion dans la table friend_requests
         $insertStmt = $pdo->prepare("INSERT INTO friend_requests (sender_id, receiver_id, status, sent_at) 
             VALUES (:sender, :receiver, 'pending', NOW())");
         $insertStmt->execute([
             'sender' => $id_user,
             'receiver' => $receiver_id
         ]);
+
+        // Insertion dans la table notification
+        $notifStmt = $pdo->prepare('INSERT INTO notification (id_user, est_lu, id_envoyeur, message, date_notification) 
+        VALUES (?, 0, ?, ?, NOW())');
+    $message = "Vous avez reçu une demande d'ami.";
+    $notifStmt->execute([$receiver_id, $id_user, $message]);
+    
+
         $_SESSION['invitationEnvoyee'] = true;
-      
     }
 }
 
-    
+// Récupère uniquement les utilisateurs qui ne sont pas amis avec l'utilisateur actuel
+$sql = "
+    SELECT * FROM user 
+    WHERE id_user != :id_user 
+    AND id_user NOT IN (
+        SELECT user_id_2 FROM friends WHERE user_id_1 = :id_user
+        UNION
+        SELECT user_id_1 FROM friends WHERE user_id_2 = :id_user
+    )
+";
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['id_user' => $id_user]);
+$users = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-                        // Récupère uniquement les utilisateurs qui ne sont pas amis avec l'utilisateur actuel
-                        $sql = "
-                            SELECT * FROM user 
-                            WHERE id_user != :id_user 
-                            AND id_user NOT IN (
-                                SELECT user_id_2 FROM friends WHERE user_id_1 = :id_user
-                                UNION
-                                SELECT user_id_1 FROM friends WHERE user_id_2 = :id_user
-                            )
-                        ";
-                        $stmt = $pdo->prepare($sql);
-                        $stmt->execute(['id_user' => $id_user]);
-                        $users = $stmt->fetchAll(PDO::FETCH_OBJ);
 
                         if (count($users) > 0) {
                             echo '<h5 class="text-white mb-3">Vous connaissez peut-être</h5>';

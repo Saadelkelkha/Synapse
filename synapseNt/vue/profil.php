@@ -919,10 +919,14 @@ foreach($posts as $post) {
                                     </div>
                                     <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
                                 </div>
-                                <div class="dropdown-modifier">
+                                <div class="dropdown-modifier"><?php 
+                                    if (isset($_SESSION['id_user'])) {
+                                        $id = $_SESSION['id_user']; ?>
                                     <button class="dropdown-btn-modifier btn-modifier-supprimer1">...</button>
+                                    <?php } ?>
                                     <div class="dropdown-content-modifier">
-                                        <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a>
+                                        <!-- <a href="index.php?action=afficherModifierPost&id_post=<?php echo $post->id_post; ?>">Modifier</a> -->
+                                        <button class="open-popup-btn-modifier" onclick="affichemodifier(<?php echo $post->id_post; ?>)">Modifier</button>
                                         <button class="open-popup-btn-supprimer" onclick="affichesupprimer(<?php echo $post->id_post; ?>)">Supprimer</button>
                                     </div>
                                 </div>

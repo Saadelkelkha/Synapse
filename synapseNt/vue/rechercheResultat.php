@@ -79,26 +79,82 @@
                         </div>
                         <br><br>
                         <!-- Section Personnes -->
-                        <div class="profile-pic" style="width: 100%; display: flex; gap: 10px;">
-                            <div class="name1" style="padding: 0 2%; width: 100%;">
-                                <h4 class="mb-4" style="font-weight: bold;">Personnes</h4>
-                                <div class="group-rejoindre" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
-                                <?php if ($afficher && !empty($users)) {
-                                        foreach ($users as $user) { ?>
-                                        <div class="person-card" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
-                                            <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
-                                            <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: flex-start;">
-                                                <h6 style="font-weight: 600; margin: 0;"><?php echo $user['nom'] . ' ' . $user['prenom']; ?></h6>
-                                            </div>
-                                            <button class="btn btn-primary rejoindre-btn" style="border-color: #2B2757;">Ajouter</button>
-                                        </div>
-                                        <?php  }
-                                    } else{
-                                        echo "<h3 align='center'>0 Resultats</h3>";}
-                                 ?>
-                                </div>
-                            </div>
+                        <?php
+// Connexion à la base de données
+$pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");
+$id_user = $_SESSION['id_user'];
+
+// Vérifier si l'invitation a été envoyée
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_friend_id'])) {
+    $receiver_id = $_POST['add_friend_id'];
+
+    // Vérifie si l'invitation existe déjà
+    $checkStmt = $pdo->prepare("SELECT * FROM friend_requests 
+        WHERE (sender_id = :sender AND receiver_id = :receiver)
+        OR (sender_id = :receiver AND receiver_id = :sender)");
+    $checkStmt->execute([
+        'sender' => $id_user,
+        'receiver' => $receiver_id
+    ]);
+
+    if ($checkStmt->rowCount() === 0) {
+        // Insertion dans la table des invitations
+        $insertStmt = $pdo->prepare("INSERT INTO friend_requests (sender_id, receiver_id, status, sent_at) 
+            VALUES (:sender, :receiver, 'pending', NOW())");
+        $insertStmt->execute([
+            'sender' => $id_user,
+            'receiver' => $receiver_id
+        ]);
+        $_SESSION['invitationEnvoyee'] = true;
+    }
+}
+
+// Récupérer les utilisateurs qui ne sont pas amis
+$sql = "
+    SELECT * FROM user 
+    WHERE id_user != :id_user 
+    AND id_user NOT IN (
+        SELECT user_id_2 FROM friends WHERE user_id_1 = :id_user
+        UNION
+        SELECT user_id_1 FROM friends WHERE user_id_2 = :id_user
+    )
+";
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['id_user' => $id_user]);
+$users = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+if (isset($_SESSION['invitationEnvoyee']) && $_SESSION['invitationEnvoyee']) {
+    echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            ✅ Invitation envoyée avec succès !
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>';
+    unset($_SESSION['invitationEnvoyee']);
+}
+?>
+
+<div class="profile-pic" style="width: 100%; display: flex; gap: 10px;">
+    <div class="name1" style="padding: 0 2%; width: 100%;">
+        <h4 class="mb-4" style="font-weight: bold;">Personnes</h4>
+        <div class="group-rejoindre" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+            <?php if (!empty($users)) {
+                foreach ($users as $user) { ?>
+                    <div class="person-card" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                        <img class="navhome1_profile" src="img/Profile/Julia Clarke.png" height="50" width="50" style="border-radius: 50%;">
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: flex-start;">
+                            <h6 style="font-weight: 600; margin: 0;"><?php echo $user->nom . ' ' . $user->prenom; ?></h6>
                         </div>
+                        <form method="post">
+                            <input type="hidden" name="add_friend_id" value="<?= $user->id_user ?>">
+                            <button type="submit" class="btn btn-primary rejoindre-btn" style="border-color: #2B2757;">Ajouter</button>
+                        </form>
+                    </div>
+                <?php }
+            } else {
+                echo "<h3 align='center'>0 Résultats</h3>";
+            } ?>
+        </div>
+    </div>
+</div> 
                 </div>
             </div>
             <br><br>

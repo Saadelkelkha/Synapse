@@ -470,7 +470,8 @@ foreach($posts as $post) {
                                     
                                 </div>
                                 <div class="dropdown-modifier"><?php 
-                                    if($id == $post->id_user){?>
+                                    if (isset($_SESSION['id_user'])) {
+                                        $id = $_SESSION['id_user']; ?>
                                     <button class="dropdown-btn-modifier btn-modifier-supprimer1">...</button>
                                     <?php } ?>
                                     <div class="dropdown-content-modifier">
