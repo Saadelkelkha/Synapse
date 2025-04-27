@@ -680,9 +680,21 @@
 
             case 'enregistrerPost':
                     require_once 'controller/user.php';
-                    enregistrerPosts();
+                    
                     afficherPosts();
                     break;
+                
+            case 'enregistrerPost2':
+                require_once 'controller/user.php';
+                enregistrerPosts();         
+                break;
+
+            case 'enregistrerPost3':
+                require_once 'controller/user.php';
+                enregistrerPostsSupprimer();              
+                break;
+
+                        
 
             case "gestionposts":
                 require_once 'controller/user.php';
