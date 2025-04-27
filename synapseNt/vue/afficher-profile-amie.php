@@ -784,9 +784,9 @@ $amis = $sqlState->fetchAll(PDO::FETCH_OBJ);
             
             <!-- Formulaire de création de post -->
             <div class="container mt-4">
-                <?php  foreach($amis as $ami){ ?>
-        <!-- Profile Banner -->
-        <img src="<?php echo $ami->banner; ?>" alt="Banner" class="profile-banner">
+                <?php  foreach($amis as $ami){ 
+                    if($ami->id_user == $_POST['id_user']){ ?>
+                    <img src="<?php echo $ami->banner; ?>" alt="Banner" class="profile-banner">
         
         <!-- Profile Info -->
         <div class="profile-container">
@@ -811,7 +811,10 @@ $amis = $sqlState->fetchAll(PDO::FETCH_OBJ);
               </div>
                
             </div>
-            <?php  } ?>
+                    
+        <!-- Profile Banner -->
+        
+            <?php  } } ?>
           
          <br><br>
         
@@ -852,7 +855,7 @@ $amis = $sqlState->fetchAll(PDO::FETCH_OBJ);
             <!-- Liste des publications -->
             <div id="postContainer">
                 <?php
-                $id = $_GET['id_user'];
+                $id = $_POST['id_user'];
 
                 // Requête avec une jointure entre la table `post` et la table `user`
                 $pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "");

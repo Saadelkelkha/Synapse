@@ -542,12 +542,14 @@ $sqlState->execute(['id_user' => $id_user]);
 $amis = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
-            foreach($amis as $ami){ ?> 
-            <input type="hidden" name="id_user" value="<?php echo $ami->id_user; ?>">
-        <a href="index.php?action=utilisateurs&id_user=<?php echo $ami->id_user; ?>">
+foreach($amis as $ami){ ?> 
+    <form method="POST" action="index.php?action=utilisateurs">
+        <input type="hidden" name="id_user" value="<?php echo $ami->id_user; ?>">
+        <button type="submit" class="btn p-0">
             <p><?php echo htmlspecialchars($ami->prenom) . " " . htmlspecialchars($ami->nom); ?></p>
-        </a>
-            <?php } ?>
+        </button>
+    </form>
+    <?php } ?>
             
             </h6>
             <!-- <small class="text-muted">Marrakech</small> -->
