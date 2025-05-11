@@ -85,9 +85,10 @@
     function send_message($id_user,$id_amie,$message){
         $db = database_connection();
 
+        $notification_message = "Cette amie a envoyé un message : " . $message;
         $sqlstate = $db->prepare('INSERT INTO notification (id_user, id_envoyeur, message) VALUES (?, ?, ?)');
-    
-        $sqlstate->execute([$id_user,$id_amie,$message]);
+        
+        $sqlstate->execute([$id_amie, $id_user, $notification_message]);
     
         $sqlstate = $db->prepare('INSERT INTO message (id_expediteur, id_destinataire, message) VALUES (?, ?, ?)');
     
