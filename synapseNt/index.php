@@ -839,6 +839,10 @@
                     require_once 'controller/profile.php';
                     obtenirTousLesUtlisateursControllerParId($_POST['id_user']);
                     break;
+
+            case "notifications":
+                require_once 'vue/notifications.php';
+                break;
             
         }
     }else{

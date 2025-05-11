@@ -95,9 +95,7 @@ $stories = $pdo->query($sql)->fetchAll(PDO::FETCH_OBJ);
             color: white;
             cursor: pointer;
         }
-        .home_stories{
-            z-index: 798;
-        }
+     
         .btn-story1{
             background-color: transparent;
             color:grey;
@@ -156,7 +154,7 @@ foreach ($stories as $story) {
 </div>        </div>
     </div>
 
-    <div class="story-overlay" id="storyOverlay">
+    <div class="story-overlay" id="storyOerlay">
         <span class="close-btn" onclick="closeStoryOverlay()">&times;</span>
         <img id="storyImage" src="" alt="Story en grand">
     </div>
@@ -164,14 +162,15 @@ foreach ($stories as $story) {
     <script>
         function viewStory(image) {
             document.getElementById('storyImage').src = image;
-            document.getElementById('storyOverlay').style.display = 'flex';
+            document.getElementById('storyOerlay').style.display = 'flex';
         }
 
         function closeStoryOverlay() {
-            document.getElementById('storyOverlay').style.display = 'none';
+            document.getElementById('storyOerlay').style.display = 'none';
         }
     </script>
 <script>
+    let storyTimeout;
     function playUserStories(stories) {
         let index = stories.length - 1;
 
@@ -183,17 +182,20 @@ foreach ($stories as $story) {
 
             const story = stories[index];
             document.getElementById('storyImage').src = story.image_path;
-            document.getElementById('storyOverlay').style.display = 'flex';
+            document.getElementById('storyOerlay').style.display = 'flex';
 
             index--;
-            setTimeout(showPrevious, 15000); // 60 secondes
+            storyTimeout = setTimeout(showPrevious, 15000);
         }
 
         showPrevious();
     }
 
     function closeStoryOverlay() {
-        document.getElementById('storyOverlay').style.display = 'none';
+        document.getElementById('storyOerlay').style.display = 'none';
+        if (storyTimeout) {
+            clearTimeout(storyTimeout); // Stop the timeout for showing the next story
+        }
     }
 </script>
 

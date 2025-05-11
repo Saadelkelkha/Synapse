@@ -343,8 +343,8 @@ $id_user = $_SESSION['id_user'] ?? 1;
 
 // Fonction pour vérifier si deux utilisateurs sont amis
 function isFriend($pdo, $id_user, $receiver_id) {
-    $stmt = $pdo->prepare("SELECT * FROM friends WHERE (user_id_1 = ? AND user_id_2 = ?) OR (user_id_1 = ? AND user_id_2 = ?)");
-    $stmt->execute([$id_user, $receiver_id, $receiver_id, $id_user]);
+    $stmt = $pdo->prepare("SELECT * FROM followers WHERE (id_user = ? AND id_amie = ?)");
+    $stmt->execute([$id_user, $receiver_id]);
     return $stmt->rowCount() > 0;
 }
 
@@ -474,8 +474,8 @@ $requests = $pdo->query("SELECT friend_requests.id, user.prenom, user.nom
               <p align="start"><?php echo htmlspecialchars($user['bio']); ?></p>
             <?php  
                   // Récupérer le nombre d'amis
-                    $stmt = $pdo->prepare("SELECT COUNT(*)   AS friend_count FROM friends WHERE user_id_1 = ? OR user_id_2 = ?");
-                    $stmt->execute([$id_user, $id_user]);
+                    $stmt = $pdo->prepare("SELECT COUNT(*)   AS friend_count FROM followers WHERE id_user = ?");
+                    $stmt->execute([$id_user]);
                     $friendCount = $stmt->fetch(PDO::FETCH_ASSOC)['friend_count'];
             ?>
               <p align="start"><?=  $friendCount ?> ami(s)</p>

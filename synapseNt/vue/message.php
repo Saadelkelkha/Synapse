@@ -291,6 +291,7 @@ document.getElementById('toggleChat').addEventListener('click', function () {
             chatBody.innerHTML = '';
             if (res.data && res.data.length > 0) {
                 res.data.forEach(function (message) {
+                    console.log(message);
                     var messageElement = document.createElement('div');
                     messageElement.onclick = function() {
                         show_chat(message.id_amie);
