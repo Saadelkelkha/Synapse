@@ -4,10 +4,12 @@
                         <i class="navhome2_sidebar_logo uil uil-compass"></i> 
                         <h3>Explore</h3>
                     </a>
-                    <a class="menu-item" id="notifications">
-                        <i class="navhome2_sidebar_logo uil uil-bell"></i>
-                        <h3>Notifications</h3>
-                    </a>
+                   
+                        
+                        
+                        <h3 class="menu-item"><?php require_once 'vue/notifications.php'; ?></h3>
+                       
+                   
                     <a href="index.php?action=groups" class="menu-item">
                         <i class="navhome2_sidebar_logo bi bi-people"></i>
                         <h3>Groupes</h3>

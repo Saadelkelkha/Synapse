@@ -95,9 +95,7 @@ $stories = $pdo->query($sql)->fetchAll(PDO::FETCH_OBJ);
             color: white;
             cursor: pointer;
         }
-        .home_stories{
-            z-index: 798;
-        }
+     
         .btn-story1{
             background-color: transparent;
             color:grey;
@@ -158,7 +156,7 @@ foreach ($stories as $story) {
 
     <div class="story-overlay" id="storyOverlay">
         <span class="close-btn" onclick="closeStoryOverlay()">&times;</span>
-        <img id="storyImage" src="" alt="Story en grand">
+        
     </div>
 
     <script>
