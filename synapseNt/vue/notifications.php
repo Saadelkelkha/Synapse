@@ -102,16 +102,18 @@ button.btn12:hover i {
             right: -25px;
         }
 
-        #notificationList {
-            display: none;
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 300px;
-            background: white;
-            position: absolute;
-            z-index: 999;
-            
-        }
+       #notificationList {
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 300px;
+    max-height: 300px; /* Hauteur max visible */
+    overflow-y: auto;  /* Barre de défilement verticale si nécessaire */
+    background: white;
+    position: absolute;
+    z-index: 999;
+}
+
 
         .notif-item {
             border-bottom: 1px solid #eee;

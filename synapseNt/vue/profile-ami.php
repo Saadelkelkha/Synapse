@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste d'amis</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="./assets/home.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
     .fixed-profile {
@@ -227,13 +228,9 @@
         padding: 0;
     }
 
-    .search-bar {
-        border: 1px solid #ccc;
-        border-radius: 20px;
-        padding: 8px 12px;
-        outline: none;
+    /* .search-bar {  
         width: 40vw;
-    }
+    } */
 
     .rechercher-nom {
         background-color: #2B2757;
@@ -442,6 +439,23 @@ $requests = $pdo->query("SELECT friend_requests.id, user.prenom, user.nom
                          JOIN user ON user.id_user = friend_requests.sender_id 
                          WHERE receiver_id = $id_user")->fetchAll(PDO::FETCH_ASSOC);
 
+$pdo = new PDO("mysql:host=localhost;dbname=synapse", "root", "", [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+]);
+
+$id_user = $_SESSION['id_user'] ?? null;
+$id_ami = $_POST['id_ami'] ?? null;
+
+if ($id_user && $id_ami) {
+    $stmt = $pdo->prepare("DELETE FROM friend
+        WHERE (user_id_1 = :u1 AND user_id_2 = :u2) OR (user_id_1 = :u2 AND user_id_2 = :u1)");
+    $stmt->execute(['u1' => $id_user, 'u2' => $id_ami]);
+
+    header("Location: index.php?action=home");
+    exit;
+}
+
+
 ?>
 
 
@@ -452,12 +466,12 @@ $requests = $pdo->query("SELECT friend_requests.id, user.prenom, user.nom
 <div class="container">
 <?php require_once 'vue/layout/navhome1.php'; ?>
 
-<main class="mt-1 d-flex">
+<main class=" d-flex">
 
             <!-- Sidebar -->
             
             <!-- Formulaire de création de post -->
-            <div class="container mt-4">
+            <div class="container">
                 
         <!-- Profile Banner -->
         <img src="<?php echo $user['banner']; ?>" alt="Banner" class="profile-banner">
@@ -507,11 +521,7 @@ $requests = $pdo->query("SELECT friend_requests.id, user.prenom, user.nom
     
 
     <!-- Barre de recherche et options -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="fw-bold" align="start">Ami(e)s</h4>
-        <input type="text" class="form-control w-25" placeholder="🔍 Rechercher">
-       
-    </div>
+   
 
     <!-- Onglets -->
     <!-- <div class="d-flex border-bottom mb-3"> -->
@@ -543,12 +553,23 @@ $amis = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
 foreach($amis as $ami){ ?> 
-    <form method="POST" action="index.php?action=utilisateurs">
-        <input type="hidden" name="id_user" value="<?php echo $ami->id_user; ?>">
-        <button type="submit" class="btn p-0">
-            <p><?php echo htmlspecialchars($ami->prenom) . " " . htmlspecialchars($ami->nom); ?></p>
-        </button>
-    </form>
+    <form method="POST" action="index.php?action=utilisateurs" class="d-flex align-items-center justify-content-between border rounded p-2 mb-2">
+    <input type="hidden" name="id_user" value="<?php echo $ami->id_user; ?>">
+
+    <button type="submit" class="btn btn-link text-decoration-none text-dark p-0 m-0">
+        <img src="<?php echo htmlspecialchars($ami->photo_profil) ?>" alt="">
+        <strong><?php echo htmlspecialchars($ami->prenom) . " " . htmlspecialchars($ami->nom); ?></strong>
+    </button>
+
+    <!-- Bouton Supprimer -->
+   
+</form>
+
+ <!-- <form method="POST" action="supprimer_ami.php" class="m-0">
+        <input type="hidden" name="id_ami" value="<?php echo $ami->id_user; ?>">
+        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+    </form> -->
+
     <?php } ?>
             
             </h6>
@@ -576,7 +597,7 @@ foreach($amis as $ami){ ?>
 <?php endforeach; ?> -->
 
 <!-- Invitations reçues -->
-<h2 class="fw-bold" align="start">Invitations reçues</h2>
+<h2 class="fw-bold mx-4" align="start">Invitations reçues</h2>
 <div id="requests">
     <?php foreach ($requests as $request): ?>
         <div class="card card1" id="request-<?= $request['id'] ?>">
