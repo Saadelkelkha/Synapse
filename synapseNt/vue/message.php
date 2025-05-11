@@ -289,9 +289,9 @@ document.getElementById('toggleChat').addEventListener('click', function () {
             data1 = res.data;
             var chatBody = document.querySelector('.chat-body');
             chatBody.innerHTML = '';
+            console.log(res);
             if (res.data && res.data.length > 0) {
                 res.data.forEach(function (message) {
-                    console.log(message);
                     var messageElement = document.createElement('div');
                     messageElement.onclick = function() {
                         show_chat(message.id_amie);
@@ -519,11 +519,13 @@ function show_chat(id_amie) {
             id_amie: id_amie
         },
         success: function (res) {
+            console.log(res.data);
+            console.log(res.amieinfo);
             data2 = res.data;
             var chatBody = document.querySelector('.chat-body');
             chatBody.innerHTML = ''; // Clear previous messages
 
-            if (res.data && res.data.length > 0) {
+            if (res.data && res.data.length >= 0) {
                 // Add a div at the top with photo_profil, prenom, and nom
                 var chat_div = document.createElement('div');
                 chat_div.classList.add('chat-div');

@@ -6,6 +6,11 @@
     <title>Liste d'amis</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.6/css/line.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="assets/home.css" />
     <style>
     .fixed-profile {
         position: sticky;
@@ -343,8 +348,8 @@ $id_user = $_SESSION['id_user'] ?? 1;
 
 // Fonction pour vérifier si deux utilisateurs sont amis
 function isFriend($pdo, $id_user, $receiver_id) {
-    $stmt = $pdo->prepare("SELECT * FROM followers WHERE (id_user = ? AND id_amie = ?)");
-    $stmt->execute([$id_user, $receiver_id]);
+    $stmt = $pdo->prepare("SELECT * FROM friends WHERE (user_id_1 = ? AND user_id_2 = ?) OR (user_id_1 = ? AND user_id_2 = ?)");
+    $stmt->execute([$id_user, $receiver_id, $receiver_id, $id_user]);
     return $stmt->rowCount() > 0;
 }
 
@@ -474,8 +479,8 @@ $requests = $pdo->query("SELECT friend_requests.id, user.prenom, user.nom
               <p align="start"><?php echo htmlspecialchars($user['bio']); ?></p>
             <?php  
                   // Récupérer le nombre d'amis
-                    $stmt = $pdo->prepare("SELECT COUNT(*)   AS friend_count FROM followers WHERE id_user = ?");
-                    $stmt->execute([$id_user]);
+                    $stmt = $pdo->prepare("SELECT COUNT(*)   AS friend_count FROM friends WHERE user_id_1 = ? OR user_id_2 = ?");
+                    $stmt->execute([$id_user, $id_user]);
                     $friendCount = $stmt->fetch(PDO::FETCH_ASSOC)['friend_count'];
             ?>
               <p align="start"><?=  $friendCount ?> ami(s)</p>

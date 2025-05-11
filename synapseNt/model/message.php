@@ -5,8 +5,11 @@
         $db = database_connection();
     
         $sqlstate = $db->prepare('
-            SELECT
-                f.id_amie,
+            SELECT 
+                CASE 
+                    WHEN f.user_id_1 = ? THEN f.user_id_2
+                    ELSE f.user_id_1
+                END AS id_amie,
                 u.prenom,
                 u.nom,
                 u.photo_profil,
@@ -18,27 +21,30 @@
                 m.audio_dure,
                 m.vue,
                 m.date_envoi
-            FROM followers f
-            JOIN user u ON u.id_user = f.id_amie
+            FROM friends f
+            JOIN user u ON u.id_user = CASE 
+                                         WHEN f.user_id_1 = ? THEN f.user_id_2
+                                         ELSE f.user_id_1
+                                       END
             LEFT JOIN message m
                 ON (
-                    (f.id_user = m.id_expediteur AND f.id_amie = m.id_destinataire)
+                    (f.user_id_1 = m.id_expediteur AND f.user_id_2 = m.id_destinataire)
                     OR
-                    (f.id_user = m.id_destinataire AND f.id_amie = m.id_expediteur)
+                    (f.user_id_2 = m.id_expediteur AND f.user_id_1 = m.id_destinataire)
                 )
                 AND m.id_message = (
                     SELECT MAX(m2.id_message)
                     FROM message m2
                     WHERE
-                        (m2.id_expediteur = f.id_user AND m2.id_destinataire = f.id_amie)
+                        (m2.id_expediteur = f.user_id_1 AND m2.id_destinataire = f.user_id_2)
                         OR
-                        (m2.id_expediteur = f.id_amie AND m2.id_destinataire = f.id_user)
+                        (m2.id_expediteur = f.user_id_2 AND m2.id_destinataire = f.user_id_1)
                 )
-            WHERE f.id_user = ?
-            ORDER BY m.id_message DESC
+            WHERE ? IN (f.user_id_1, f.user_id_2)
+            ORDER BY m.id_message DESC;
         ');
     
-        $sqlstate->execute([$id_user]);
+        $sqlstate->execute([$id_user,$id_user,$id_user]);
         return $sqlstate->fetchAll(PDO::FETCH_OBJ);
     }
 
