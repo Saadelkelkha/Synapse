@@ -284,11 +284,32 @@
                     joingroup($idgroupe);
                     break;
                 }
+            case 'inv_amie':
+                if(isset($_POST['id_groupe'])){
+                    require_once 'controller/user.php';
+                    $idgroupe = $_POST['id_groupe'];
+                    inv_amie($idgroupe);
+                    break;
+                }
             case 'cancel_join_group':
                 if(isset($_POST['id_groupe'])){
                     require_once 'controller/group.php';
                     $idgroupe = $_POST['id_groupe'];
                     canceljoingroup($idgroupe);
+                    break;
+                }
+            case 'cancel_inv_amie':
+                if(isset($_POST['id_groupe'])){
+                    require_once 'controller/user.php';
+                    $idgroupe = $_POST['id_groupe'];
+                    cancel_inv_amie($idgroupe);
+                    break;
+                }
+            case 'accept_inv_amie':
+                if(isset($_POST['id_groupe'])){
+                    require_once 'controller/user.php';
+                    $idgroupe = $_POST['id_groupe'];
+                    accept_inv_amie($idgroupe);
                     break;
                 }
             case 'exploregroup':

@@ -946,7 +946,6 @@ foreach($posts as $post) {
                     id_groupe_post : postId,
                 },
                 success: function(res) {
-                    console.log(res);
                     commentList.previousElementSibling.setAttribute('onclick', 'affichecommentlist(event)');
                     commentList.previousElementSibling.setAttribute('style', 'cursor: pointer;');
                     commentList.previousElementSibling.innerHTML = `Voir les ${res.comments.length} commentaires`;
@@ -1263,7 +1262,7 @@ foreach($posts as $post) {
 });
 
 
-function save_post_groupe(event){
+        function save_post_groupe(event){
             var postId = event.currentTarget.getAttribute('data-post-id');
 
                 if (event.currentTarget.classList.contains('is-saved')) {
@@ -1276,10 +1275,8 @@ function save_post_groupe(event){
                             id_user : <?php echo $id ; ?>,
                         },
                         success: function(res) {
-                            
-                          
                             document.querySelectorAll('.btn-enregsitrer').forEach(SaveButton => {
-                                if (SaveButton.getAttribute('data-post-id') == res.id_post_groupe) {
+                                if (SaveButton.getAttribute('data-post-id') == postId) {
                                     SaveButton.querySelector('i').classList.remove('text-primary');
                                     SaveButton.classList.remove('is-saved');
                                 }
@@ -1307,7 +1304,7 @@ function save_post_groupe(event){
                         success: function(res) {
                            
                             document.querySelectorAll('.btn-enregsitrer').forEach(SaveButton => {
-                                if (SaveButton.getAttribute('data-post-id') == res.id_post_groupe) {
+                                if (SaveButton.getAttribute('data-post-id') == postId) {
                                     SaveButton.querySelector('i').classList.add('text-primary');
                                     SaveButton.classList.add('is-saved');
                                 }

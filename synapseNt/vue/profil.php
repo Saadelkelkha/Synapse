@@ -827,7 +827,7 @@
                
                     <form class="post-box mb-" >
                         <div class="profile-pic mb-3 d-flex">
-                            <img src="img/Profile/Julia Clarke.png" alt="" >
+                            <img src="<?php echo $user['photo_profil']?>" alt="" >
                             <input  type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="openPopup">
                         </div>
                     </form>
@@ -876,6 +876,10 @@
                 $sqlState = $pdo->prepare('SELECT * FROM post WHERE id_user = ?'); 
                 $sqlState->execute([$id]); 
                 $posts = $sqlState->fetchAll(PDO::FETCH_OBJ);
+
+                $enregistrerpostes = $pdo->prepare('SELECT * FROM enregistrer_posts LEFT JOIN post ON enregistrer_posts.id_post = post.id_post WHERE enregistrer_posts.id_user = ?');
+                $enregistrerpostes->execute([$id]);
+                $enregistrerpostes = $enregistrerpostes->fetchAll(PDO::FETCH_OBJ);
                 
 foreach($posts as $post) {
     // Récupérer l'ID de l'utilisateur depuis la session
@@ -947,11 +951,20 @@ foreach($posts as $post) {
                                 </div>
                             </div>
                             <div class="bookmark">
-                              <form action="index.php?action=enregistrerPost" method="post">
-                              <input type="hidden" name="id_post" value="<?= $post->id_post; ?>">
-                              <button name="enregistrer" class="btn-enregsitrer p-0"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>
-
-                              </form>
+                                <?php
+                                    $isbookmarked = false;
+                                    foreach($enregistrerpostes as $bookmarker) {
+                                        if($post->id_post == $bookmarker->id_post){
+                                                echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0 is-saved" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark text-primary" style="font-size: x-large;"></i></button>';
+                                                $isbookmarked = true;
+                                                break;
+                                        }
+                                    }
+                                    if(!$isbookmarked){
+                                        echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>';
+                                    }
+                                ?>
+                          
                             </div>
                         </div>
                         
@@ -1380,7 +1393,6 @@ foreach($posts as $post) {
                     id_groupe_post : postId,
                 },
                 success: function(res) {
-                    console.log(res);
                     commentList.previousElementSibling.setAttribute('onclick', 'affichecommentlist(event)');
                     commentList.previousElementSibling.setAttribute('style', 'cursor: pointer;');
                     commentList.previousElementSibling.innerHTML = `Voir les ${res.comments.length} commentaires`;
@@ -1692,6 +1704,62 @@ likeButton.addEventListener("click", function () {
 });
 });
 });
+
+        function save_post_groupe(event){
+            var postId = event.currentTarget.getAttribute('data-post-id');
+
+                if (event.currentTarget.classList.contains('is-saved')) {
+                    // If the post is already saved, unsave it
+                    $.ajax({
+                        url: 'index.php?action=enregistrerPost3',
+                        type: 'POST',
+                        data: {
+                            id_post : postId,
+                            id_user : <?php echo $id ; ?>,
+                        },
+                        success: function(res) {
+                            document.querySelectorAll('.btn-enregsitrer').forEach(SaveButton => {
+                                if (SaveButton.getAttribute('data-post-id') == postId) {
+                                    SaveButton.querySelector('i').classList.remove('text-primary');
+                                    SaveButton.classList.remove('is-saved');
+                                }
+
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + error);
+                            console.log(xhr);
+                            console.log(status);
+                            console.log(error);
+                            alert("An error occurred: " + xhr.responseText);
+                        }
+                        
+                    });
+                }else{
+
+                    $.ajax({
+                        url: 'index.php?action=enregistrerPost2',
+                        type: 'POST',
+                        data: {
+                            id_post : postId,
+                            id_user : <?php echo $id ; ?>,
+                        },
+                        success: function(res) {
+                           
+                            document.querySelectorAll('.btn-enregsitrer').forEach(SaveButton => {
+                                if (SaveButton.getAttribute('data-post-id') == postId) {
+                                    SaveButton.querySelector('i').classList.add('text-primary');
+                                    SaveButton.classList.add('is-saved');
+                                }
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error occurred: " + error);
+                            alert("An error occurred: " + xhr.responseText);
+                        }
+                    });
+                }
+        }
 
     
 

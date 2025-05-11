@@ -266,7 +266,7 @@
 
     function search($keywords){
         if(!empty(trim($keywords))){
-            $users = rechercherNomPrenom($keywords);
+            $users = rechercherNomPrenom($keywords,$_SESSION['id_user']);
             $groupes = rechercherNomGroup($keywords);
             $afficher = true;
         }else{
@@ -294,6 +294,8 @@
 
         $invitations = selectinvitationgroup();
         $joingroupes = rechercherjoinGroup($id);
+        $invitations_amie = selectinvitationamie($id);
+        $amis = selectamies($id);
 
         require_once 'vue/rechercheResultat.php';
     }
@@ -349,7 +351,6 @@
         if (isset($_POST['id_post']) && isset($_SESSION['id_user'])) {
             $id_post = $_POST['id_post'];
             $id_user = $_SESSION['id_user'];
-
             
     
             enregistrerPostModelSupprimer($id_user, $id_post);
@@ -735,6 +736,42 @@ function modifierpostt($id_post_groupe,$text_content){
         'text_content' => $text_content,
         'image_url' => $imageUrl,
         'id_post_groupe' => $id_post_groupe
+    ]);
+}
+
+function inv_amie($id_user){
+    $id = $_SESSION['id_user'];
+    $user = selectuser($id);
+    $fullname = $user['prenom'] . " " . $user['nom'];
+
+    addinvitation($id,$id_user);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'success',
+    ]);
+}
+
+function cancel_inv_amie($id_user){
+    $id = $_SESSION['id_user'];
+    $user = selectuser($id);
+    $fullname = $user['prenom'] . " " . $user['nom'];
+
+    cancelinvitation($id,$id_user);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'success',
+    ]);
+}
+
+function accept_inv_amie($id_user){
+    $id = $_SESSION['id_user'];
+    $user = selectuser($id);
+    $fullname = $user['prenom'] . " " . $user['nom'];
+
+    acceptinvitationn($id,$id_user);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status' => 'success',
     ]);
 }
 

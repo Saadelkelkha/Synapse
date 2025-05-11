@@ -2,11 +2,11 @@
     require_once 'db.php';
 
 
-    function rechercherNomPrenom($keywords){
+    function rechercherNomPrenom($keywords, $id_user){
         $db = database_connection();
 
-        $sqlstate = $db->prepare("SELECT nom , prenom FROM user WHERE concat(nom ,' ' ,prenom) LIKE :keywords OR  concat(prenom ,' ' ,nom) LIKE :keywords");
-        $sqlstate->execute([':keywords' => '%' . $keywords . '%']);
+        $sqlstate = $db->prepare("SELECT * FROM user WHERE (concat(nom ,' ' ,prenom) LIKE :keywords OR  concat(prenom ,' ' ,nom) LIKE :keywords) AND id_user != :id_user");
+        $sqlstate->execute([':keywords' => '%' . $keywords . '%', ':id_user' => $id_user]);
         $users = $sqlstate->fetchAll(PDO::FETCH_OBJ);
 
         return $users;
@@ -24,6 +24,27 @@
 
     function insertPost($text_content,$imageUrl,$currentDate,$id_user){
         $db = database_connection();
+
+        $amis = $db->prepare('SELECT * FROM friends WHERE user_id_1 = ? OR user_id_2 = ?');
+        $amis->execute([$id_user, $id_user]);
+        $amis = $amis->fetchAll(PDO::FETCH_OBJ);
+        foreach ($amis as $ami) {
+            if ($ami->user_id_1 != $id_user) {
+                $id = $ami->user_id_1;
+            } else {
+                $id = $ami->user_id_2;
+            }
+
+            
+            $friend = $db->prepare('SELECT nom, prenom FROM user WHERE id_user = ?');
+            $friend->execute([$id_user]);
+            $friendInfo = $friend->fetch(PDO::FETCH_OBJ);
+
+            $notifStmt = $db->prepare('INSERT INTO notification (id_user, est_lu, id_envoyeur, message, date_notification) VALUES (?, 0, ?, ?, NOW())');
+            $message = "Votre ami " . $friendInfo->prenom . " " . $friendInfo->nom . " a publié quelque chose !";
+            $notifStmt->execute([$id, $id_user, $message]);
+        }
+
         $sqlState = $db->prepare('INSERT INTO post (text_content, image_path, date_post, id_user) VALUES (?, ?, ?, ?)');
         $post = $sqlState->execute([$text_content,$imageUrl,$currentDate, $id_user]);
         return $post;

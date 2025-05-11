@@ -218,4 +218,48 @@
         $sqlstate = $db->prepare('INSERT INTO comment_post(id_post_groupe,id_user,groupe_comment_content) VALUES (?,?,?)');
         $sqlstate->execute([$id_groupe_post,$id,$groupe_comment]);
     }
+
+    function addinvitation($id,$id_user){
+        $db = database_connection();
+
+        $notifStmt = $db->prepare('INSERT INTO notification (id_user, est_lu, id_envoyeur, message, date_notification) VALUES (?, 0, ?, ?, NOW())');
+        $message = "Vous avez reçu une demande d'ami.";
+        $notifStmt->execute([$id_user, $id, $message]); // Replace non-breaking space with a regular space
+
+        $sqlstate = $db->prepare('INSERT INTO friend_requests(sender_id,receiver_id) VALUES (?,?)');
+        $sqlstate->execute([$id,$id_user]);
+    }
+
+    function cancelinvitation($id,$id_user){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('DELETE FROM friend_requests WHERE sender_id = ? AND receiver_id = ?');
+        $sqlstate->execute([$id,$id_user]);
+    }
+
+    function selectinvitationamie($id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM friend_requests WHERE receiver_id = ? OR sender_id = ?');
+        $sqlstate->execute([$id,$id]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function acceptinvitationn($id,$id_user){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('INSERT INTO friends(user_id_1,user_id_2) VALUES (?,?)');
+        $sqlstate->execute([$id,$id_user]);
+
+        $sqlstate = $db->prepare('DELETE FROM friend_requests WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)');
+        $sqlstate->execute([$id,$id_user,$id_user,$id]);
+    }
+
+    function selectamies($id){
+        $db = database_connection();
+
+        $sqlstate = $db->prepare('SELECT * FROM friends WHERE user_id_1 = ? OR user_id_2 = ?');
+        $sqlstate->execute([$id,$id]);
+        return $sqlstate->fetchAll(PDO::FETCH_OBJ);
+    }
 ?>

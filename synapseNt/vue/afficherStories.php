@@ -20,7 +20,7 @@ $stories = $pdo->query($sql)->fetchAll(PDO::FETCH_OBJ);
             justify-content: center;
             align-items: center;
             margin: 2% 0;
-            /* width: 100%; */
+            width: 100%;
             
         }
        
