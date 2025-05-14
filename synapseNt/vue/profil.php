@@ -809,9 +809,8 @@
         <div class="col-md-4 fixed-profile">
             <div class="profile-card mb-3">
                 <h5><strong>Intro</strong></h5>
-                <button class="btn btn-light mb-2">Ajouter une bio</button>
                 <button class="btn btn-light mb-2"><a style="color:black; text-decoration:none;"  href="index.php?action=modifierProfile">Modifier Profil</a></button>
-                <button class="btn btn-light">Ajouter du contenu à la une</button>
+                <button class="btn btn-light"><a style="color:black; text-decoration:none;"  href="index.php?action=home">Ajouter du contenu à la une</a></button>
             </div>
             <div class="profile-card">
                 <h5><strong>Photos</strong></h5>
