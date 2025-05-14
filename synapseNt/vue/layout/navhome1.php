@@ -7,12 +7,20 @@
                 <?php  include 'vue/chatbot1.php';?>
                 <?php  include 'vue/message.php';?>
             </div>
-            <form action="index.php?action=search" method="POST" style="display:flex; gap:10px">
-                <input type="text" name="keywords" id="" class="form-control search-bar">
-                <button type="submit" name="rechercher" class="btn btn-primary rechercher-nom" style="border-color: #2B2757;" value="rechercher">
-                    <i class="bi bi-search"></i> 
-                </button>
-            </form>
+<form action="index.php?action=search" method="POST" style="display: flex; gap: 10px; align-items: center;">
+  <div class="position-relative" style="flex: 1;">
+    <!-- Bouton intégré dans le champ -->
+    <button   type="submit" name="rechercher" class="btn p-0 m-0 position-absolute d-flex align-items-center justify-content-center"
+            style="left: 10px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: none; background: transparent; cursor:auto;">
+      <i class="bi bi-search" style="color: #aaa;"></i>
+    </button>
+
+    <!-- Champ avec padding à gauche pour l’icône-bouton -->
+    <input type="text" name="keywords" class="form-control search-bar ps-5" placeholder="Rechercher sur SynapseNt" style="border-radius: 30px;">
+  </div>
+</form>
+
+
             <div class="dropdown" style="position: relative;">
               <button class="btn dropdown-toggle" style="background-color: #2B2757;color:white;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <b class="cyndy"><?php if(isset($fullname)){echo $fullname;} ?></b>

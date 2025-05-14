@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar and Sidebar</title>
+    <title>Gestion des utilisateurs | SynapseNt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.6/css/line.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/home.css" />
+    <link rel="shortcut icon" href="img/logop11.png" type="image/png">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/htmx.org"></script>
     <style>
@@ -64,8 +65,8 @@
                                 echo "<td>".$user['nom']."</td>";
                                 echo "<td>".$user['email']."</td>";
                                 echo "<td>".$user['date_naissance']."</td>";
-                                echo "<td class='action d-flex'><form class='p-0' method='post' action='index.php?action=update_user'><input name='id' type='hidden' value='" . $user['id_user'] . "'><button class='btn border-0 p-0' type='submit'><i class='uil uil-pen'></i></button></form>";
-                                echo "<form class='p-0' method='post' action='index.php?action=delete_user'><input type='hidden' name='id' value='" . $user['id_user'] . "'><button class='btn border-0 p-0' type='submit'><i class='uil uil-trash-alt'></i></button></form></td>";
+                                echo "<td class='action d-flex'><form class='p-0' method='post' action='index.php?action=update_user'><input name='id' type='hidden' value='" . $user['id_user'] . "'><button class='btn  btn-success ' type='submit' ><i class='uil uil-pen text-light'></i></button></form>";
+                                echo "<form class='p-0' method='post' action='index.php?action=delete_user'><input type='hidden' name='id' value='" . $user['id_user'] . "'><button class='btn  btn-danger btn-sm' type='submit'><i class='uil uil-trash-alt text-light'></i></button></form></td>";
                                 echo "</tr>";
                             }
                         ?>

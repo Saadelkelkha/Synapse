@@ -16,18 +16,24 @@ if (isset($_POST['post_id'])) {
             // Supprimez le like
             $stmt = $pdo->prepare("DELETE FROM likes WHERE id_post = :id_post AND id_user = :id_user");
             $stmt->execute(['id_post' => $postId, 'id_user' => $userId]);
+
+            $stmt = $pdo->prepare("SELECT COUNT() AS like_count FROM likes WHERE id_post = :id_post");
+            $stmt->execute(['id_post' => $postId]);
+            $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count'];
+
+            echo json_encode(['success' => true, 'like_count' => $likeCount, 'liked' => false]);
         } else {
             // Ajoutez un like
             $stmt = $pdo->prepare("INSERT INTO likes (id_post, id_user) VALUES (:id_post, :id_user)");
             $stmt->execute(['id_post' => $postId, 'id_user' => $userId]);
+
+            $stmt = $pdo->prepare("SELECT COUNT() AS like_count FROM likes WHERE id_post = :id_post");
+            $stmt->execute(['id_post' => $postId]);
+            $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count'];
+
+            echo json_encode(['success' => true, 'like_count' => $likeCount, 'liked' => true]);
         }
 
-        // Comptez les likes
-        $stmt = $pdo->prepare("SELECT COUNT(*) AS like_count FROM likes WHERE id_post = :id_post");
-        $stmt->execute(['id_post' => $postId]);
-        $likeCount = $stmt->fetch(PDO::FETCH_ASSOC)['like_count'];
-
-        echo json_encode(['success' => true, 'like_count' => $likeCount]);
     } catch (Exception $e) {
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }

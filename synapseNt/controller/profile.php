@@ -6,19 +6,16 @@ require_once 'model/admin.php';
     require_once 'model/home.php';
 
 function afficherPostProfileController(){
+    $id = $_SESSION['id_user'];
+    $user = selectuser($id);
+    $fullname = $user['prenom'] . " " . $user['nom'];
    
     $posts = afficherPostProfil();
     require_once 'vue/profile-photos.php';
    
    
 }
-function afficherPhotosProfileController(){
-   
-    $posts = afficherusersPhotosProfil();
-    require_once 'vue/profile-photos.php';
-   
-   
-}
+
 
 // function afficherPostProfileController(){
    
