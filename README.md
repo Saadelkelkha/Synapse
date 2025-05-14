@@ -20,38 +20,6 @@
 - **Bootstrap** (Design responsive)
 - **XAMPP** (Serveur local)
 
-## 📂 Structure du projet
-
-```
-synapse/
-├── app/
-│   ├── controllers/
-│   ├── models/
-│   ├── views/
-│   └── core/
-├── public/
-│   ├── assets/
-│   └── index.php
-├── config/
-│   └── database.php
-├── .htaccess
-└── README.md
-```
-
-## 🧑‍💻 Base de données (Table `user`)
-
-Voici les champs principaux de la table `user` :
-
-- `id_user` (INT, PK)
-- `prenom` (VARCHAR)
-- `nom` (VARCHAR)
-- `date_naissance` (DATE)
-- `email` (VARCHAR)
-- `password` (VARCHAR, hashé)
-- `photo_profil` (VARCHAR)
-- `banner` (VARCHAR)
-- `bio` (TEXT)
-
 ## 🧪 Lancer le projet en local
 
 1. Cloner le dépôt :
@@ -68,8 +36,8 @@ Voici les champs principaux de la table `user` :
 
 Projet réalisé par :
 
-- **Ton Nom**
-- [Ajoute d'autres collaborateurs si nécessaire]
+- **Ziad Chamrah**
+- **Saad Elkelkha**
 
 ## 📃 Licence
 
