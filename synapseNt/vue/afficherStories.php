@@ -219,11 +219,6 @@ foreach ($stories as $story) {
     </div>
 </div>
 
-<<<<<<< HEAD
-=======
-<!-- Bootstrap JS -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
->>>>>>> ef003e3270f937cedebe834f1adb057e3aa8b0f3
 
 <script>
     let groupedStories = <?php echo json_encode($groupedStories); ?>;
