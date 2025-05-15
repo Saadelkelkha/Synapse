@@ -351,6 +351,8 @@
         .enregistrer-annuler-btn{
             display:flex;
         }
+
+        
     </style>
 </head>
 <body>

@@ -10,7 +10,9 @@ $enregistrerpostes = $pdo->prepare('SELECT * FROM enregistrer_posts LEFT JOIN po
 $enregistrerpostes->execute([$id]);
 $enregistrerpostes = $enregistrerpostes->fetchAll(PDO::FETCH_OBJ);
 
-
+$postLikes = $pdo->prepare("SELECT * FROM likes WHERE id_user = ?");
+$postLikes->execute([$id]);
+$postsLikes1 = $postLikes->fetchAll(PDO::FETCH_OBJ);
 
 
 $id_post = $_GET['id_post'] ?? null;
@@ -498,7 +500,32 @@ foreach($posts as $post) {
                         </div>
                         <div class="action-button" style="display: flex; justify-content: space-between;">
                             <div class="interaction-button">
-                                <span><button style="background-color:white; color:black" class="like_button p-0" data-post-id="<?php echo $post->id_post; ?>" data-user-id="<?php echo $id_user; ?>"><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button> <!-- Bouton Like --></span>
+                                <?php 
+                                $isFalseLikes = false;
+
+                                foreach($postsLikes1 as $postsLike){
+
+                                    if($postsLike->id_post == $post->id_post){
+                                        $isFalseLikes = true;
+                                       echo '<span>
+                                            <button style="background-color:white; color:black" class="like_button p-0" data-post-id="' . $post->id_post . '" data-user-id="' . $id_user . '">
+                                                <i class="uil uil-thumbs-up text-primary" style="font-size: x-large;"></i>
+                                            </button>
+                                        </span>';
+
+                                    }
+
+                                    ?>
+                               <?php }
+                               if( $isFalseLikes == false ){
+                                       echo '<span>
+                                            <button style="background-color:white; color:black" class="like_button p-0" data-post-id="' . $post->id_post . '" data-user-id="' . $id_user . '">
+                                                <i class="uil uil-thumbs-up" style="font-size: x-large;"></i>
+                                            </button>
+                                        </span>';
+
+                                    }
+                               ?>
 
                                 <!-- Compteur de likes -->
                                 
@@ -1246,9 +1273,14 @@ foreach($posts as $post) {
 
                     if (response.success) {
                         // Mise à jour du compteur de likes
-                       
-                        countLike.textContent = response.like_count;
-                       
+
+                        if (response.liked) {
+                            likeButton.querySelector('i').classList.add("text-primary");
+                        } else {
+                            likeButton.querySelector('i').classList.remove("text-primary");
+                        }
+
+                       countLike.textContent = response.like_count;
                     } else {
                         alert("Erreur : " + response.message);
                     }

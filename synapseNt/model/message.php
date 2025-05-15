@@ -85,7 +85,7 @@
     function send_message($id_user,$id_amie,$message){
         $db = database_connection();
 
-        $notification_message = "Cette amie a envoyé un message : " . $message;
+        $notification_message = " a envoyé un message : " . $message;
         $sqlstate = $db->prepare('INSERT INTO notification (id_user, id_envoyeur, message) VALUES (?, ?, ?)');
         
         $sqlstate->execute([$id_amie, $id_user, $notification_message]);
@@ -97,6 +97,11 @@
 
     function send_audio($id_user,$id_amie,$message,$finalTime){
         $db = database_connection();
+
+        $notification_message = " a envoyé un audio";
+        $sqlstate = $db->prepare('INSERT INTO notification (id_user, id_envoyeur, message) VALUES (?, ?, ?)');
+        
+        $sqlstate->execute([$id_amie, $id_user, $notification_message]);
     
         $sqlstate = $db->prepare('INSERT INTO message (id_expediteur, id_destinataire, audio, audio_dure) VALUES (?, ?, ?, ?)');
     

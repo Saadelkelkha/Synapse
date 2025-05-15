@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification_i
 $sql = "
 SELECT n.id_notification, n.message, n.date_notification, u.prenom, u.nom, u.photo_profil 
 FROM notification n 
-JOIN user u ON n.id_user = u.id_user 
+JOIN user u ON n.id_envoyeur = u.id_user 
 WHERE n.id_user = ? 
 ORDER BY n.date_notification DESC
 ";
@@ -112,6 +112,8 @@ button.btn12:hover i {
     background: white;
     position: absolute;
     z-index: 999;
+    scrollbar-width: none; /* For Firefox */
+            -ms-overflow-style: none; /* For Internet Explorer and Edge */
 }
 
 
@@ -168,16 +170,33 @@ button.btn12:hover i {
     <?php if (count($notifications) > 0): ?>
         <?php foreach ($notifications as $notif): ?>
             <div class="notif-item">
-                <small><?php echo date('d/m/Y H:i', strtotime($notif['date_notification'])); ?></small><br>
-                <strong><?php echo htmlspecialchars($notif['message']); ?></strong><br>
-                <div class="notif-user">
+                <h2>Notification</h2>
+                <div class="notif-user d-flex">
                     <img src="<?php echo $notif['photo_profil'] ; ?>" alt="User Photo" class="notif-user-photo">
-                    <span><?php echo htmlspecialchars($notif['prenom']) . ' ' . htmlspecialchars($notif['nom']); ?></span>
+                    <div class="ms-2">
+                        <span style="color: black;"><?php echo htmlspecialchars($notif['prenom']) . ' ' . htmlspecialchars($notif['nom']); ?></span>
+                        <strong style="color: black;"><?php echo htmlspecialchars($notif['message']); ?></strong><br>
+                        <?php
+                            $notifDate = strtotime($notif['date_notification']);
+                            $currentDate = time();
+                            $diff = $currentDate - $notifDate;
+
+                            if ($diff > 2592000) { // More than 1 month (30 days)
+                                echo '<small>' . date('d/m/Y H:i', $notifDate) . '</small><br>';
+                            } elseif ($diff > 604800) { // More than 1 week (7 days)
+                                echo '<small>' . floor($diff / 604800) . 'w</small><br>';
+                            } elseif ($diff > 86400) { // More than 1 day
+                                echo '<small>' . floor($diff / 86400) . 'd</small><br>';
+                            } elseif ($diff > 3600) { // More than 1 hour
+                                echo '<small>' . floor($diff / 3600) . 'h</small><br>';
+                            } elseif ($diff > 60) { // More than 1 minute
+                                echo '<small>' . floor($diff / 60) . 'm</small><br>';
+                            } else { // Less than 1 minute
+                                echo '<small>' . $diff . 's</small><br>';
+                            }
+                        ?>
+                    </div>
                 </div>
-                <form method="post" action="">
-                    <input type="hidden" name="delete_notification_id" value="<?php echo $notif['id_notification']; ?>">
-                    <button type="submit">Supprimer</button>
-                </form>
             </div>
         <?php endforeach; ?>
     <?php else: ?>
