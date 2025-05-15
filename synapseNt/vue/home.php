@@ -14,7 +14,6 @@ $postLikes = $pdo->prepare("SELECT * FROM likes WHERE id_user = ?");
 $postLikes->execute([$id]);
 $postsLikes1 = $postLikes->fetchAll(PDO::FETCH_OBJ);
 
-
 $id_post = $_GET['id_post'] ?? null;
 ?>
 <!DOCTYPE html>
@@ -28,7 +27,16 @@ $id_post = $_GET['id_post'] ?? null;
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="assets/home.css" />
+    <link rel="shortcut icon" href="img/logop11.png" type="image/png">
+
+
+
     <style>
+       
+        .enre1:hover{ 
+            background-color: lightgrey;
+            border-radius:5px;
+        }
 
         button {
             padding: 10px 20px;
@@ -368,13 +376,14 @@ $id_post = $_GET['id_post'] ?? null;
         .btn-modifier-supprimer1{
             color:black;
             background-color: transparent;
+            border-radius:15px;
+           
             
         }
         .btn-modifier-supprimer1:hover{
             color:white;
-           border-radius:50%;
+           border-radius:15px;
            background-color: lightgrey;
-           
             
         }
 
@@ -410,7 +419,7 @@ $id_post = $_GET['id_post'] ?? null;
                     <form class="create-post mb-3 mt-4" >
                         <div class="profile-pic mb-3 d-flex">
                             <img src="<?php echo $user['photo_profil']; ?>">
-                            <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="openPopup" readonly>
+                            <input type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="Ce que voulez-vous dire?" class="form-control mb-2 mt-2 ms-2" id="openPopup" readonly>
                         </div>
                     </form>
                     <!-- Popup -->
@@ -420,9 +429,9 @@ $id_post = $_GET['id_post'] ?? null;
                             <div class="container_creer">
                                 <div class="wrapper">
                                     <section class="post">
-                                        <header>Create Post</header>
+                                        <header>Creer Post</header>
                                         <form method="post" enctype="multipart/form-data" action="index.php?action=post">
-                                            <textarea name="text_content" placeholder="What's on your mind, SynapseNt?" ></textarea>
+                                            <textarea name="text_content" placeholder="Ce que voulez-vous dire ?" ></textarea>
                                             <div id="uploadedImageContainer"></div>
                                             <div class="options">
                                                 <p>Ajouter à votre poste</p>
@@ -542,13 +551,13 @@ foreach($posts as $post) {
                                     $isbookmarked = false;
                                     foreach($enregistrerpostes as $bookmarker) {
                                         if($post->id_post == $bookmarker->id_post){
-                                                echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0 is-saved" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark text-primary" style="font-size: x-large;"></i></button>';
+                                                echo '<button name="enregistrer" type="button" class="btn-enregsitrer enre1 border-0 is-saved" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark text-primary" style="font-size: x-large;"></i></button>';
                                                 $isbookmarked = true;
                                                 break;
                                         }
                                     }
                                     if(!$isbookmarked){
-                                        echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>';
+                                        echo '<button name="enregistrer" type="button" class="btn-enregsitrer enre1 border-0" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>';
                                     }
                                 ?>
                           
@@ -1272,6 +1281,11 @@ foreach($posts as $post) {
                     var response = JSON.parse(xhr.responseText);
 
                     if (response.success) {
+                        if (response.liked) {
+                            likeButton.querySelector('i').classList.add("text-primary");
+                        } else {
+                            likeButton.querySelector('i').classList.remove("text-primary");
+                        }
                         // Mise à jour du compteur de likes
 
                         if (response.liked) {

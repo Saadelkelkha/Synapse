@@ -3,18 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestion des Stories</title>
+  <title>Gestion des stories | SynapseNt</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.6/css/line.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
   <link rel="stylesheet" href="assets/home.css" />
+  <link rel="shortcut icon" href="img/logop11.png" type="image/png">
   <style>
     #Users i, #Users h3 {
       color: #102770;
     }
     td a {
       margin-right: 10px;
+    }
+    .stories1-div{
+      display:flex;
     }
   </style>
 </head>
@@ -67,7 +71,8 @@
         }
       ?>
 
-<form action="" method="post">
+<div class="stories1-div">
+  <form action="" method="post">
                     <input type="text" name="search" placeholder="Rechercher une story" class="form-control"
                    value="<?= isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '' ?>">
             <select name="search_by" class="form-select">
@@ -76,12 +81,13 @@
               <option value="prenom" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'prenom') ? 'selected' : '' ?>>Prénom</option>
               <option value="nom" <?= (isset($_POST['search_by']) && $_POST['search_by'] == 'nom') ? 'selected' : '' ?>>Nom</option>
             </select>
-            <button type="submit" name="submit_search" class="btn btn-primary"><i class="bi bi-search"></i></button>
+            <button type="submit" name="submit_search" class="btn" style="background-color: #2B2757;color:white;"><i class="bi bi-search"></i></button>
                     </form>
                     <form class="gusersall" action="" method="post">
-                    <button type="submit" name="submit_all" class="btn btn-secondary">Toutes les Stories</button>
+                    <button type="submit" name="submit_all" class="btn" style="background-color: #2B2757;color:white;">Toutes les Stories</button>
 </form>
       </form>
+</div>
       <div class="table-responsive">
         <table class="table table-light table-striped table-md mt-2">
           <thead>
@@ -113,7 +119,7 @@
                 <form method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer cette story ?');" style="display:inline;">
                   <input type="hidden" name="id_story" value="<?= $story['id_story'] ?>">
                   <button type="submit" name="delete" class="btn btn-danger btn-sm">
-                    <i class="bi bi-trash"></i> Supprimer
+                    <i class="uil uil-trash-alt"></i> 
                   </button>
                 </form>
               </td>

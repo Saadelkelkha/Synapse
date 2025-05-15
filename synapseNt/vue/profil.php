@@ -3,21 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navbar and Sidebar</title>
+    <title>Profile | SynapseNt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.6/css/line.css">
     <link rel="stylesheest" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
+    <link rel="shortcut icon" href="img/logop11.png" type="image/png">
     <link rel="stylesheet" href="assets/home.css">
+    
     <style>
-        .fixed-profile {
+        .nav-link.active {
+    color:#2B2757;
+}
+.enre1:hover{ 
+            background-color: lightgrey;
+            border-radius:5px;
+        }
+        .btn-modifier-supprimer1{
+            color:black;
+            background-color: transparent;
+            border-radius:15px;
+           
+            
+        }
+        .btn-modifier-supprimer1:hover{
+            color:white;
+           border-radius:15px;
+           background-color: lightgrey;
+            
+        }
+
+.fixed-profile {
     position: sticky;
     top: 100px; /* Ajuste selon la hauteur de ton header */
     height: fit-content;
-    max-height: 90vh; /* S'assure qu'il ne dépasse pas l'écran */
+    max-height: 90vh; /* Ne dépasse pas l'écran */
 }
+
+/* Désactiver le comportement sticky sur les petits écrans (≤ 768px) */
+@media (max-width: 768px) {
+    .fixed-profile {
+        position: static !important;
+        top: auto;
+    }
+}
+
 
 
         button {
@@ -57,18 +88,27 @@
         .popup button {
             background-color: #2B2757;
         }
+/* Style par défaut : overlay fixé (pour les grands écrans) */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* masqué par défaut */
+    z-index: 999;
+}
 
-        /* Overlay to dim background */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none; /* Hidden by default */
-            z-index: 999;
-        }
+/* Quand l'écran fait 768px ou moins */
+@media (max-width: 768px) {
+    .overlay {
+        position: absolute !important; 
+        /* display:block; */
+        /* remplacer fixed */
+    }
+}
+
 
         .creer-poste {
             
@@ -790,17 +830,18 @@
 <div class="container mt-2">
 <nav class="navbar navbar-light bg-white shadow-sm">
     <div class="container">
-        <ul class="navbar-nav flex-row gap-3">
-            <li class="nav-item">
-                <a class="nav-link active" href="index.php?action=afficherProfil">Publications</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="index.php?action=afficherPhotos">Multimédia</a>
-            </li>
-        </ul>
+        <ul class="navbar-nav flex-row gap-3" id="menuNav">
+    <li class="nav-item">
+        <a class="nav-link active" href="index.php?action=afficherProfil">Publications</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="index.php?action=afficherAmies">Ami(e)s</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="index.php?action=afficherPhotos">Multimédia</a>
+    </li>
+</ul>
+
     </div>
 </nav>
 <br>
@@ -812,10 +853,7 @@
                 <button class="btn btn-light mb-2"><a style="color:black; text-decoration:none;"  href="index.php?action=modifierProfile">Modifier Profil</a></button>
                 <button class="btn btn-light"><a style="color:black; text-decoration:none;"  href="index.php?action=home">Ajouter du contenu à la une</a></button>
             </div>
-            <div class="profile-card">
-                <h5><strong>Photos</strong></h5>
-                <a href="#">Toutes les photos</a>
-            </div>
+           
         </div>
 
         <!-- Colonne droite (Publications) -->
@@ -827,7 +865,7 @@
                     <form class="post-box mb-" >
                         <div class="profile-pic mb-3 d-flex">
                             <img src="<?php echo $user['photo_profil']?>" alt="" >
-                            <input  type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="What's happening?" class="form-control mb-2 mt-2 ms-2" id="openPopup">
+                            <input  type="text" style="background-color: #f6f7f8; border-color: #f6f7f8;" placeholder="Que voulez-vous dire ?" class="form-control mb-2 mt-2 ms-2" id="openPopup">
                         </div>
                     </form>
                     <div class="overlay" id="overlay"></div>
@@ -836,16 +874,16 @@
                             <div class="container_creer">
                                 <div class="wrapper">
                                     <section class="post">
-                                        <header>Create Post</header>
+                                        <header>Créer un post</header>
                                         <form method="post" enctype="multipart/form-data" action="index.php?action=post">
-                                            <textarea name="text_content" placeholder="What's on your mind, SynapseNt?" ></textarea>
+                                            <textarea name="text_content" placeholder="Que voulez-vous dire ?" ></textarea>
                                             <div id="uploadedImageContainer"></div>
                                             <div class="options">
                                                 <p>Ajouter à votre poste</p>
                                                 <ul class="list">
                                                     <li>
-                                                        <label for="imageInput">
-                                                            <img src="img/fb-icons/gallery.svg" alt="gallery">
+                                                         <label for="imageInput">
+                                                            <i class="bi bi-images"></i>
                                                         </label>
                                                         <input type="file" id="imageInput" accept="image/*" name="image">
                                                     </li>
@@ -954,13 +992,13 @@ foreach($posts as $post) {
                                     $isbookmarked = false;
                                     foreach($enregistrerpostes as $bookmarker) {
                                         if($post->id_post == $bookmarker->id_post){
-                                                echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0 is-saved" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark text-primary" style="font-size: x-large;"></i></button>';
+                                                echo '<button name="enregistrer" type="button" class="btn-enregsitrer enre1 border-0 is-saved" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark text-primary" style="font-size: x-large;"></i></button>';
                                                 $isbookmarked = true;
                                                 break;
                                         }
                                     }
                                     if(!$isbookmarked){
-                                        echo '<button name="enregistrer" type="button" class="btn-enregsitrer border-0" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>';
+                                        echo '<button name="enregistrer" type="button" class="btn-enregsitrer enre1 border-0" onclick="save_post_groupe(event)" data-post-id="' .$post->id_post .'"><i class="uil uil-bookmark" style="font-size: x-large;"></i></button>';
                                     }
                                 ?>
                           

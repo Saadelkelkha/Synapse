@@ -11,24 +11,21 @@
                        
                    
                     <a href="index.php?action=groups" class="menu-item">
-                        <i class="navhome2_sidebar_logo bi bi-people"></i>
+                        <i class="navhome2_sidebar_logo uil uil-users-alt"></i>
                         <h3>Groupes</h3>
                     </a>
                     <a class="menu-item" href="index.php?action=afficherProfil">
-                        <i class="navhome2_sidebar_logo uil uil-analytics"></i>
+                        <i class="navhome2_sidebar_logo uil uil-user"></i>
                         <h3>Profile</h3>
                     </a>
                     <a class="menu-item" href="index.php?action=enregistrerposts">
-                        <i class="navhome2_sidebar_logo uil uil-palette"></i>
+                        <i class="navhome2_sidebar_logo uil uil-save"></i>
                         <h3>Enregistrer</h3>
                     </a>
                     <a class="menu-item" href="index.php?action=modifierProfile">
                         <i class="navhome2_sidebar_logo uil uil-setting"></i>
-                        <h3>Settings</h3>
+                        <h3>Paramètres</h3>
                     </a>
-                    <a class="menu-item" href="index.php?action=ajouterAmie">
-                        <i class="navhome2_sidebar_logo uil uil-setting"></i>
-                        <h3>Amies</h3>
-                    </a>
+                    
                 </div>
             </nav>
