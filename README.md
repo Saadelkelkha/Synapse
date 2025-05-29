@@ -1,6 +1,6 @@
 <html lang="en">
 <body>
-  <p><strong>Synapse</strong> 🌐 is a web-based social network developed in PHP (MVC architecture), offering a complete social experience: messaging 💬, content sharing 📸, stories 🎞️, groups 👥, chatbot 🤖, and an efficient admin interface 🛠️.</p>
+  <h1><strong>Synapse</strong> 🌐</h1><p> is a web-based social network developed in PHP (MVC architecture), offering a complete social experience: messaging 💬, content sharing 📸, stories 🎞️, groups 👥, chatbot 🤖, and an efficient admin interface 🛠️.</p>
 
   <h2>Main Features</h2>
 
