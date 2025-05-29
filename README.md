@@ -64,7 +64,6 @@
   <p>Ce projet a été réalisé dans le cadre d’un <strong>Projet de Fin d’Études (PFE)</strong> pour mettre en œuvre une application complète illustrant les connaissances en PHP, architecture logicielle, interactions utilisateur et gestion de contenu.</p>
 
   <h2>🧑‍💻 Auteur</h2>
-  <p>Projet développé par <strong>[Ton Nom]</strong> – Étudiant en développement informatique<br>
-  <em>[Optionnel : lien vers ton portfolio ou LinkedIn]</em></p>
+  <p>Projet développé par <strong>Saad El Kelkha</strong> – Étudiant en développement informatique<br>
 </body>
 </html>
