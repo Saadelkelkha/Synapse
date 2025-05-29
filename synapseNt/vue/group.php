@@ -11,6 +11,14 @@
     <link rel="stylesheet" href="assets/home.css" />
     <link rel="shortcut icon" href="img/logop11.png" type="image/png">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #Groups i {
+            color: #102770;
+        }
+        #Groups h3 {
+            color: #102770;
+        }
+    </style>
 </head>
 <body>
     <div class="mt-3">

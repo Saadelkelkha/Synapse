@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="assets/home.css">
     
     <style>
+
         .nav-link.active {
     color:#2B2757;
 }
@@ -754,6 +755,7 @@
             font-weight: bold;
         }
         .profile-card {
+            margin-bottom: 1rem;
             background: white;
             border-radius: 10px;
             padding: 15px;
@@ -917,6 +919,10 @@
                 $enregistrerpostes = $pdo->prepare('SELECT * FROM enregistrer_posts LEFT JOIN post ON enregistrer_posts.id_post = post.id_post WHERE enregistrer_posts.id_user = ?');
                 $enregistrerpostes->execute([$id]);
                 $enregistrerpostes = $enregistrerpostes->fetchAll(PDO::FETCH_OBJ);
+
+                $postLikes = $pdo->prepare("SELECT * FROM likes WHERE id_user = ?");
+                $postLikes->execute([$id]);
+                $postsLikes1 = $postLikes->fetchAll(PDO::FETCH_OBJ);
                 
 foreach($posts as $post) {
     // Récupérer l'ID de l'utilisateur depuis la session
@@ -976,7 +982,32 @@ foreach($posts as $post) {
                         </div>
                         <div class="action-button" style="display: flex; justify-content: space-between;">
                             <div class="interaction-button">
-                                <span><button style="background-color:white; color:black" class="like_button p-0" data-post-id="<?php echo $post->id_post; ?>" data-user-id="<?php echo $id_user; ?>"><i class="uil uil-thumbs-up" style="font-size: x-large;"></i></button> <!-- Bouton Like --></span>
+                              <?php 
+                                $isFalseLikes = false;
+
+                                foreach($postsLikes1 as $postsLike){
+
+                                    if($postsLike->id_post == $post->id_post){
+                                        $isFalseLikes = true;
+                                       echo '<span>
+                                            <button style="background-color:white; color:black" class="like_button p-0" data-post-id="' . $post->id_post . '" data-user-id="' . $id_user . '">
+                                                <i class="uil uil-thumbs-up text-primary" style="font-size: x-large;"></i>
+                                            </button>
+                                        </span>';
+
+                                    }
+
+                                    ?>
+                               <?php }
+                               if( $isFalseLikes == false ){
+                                       echo '<span>
+                                            <button style="background-color:white; color:black" class="like_button p-0" data-post-id="' . $post->id_post . '" data-user-id="' . $id_user . '">
+                                                <i class="uil uil-thumbs-up" style="font-size: x-large;"></i>
+                                            </button>
+                                        </span>';
+
+                                    }
+                               ?>
 
                                 <!-- Compteur de likes -->
                                 
@@ -1705,41 +1736,51 @@ document.getElementById('overlay-supprimer').addEventListener('click', () => {
 });   
 
 document.addEventListener("DOMContentLoaded", function () {
-var likeButtons = document.querySelectorAll('.like_button');
+    var likeButtons = document.querySelectorAll('.like_button');
 
-likeButtons.forEach(function(likeButton) {
-likeButton.addEventListener("click", function () {
-    var postId = this.getAttribute('data-post-id');  // Récupérer l'ID du post
-    var userId = this.getAttribute('data-user-id');  // Récupérer l'ID de l'utilisateur
-    var countLike = document.getElementById("count_like_" + postId);  // Compteur de likes spécifique au post
-
-    // Création de l'objet XMLHttpRequest
-    var xhr = new XMLHttpRequest();
-
-    // Configuration de la requête POST
-    xhr.open("POST", "vue/like_post.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    // Gestion de la réponse
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
-
-            if (response.success) {
-                // Mise à jour du compteur de likes
-               
-                countLike.textContent = response.like_count;
-               
-            } else {
-                alert("Erreur : " + response.message);
-            }
-        }
-    };
-
-    // Envoi des données (ID du post et de l'utilisateur)
-    xhr.send("post_id=" + postId + "&user_id=" + userId); // ID du post et de l'utilisateur
-});
-});
+    likeButtons.forEach(function(likeButton) {
+        likeButton.addEventListener("click", function () {
+            var postId = this.getAttribute('data-post-id');  // Récupérer l'ID du post
+            var userId = this.getAttribute('data-user-id');  // Récupérer l'ID de l'utilisateur
+            var countLike = document.getElementById("count_like_" + postId);  // Compteur de likes spécifique au post
+        
+            // Création de l'objet XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+        
+            // Configuration de la requête POST
+            xhr.open("POST", "vue/like_post.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+            // Gestion de la réponse
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                
+                    if (response.success) {
+                        if (response.liked) {
+                            likeButton.querySelector('i').classList.add("text-primary");
+                        } else {
+                            likeButton.querySelector('i').classList.remove("text-primary");
+                        }
+                        // Mise à jour du compteur de likes
+                    
+                        if (response.liked) {
+                            likeButton.querySelector('i').classList.add("text-primary");
+                        } else {
+                            likeButton.querySelector('i').classList.remove("text-primary");
+                        }
+                    
+                       countLike.textContent = response.like_count;
+                    } else {
+                        alert("Erreur : " + response.message);
+                    }
+                }
+            };
+        
+            // Envoi des données (ID du post et de l'utilisateur)
+            xhr.send("post_id=" + postId + "&user_id=" + userId); // ID du post et de l'utilisateur
+        });
+    });
 });
 
         function save_post_groupe(event){

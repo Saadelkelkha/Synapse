@@ -11,14 +11,14 @@
     <link rel="stylesheet" href="assets/home.css" />
     <link rel="shortcut icon" href="img/logop11.png" type="image/png">
     <style>
-      #Users i{
+      #Posts i{
         color: #102770;
       }
       .btn12{
         background-color: #102770;
       }
 
-      #Users h3{
+      #Posts h3{
         color: #102770;
       }
       td a{

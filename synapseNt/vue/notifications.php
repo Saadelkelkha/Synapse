@@ -167,10 +167,10 @@ button.btn12:hover i {
 
 <!-- Liste des Notifications -->
 <div id="notificationList">
+    <h2>Notification</h2>
     <?php if (count($notifications) > 0): ?>
         <?php foreach ($notifications as $notif): ?>
             <div class="notif-item">
-                <h2>Notification</h2>
                 <div class="notif-user d-flex">
                     <img src="<?php echo $notif['photo_profil'] ; ?>" alt="User Photo" class="notif-user-photo">
                     <div class="ms-2">

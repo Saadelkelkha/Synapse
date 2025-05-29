@@ -32,7 +32,10 @@ $id_post = $_GET['id_post'] ?? null;
 
 
     <style>
-       
+        #Explore i, #Explore h3 {
+          color: #102770;
+        }
+
         .enre1:hover{ 
             background-color: lightgrey;
             border-radius:5px;
@@ -1259,7 +1262,7 @@ foreach($posts as $post) {
             document.getElementById('overlay-supprimer').classList.add('hidden-modifier');
         });   
         
-        document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     var likeButtons = document.querySelectorAll('.like_button');
     
     likeButtons.forEach(function(likeButton) {

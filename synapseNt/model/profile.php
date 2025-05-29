@@ -49,6 +49,7 @@ function afficherAmies(){
         $sqlState = $db->query('SELECT * FROM user');
         return $sqlState->fetchAll(PDO::FETCH_OBJ);
     }
+
     function obtenirUtilisateurParId($id_user) {
         $db = database_connection();
         $stmt = $db->prepare("SELECT * FROM user WHERE id_user = ?");
@@ -58,5 +59,9 @@ function afficherAmies(){
         return $user ? [$user] : []; // Retourne un tableau contenant l'objet
     }
     
-    
+    function supprimeramiModel($id_ami,$id){
+        $pdo = database_connection();
+        $stmt = $pdo->prepare("DELETE FROM friends WHERE (user_id_1 = ? AND user_id_2 = ?) OR (user_id_1 = ? AND user_id_2 = ?)");
+        return $stmt->execute([$id_ami,$id,$id,$id_ami]);
+    }
 ?>

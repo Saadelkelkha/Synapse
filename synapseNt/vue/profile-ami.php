@@ -562,20 +562,40 @@ $amis = $sqlState->fetchAll(PDO::FETCH_OBJ);
 
 
 foreach($amis as $ami){ ?> 
-    <form method="POST" action="index.php?action=utilisateurs" class="d-flex align-items-center justify-content-between border rounded p-2 mb-2">
-    <input type="hidden" name="id_user" value="<?php echo $ami->id_user; ?>">
+    <div class="person-card d-flex justify-content-between person-card-inv-groupe bg-white w-100" style="display: flex; align-items: center; gap: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+        <div class="d-flex gap-2 align-items-center">
+            <img class="navhome1_profile" src="<?php echo $ami->photo_profil?>" height="50" width="50" style="border-radius: 50%;">
+            <h6 style="font-weight: 600; margin: 0;"><?php echo $ami->prenom ?> <?php echo $ami->nom ?></h6>
+        </div>
+        <div class="d-flex gap-2">
+            <div class="dropdown show">
+            <a class="btn btn-primary" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                ...
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item w-100 text-center" onclick="supprimerami(<?php echo $ami->id_user ?>, event)">Supprimer ami</a>
+                <form class="dropdown-item" method="POST" action="index.php?action=utilisateurs">
+                    <input type="hidden" name="id_user" value="<?php echo $ami->id_user ?>">
+                    <button type="submit" class="btn btn-link text-decoration-none text-dark p-0 m-0 w-100">
+                        View profile
+                    </button>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div><br>
+    <!-- <form method="POST" action="index.php?action=utilisateurs" class="d-flex align-items-center justify-content-between border rounded p-2 mb-2">
+        <input type="hidden" name="id_user" value="">
 
-    <button type="submit" class="btn btn-link text-decoration-none text-dark p-0 m-0">
-        <img src="<?php echo htmlspecialchars($ami->photo_profil) ?>" alt="">
-        <strong><?php echo htmlspecialchars($ami->prenom) . " " . htmlspecialchars($ami->nom); ?></strong>
-    </button>
-
-    <!-- Bouton Supprimer -->
-   
-</form>
+        <button type="submit" class="btn btn-link text-decoration-none text-dark p-0 m-0">
+            <img src="<?php echo htmlspecialchars($ami->photo_profil) ?>" alt="">
+            <strong><?php echo htmlspecialchars($ami->prenom) . " " . htmlspecialchars($ami->nom); ?></strong>
+        </button>
+        
+    </form> -->
 
  <!-- <form method="POST" action="supprimer_ami.php" class="m-0">
-        <input type="hidden" name="id_ami" value="<?php echo $ami->id_user; ?>">
+        <input type="hidden" name="id_ami" value="">
         <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
     </form> -->
 
@@ -639,6 +659,26 @@ foreach($amis as $ami){ ?>
 
 
 <script>
+function supprimerami(id_ami, event) {
+    $.ajax({
+        url: 'index.php?action=supprimerami',
+        method: 'POST',
+        data: {
+            id_ami: id_ami,
+        },
+        success: function(){
+            // Remove the friend card from the DOM
+            if (event && event.target) {
+                // Find the closest parent with class 'person-card' and remove it
+                var card = event.target.closest('.person-card');
+                if (card) {
+                    card.remove();
+                }
+            }
+        }
+    });
+}
+
 function sendRequest(receiver_id) {
     $.post("", { send_request: true, receiver_id: receiver_id }, function(response) {
         console.log(response);
@@ -728,6 +768,6 @@ function closeModal() {
    
 }
 </script>
-
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -122,7 +122,12 @@
                             ...
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member}, event)">View profile</a>
+                            <form method="POST" class="dropdown-item" action="index.php?action=utilisateurs">
+                                <input type="hidden" name="id_user" value="${inv.id_user}">
+                                <button type="submit" class="btn btn-link text-decoration-none text-dark p-0 m-0 w-100">
+                                    View profile
+                                </button>
+                            </form>
                         </div>
                         </div>
                     </div>
@@ -148,7 +153,12 @@
                             <?php if ($is_admin) { ?>
                             <a class="dropdown-item" onclick="addkickmemberpopup(${inv.id_groupe_member}, event)">Kick from group</a>
                             <?php } ?>
-                            <a class="dropdown-item" onclick="viewprofile(${inv.id_groupe_member}, event)">View profile</a>
+                            <form class="dropdown-item" method="POST" action="index.php?action=utilisateurs">
+                                <input type="hidden" name="id_user" value="${inv.id_user}">
+                                <button type="submit" class="btn btn-link text-decoration-none text-dark p-0 m-0 w-100">
+                                    View profile
+                                </button>
+                            </form>
                         </div>
                         </div>
                     </div>

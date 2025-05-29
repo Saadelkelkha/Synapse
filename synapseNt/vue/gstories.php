@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="assets/home.css" />
   <link rel="shortcut icon" href="img/logop11.png" type="image/png">
   <style>
-    #Users i, #Users h3 {
+    #Stories i, #Stories h3 {
       color: #102770;
     }
     td a {

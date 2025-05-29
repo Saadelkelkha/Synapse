@@ -843,6 +843,14 @@
             case "notifications":
                 require_once 'vue/notifications.php';
                 break;
+            case "supprimerami":
+                if(isset($_POST['id_ami'])){
+                    require_once 'controller/profile.php';
+                    $id_ami = $_POST['id_ami'];
+                    supprimerami($id_ami);
+                    break;
+                }
+                
             
         }
     }else{
