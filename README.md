@@ -40,7 +40,7 @@
     <li><strong>Architecture</strong>: MVC (Model View Controller) 🏗️</li>
     <li><strong>Database</strong>: MySQL 🛢️</li>
     <li><strong>Frontend</strong>: HTML, CSS, JavaScript (AJAX) 🎨</li>
-    <li><strong>Libraries</strong>: PlantUML 🌿, Font Awesome ⭐, Bootstrap (optional)</li>
+    <li><strong>Libraries</strong>: PlantUML 🌿, Font Awesome ⭐, Bootstrap</li>
   </ul>
 
   <h2>Project Structure (Excerpt) 📁</h2>
