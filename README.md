@@ -1,54 +1,49 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+<html lang="en">
 <body>
-  <h1>🧠 Synapse – Réseau Social Dynamique</h1>
-  <p><strong>Synapse</strong> est un réseau social web développé en PHP (architecture MVC) conçu pour offrir une expérience sociale complète : messagerie, publication de contenu, stories, groupes, chatbot, et une interface d’administration performante.</p>
+  <p><strong>Synapse</strong> is a web-based social network developed in PHP (MVC architecture), offering a complete social experience: messaging, content sharing, stories, groups, chatbot, and an efficient admin interface.</p>
 
-  <h2>🚀 Fonctionnalités principales</h2>
+  <h2>Main Features</h2>
 
-  <h3>👤 Utilisateur</h3>
+  <h3>User</h3>
   <ul>
-    <li><strong>Authentification</strong> : Inscription, Connexion sécurisée, Déconnexion</li>
-    <li><strong>Profil</strong> : Modification des informations personnelles, image de profil, bannière</li>
-    <li><strong>Amis</strong> : Envoi d'invitations, acceptation/refus, visualisation de profil</li>
-    <li><strong>Publications</strong> : Texte, image, vidéo, interactions (like, commentaires, réponses, sauvegardes)</li>
-    <li><strong>Stories</strong> : Ajout, affichage interactif (suivant, précédent, quitter)</li>
-    <li><strong>Messagerie</strong> : Textes et audios entre amis</li>
-    <li><strong>Chatbot intégré</strong> : Réponses automatiques aux messages</li>
-    <li><strong>Groupes</strong> :
+    <li><strong>Authentication</strong>: Register, Secure login, Logout</li>
+    <li><strong>Forgot Password</strong>: Click on "Forgot password?" → go to page to enter email → receive link in email → click link → enter new password and confirmation → password is changed</li>
+    <li><strong>Profile</strong>: Edit personal info, profile image, banner</li>
+    <li><strong>Friends</strong>: Send/accept/reject invitations, view profile</li>
+    <li><strong>Posts</strong>: Text, image, video, interactions (like, comment, reply, save)</li>
+    <li><strong>Stories</strong>: Add, view (next, previous, exit)</li>
+    <li><strong>Messaging</strong>: Send/receive text and audio messages with friends</li>
+    <li><strong>Integrated chatbot</strong>: Auto-response to user messages</li>
+    <li><strong>Groups</strong>:
       <ul>
-        <li>Création et gestion (admin)</li>
-        <li>Publication de contenu</li>
-        <li>Invitations et adhésions</li>
-        <li>Modération (kick, bannière, suppression)</li>
-        <li>Multimédia dédié</li>
+        <li>Create and manage (admin)</li>
+        <li>Post content</li>
+        <li>Send/accept join requests</li>
+        <li>Moderation (kick members, change banner, delete group)</li>
+        <li>Multimedia: View images/videos posted in the group</li>
       </ul>
     </li>
-    <li><strong>Notifications</strong> : Messages, invitations, demandes de groupe</li>
+    <li><strong>Notifications</strong>: Messages, invitations, group requests</li>
   </ul>
 
-  <h3>🛠️ Administrateur</h3>
+  <h3>Administrator</h3>
   <ul>
-    <li>Gestion des utilisateurs : recherche, modification, suppression</li>
-    <li>Gestion des groupes : mise à jour, suppression, modération</li>
-    <li>Gestion des stories et publications : suppression</li>
-    <li>Création d'autres comptes admin</li>
+    <li>User management: search, edit, delete</li>
+    <li>Group management: update, delete, moderate</li>
+    <li>Story and post management: delete</li>
+    <li>Create new admin accounts</li>
   </ul>
 
-  <h2>🧱 Stack technique</h2>
+  <h2>Tech Stack</h2>
   <ul>
-    <li><strong>Langage</strong> : PHP (orienté objet)</li>
-    <li><strong>Architecture</strong> : MVC (Model View Controller)</li>
-    <li><strong>Base de données</strong> : MySQL</li>
-    <li><strong>Frontend</strong> : HTML, CSS, JavaScript (AJAX)</li>
-    <li><strong>Librairies externes</strong> : PlantUML, Font Awesome, Bootstrap (optionnel)</li>
+    <li><strong>Language</strong>: PHP (OOP)</li>
+    <li><strong>Architecture</strong>: MVC (Model View Controller)</li>
+    <li><strong>Database</strong>: MySQL</li>
+    <li><strong>Frontend</strong>: HTML, CSS, JavaScript (AJAX)</li>
+    <li><strong>Libraries</strong>: PlantUML, Font Awesome, Bootstrap (optional)</li>
   </ul>
 
-  <h2>📂 Structure du projet (extrait)</h2>
+  <h2>Project Structure (Excerpt)</h2>
   <pre><code>/Synapse/
 ├── controller/
 ├── model/
@@ -60,10 +55,10 @@
 ├── config/
 └── index.php</code></pre>
 
-  <h2>📌 Objectif</h2>
-  <p>Ce projet a été réalisé dans le cadre d’un <strong>Projet de Fin d’Études (PFE)</strong> pour mettre en œuvre une application complète illustrant les connaissances en PHP, architecture logicielle, interactions utilisateur et gestion de contenu.</p>
+  <h2>Objective</h2>
+  <p>This project was developed as a <strong>Final Year Project (FYP)</strong> to implement a complete application demonstrating skills in PHP, software architecture, user interaction, and content management.</p>
 
-  <h2>🧑‍💻 Auteur</h2>
-  <p>Projet développé par <strong>Saad El Kelkha</strong> – Étudiant en développement informatique<br>
+  <h2>Authors</h2>
+  <p>Project developed by <strong>Saad EL Kelkha</strong> and <strong>Ziad Chamrah</strong> – Software Development Students</p>
 </body>
 </html>
